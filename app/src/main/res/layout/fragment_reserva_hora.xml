@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+ <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+     xmlns:app="http://schemas.android.com/apk/res-auto"
+     xmlns:tools="http://schemas.android.com/tools"
+     android:layout_width="match_parent"
+     android:layout_height="match_parent"
+     tools:context=".ui.metodo.HoraActivity">
+
+     <TextView
+         android:id="@+id/tvHoraTitulo"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:text="Eliga una hora para estacionar"
+         app:layout_constraintBottom_toBottomOf="parent"
+         app:layout_constraintEnd_toEndOf="parent"
+         app:layout_constraintHorizontal_bias="0.498"
+         app:layout_constraintStart_toStartOf="parent"
+         app:layout_constraintTop_toTopOf="parent"
+         app:layout_constraintVertical_bias="0.125" />
+
+     <EditText
+         android:id="@+id/etHora"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:ems="10"
+         android:inputType="none"
+         app:layout_constraintBottom_toBottomOf="parent"
+         app:layout_constraintEnd_toEndOf="parent"
+         app:layout_constraintStart_toStartOf="parent"
+         app:layout_constraintTop_toTopOf="parent"
+         app:layout_constraintVertical_bias="0.198" />
+
+     <Switch
+         android:id="@+id/switch1"
+         android:layout_width="162dp"
+         android:layout_height="30dp"
+         android:layout_marginStart="124dp"
+         android:layout_marginTop="218dp"
+         android:layout_marginEnd="125dp"
+         android:layout_marginBottom="483dp"
+         android:text="Cambiar Fecha?"
+         app:layout_constraintBottom_toBottomOf="parent"
+         app:layout_constraintEnd_toEndOf="parent"
+         app:layout_constraintStart_toStartOf="parent"
+         app:layout_constraintTop_toTopOf="parent"
+         tools:ignore="UseSwitchCompatOrMaterialXml" />
+
+     <TextView
+         android:id="@+id/tvHoraFTitulo"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:text="Eliga una Hora Final de reserva"
+         android:textAlignment="center"
+         android:visibility="gone"
+         app:layout_constraintBottom_toBottomOf="parent"
+         app:layout_constraintEnd_toEndOf="parent"
+         app:layout_constraintStart_toStartOf="parent"
+         app:layout_constraintTop_toTopOf="parent"
+         app:layout_constraintVertical_bias="0.386" />
+
+     <EditText
+         android:id="@+id/etHoraF"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:ems="10"
+         android:inputType="date"
+         android:onClick="showHoraF"
+         android:visibility="gone"
+         app:layout_constraintBottom_toBottomOf="parent"
+         app:layout_constraintEnd_toEndOf="parent"
+         app:layout_constraintHorizontal_bias="0.502"
+         app:layout_constraintStart_toStartOf="parent"
+         app:layout_constraintTop_toTopOf="parent"
+         app:layout_constraintVertical_bias="0.473" />
+
+    <TextView
+        android:id="@+id/tvFechaTitulo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="121dp"
+        android:layout_marginTop="419dp"
+        android:layout_marginEnd="121dp"
+        android:layout_marginBottom="277dp"
+        android:text="Eliga una fecha de reserva \n (1 Mes el maximo)"
+        android:textAlignment="center"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/etFecha"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="99dp"
+        android:layout_marginTop="480dp"
+        android:layout_marginEnd="99dp"
+        android:layout_marginBottom="201dp"
+        android:ems="10"
+        android:inputType="date"
+        android:onClick="showFecha"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+     <Button
+         android:id="@+id/btnReservaHora"
+         android:layout_width="262dp"
+         android:layout_height="51dp"
+         android:layout_marginStart="74dp"
+         android:layout_marginTop="613dp"
+         android:layout_marginEnd="75dp"
+         android:layout_marginBottom="67dp"
+         android:text="Hacer reservacion"
+         app:layout_constraintBottom_toBottomOf="parent"
+         app:layout_constraintEnd_toEndOf="parent"
+         app:layout_constraintStart_toStartOf="parent"
+         app:layout_constraintTop_toTopOf="parent" />
+
+
+ </androidx.constraintlayout.widget.ConstraintLayout>

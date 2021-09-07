@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.example.myapplication">
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.MyApplication"
+        android:usesCleartextTraffic="true">
+
+        <activity android:name=".SplashScreenActivity"
+            android:theme="@style/Theme.MyApplication.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity android:name=".LoginActivity"
+            android:label="EstacionAPP">
+
+        </activity>
+
+        <activity android:name=".RegisterActivity"
+            android:label="EstacionAPP Registrer">
+        </activity>
+
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.MyApplication.NoActionBar">
+        </activity>
+
+        <activity android:name=".ui.metodo.MapMuestra"
+            android:label="Perfil"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
+
+        <activity android:name=".ui.slideshow.SlideshowFragment"
+            android:label="Reservacion"
+            android:parentActivityName=".ui.metodo.MapMuestra">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ui.metodo.MapMuestra" />
+        </activity>
+
+        <activity android:name=".ui.comments.ComentariosActivity"
+            android:label="Comentarios">
+        </activity>
+
+        <activity
+            android:name=".ui.metodo.HoraActivity"
+            android:label="Reseva por Hora"
+            android:parentActivityName=".ui.slideshow.SlideshowFragment"
+            android:theme="@style/Theme.MyApplication.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ui.slideshow.SlideshowFragment" />
+        </activity>
+
+        <activity
+            android:name=".ui.metodo.MediaActivity"
+            android:label="Reseva por Media estadia"
+            android:parentActivityName=".ui.slideshow.SlideshowFragment"
+            android:theme="@style/Theme.MyApplication.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ui.slideshow.SlideshowFragment" />
+        </activity>
+
+        <activity
+            android:name=".ui.metodo.EstadiaActivity"
+            android:label="Reseva por Estadia"
+            android:parentActivityName=".ui.slideshow.SlideshowFragment"
+            android:theme="@style/Theme.MyApplication.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ui.slideshow.SlideshowFragment" />
+        </activity>
+    </application>
+
+</manifest>

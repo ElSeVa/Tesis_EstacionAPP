@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".ui.gallery.GalleryFragment">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/ivFotoSecundGarage"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:contentDescription="@string/imagen_de_fondo" />
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/ivFotoPrincGarage"
+            android:layout_width="130dp"
+            android:layout_height="120dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="120dp" />
+
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/tvPerfilNombreGarage"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textSize="25dp" />
+
+    <TextView
+        android:id="@+id/tvPerfilDireccionGarage"
+        android:layout_marginBottom="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textSize="22dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Vehiculos permitidos"
+        android:layout_gravity="center"
+        android:textSize="20dp" />
+
+    <TextView
+        android:id="@+id/tvPerfilVehiculosEstadia"
+        android:layout_marginTop="10dp"
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="18dp" />
+
+    <TextView
+        android:layout_margin="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Disponibilidad"
+        android:layout_gravity="center"
+        android:textSize="20dp" />
+
+
+    <Spinner
+        android:id="@+id/spPerfilDisponibilidad"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:spinnerMode="dropdown" />
+
+    <Button
+        android:id="@+id/btnPerfilCambios"
+        android:layout_width="204dp"
+        android:layout_height="44dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp"
+        android:text="Aplicar Cambios" />
+
+</LinearLayout>

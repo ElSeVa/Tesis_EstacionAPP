@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingBottom="8dp"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
+    android:paddingTop="8dp"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tvNumero"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:text="@string/n"
+        android:layout_centerVertical="true" />
+
+    <TextView
+        android:id="@+id/tvGarageNombre"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="25dp"
+        android:text="@string/nombre_garage"
+        android:textAppearance="?attr/textAppearanceListItem" />
+
+    <TextView
+        android:id="@+id/tvFechaIncialTitulo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/tvGarageNombre"
+        android:layout_below="@+id/tvGarageNombre"
+        android:text="@string/fecha_inicio" />
+
+    <TextView
+        android:id="@+id/tvFechaInicial"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/tvGarageNombre"
+        android:layout_below="@+id/tvFechaIncialTitulo"
+        android:text="@string/fecha_inicio" />
+
+    <TextView
+        android:id="@+id/tvSeparador"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:layout_toEndOf="@id/tvFechaInicial"
+        android:layout_below="@+id/tvFechaIncialTitulo"
+        android:layout_centerHorizontal="true"
+        android:text="@string/separador" />
+
+    <TextView
+        android:id="@+id/tvFechaFinalTitulo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/tvFechaFinal"
+        android:layout_below="@+id/tvGarageNombre"
+        android:text="@string/fecha_final" />
+
+    <TextView
+        android:id="@+id/tvFechaFinal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:layout_toEndOf="@id/tvSeparador"
+        android:layout_below="@+id/tvFechaFinalTitulo"
+        android:text="@string/fecha_final" />
+
+    <TextView
+        android:id="@+id/tvEstado"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/tvGarageNombre"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:text="@string/estado" />
+
+</RelativeLayout>

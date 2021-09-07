@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "101304326132",
+    "project_id": "estacionapp-cd6aa",
+    "storage_bucket": "estacionapp-cd6aa.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:101304326132:android:f2330d8d248c7d4d53cba1",
+        "android_client_info": {
+          "package_name": "com.example.myapplication"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "101304326132-pda4lkoul6ra7ss9erna0jnibuk32s88.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.myapplication",
+            "certificate_hash": "a48f47c8cc8c86b133b0a74983b4cac2f37fec33"
+          }
+        },
+        {
+          "client_id": "101304326132-1rochlf8u6ibrdt56su41o9okmfbh4fc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCfKeuOrKnUOtSznDs3cTqR_qTaqbWjL9Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "101304326132-1rochlf8u6ibrdt56su41o9okmfbh4fc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

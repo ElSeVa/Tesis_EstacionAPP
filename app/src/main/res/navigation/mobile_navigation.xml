@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@id/nav_home">
+
+    <fragment
+        android:id="@+id/nav_home"
+        android:name="com.example.myapplication.ui.home.HomeFragment"
+        android:label="@string/menu_home"
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_nav_home_to_mapMuestraFragment"
+            app:destination="@id/mapMuestraFragment" />
+        <action
+            android:id="@+id/action_nav_home_to_nav_gallery"
+            app:destination="@id/nav_gallery" />
+        <action
+            android:id="@+id/action_nav_home_to_profileFragment"
+            app:destination="@id/nav_perfil" />
+        <action
+            android:id="@+id/action_nav_home_to_givePromotionFragment"
+            app:destination="@id/nav_promocion" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_gallery"
+        android:name="com.example.myapplication.ui.gallery.GalleryFragment"
+        android:label="Garage"
+        tools:layout="@layout/fragment_gallery" />
+
+    <fragment
+        android:id="@+id/settingFragment"
+        android:name="com.example.myapplication.SettingFragment"
+        android:label="Filtros"
+        tools:layout="@layout/fragment_setting">
+        <action
+            android:id="@+id/action_settingFragment_to_nav_home2"
+            app:destination="@id/nav_home" />
+    </fragment>
+    <fragment
+        android:id="@+id/reservasFragment"
+        android:name="com.example.myapplication.ReservasFragment"
+        android:label="Reservaciones"
+        tools:layout="@layout/fragment_reservas">
+        <action
+            android:id="@+id/action_reservasFragment_to_nav_home2"
+            app:destination="@id/nav_home" />
+    </fragment>
+    <fragment
+        android:id="@+id/mapMuestraFragment"
+        android:name="com.example.myapplication.ui.metodo.MapMuestraFragment"
+        android:label="Detalles de Garage">
+        <argument
+            android:name="HaceReserva"
+            app:argType="boolean"
+            android:defaultValue="true" />
+        <action
+            android:id="@+id/action_mapMuestraFragment_to_menuReservaFragment"
+            app:destination="@id/menuReservaFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
+        <action
+            android:id="@+id/action_mapMuestraFragment_to_comentariosFragment"
+            app:destination="@id/comentariosFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/horaFragment"
+        android:name="com.example.myapplication.ui.metodo.HoraFragment"
+        android:label="Estadia por Hora">
+        <action
+            android:id="@+id/action_horaFragment_to_nav_home3"
+            app:destination="@id/nav_home" />
+    </fragment>
+    <fragment
+        android:id="@+id/menuReservaFragment"
+        android:name="com.example.myapplication.ui.slideshow.MenuReservaFragment"
+        android:label="Menu de Reservas">
+        <action
+            android:id="@+id/action_menuReservaFragment_to_estadiaFragment"
+            app:destination="@id/estadiaFragment" />
+        <action
+            android:id="@+id/action_menuReservaFragment_to_mediaFragment"
+            app:destination="@id/mediaFragment" />
+        <action
+            android:id="@+id/action_menuReservaFragment_to_horaFragment"
+            app:destination="@id/horaFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/mediaFragment"
+        android:name="com.example.myapplication.ui.metodo.MediaFragment"
+        android:label="Media Estadia">
+        <action
+            android:id="@+id/action_mediaFragment_to_nav_home3"
+            app:destination="@id/nav_home" />
+    </fragment>
+    <fragment
+        android:id="@+id/estadiaFragment"
+        android:name="com.example.myapplication.ui.metodo.EstadiaFragment"
+        android:label="Estadia">
+        <action
+            android:id="@+id/action_estadiaFragment_to_nav_home3"
+            app:destination="@id/nav_home" />
+    </fragment>
+    <fragment
+        android:id="@+id/comentariosFragment"
+        android:name="com.example.myapplication.ui.comments.ComentariosFragment"
+        android:label="Comentarios" />
+    <fragment
+        android:id="@+id/nav_perfil"
+        android:name="com.example.myapplication.ui.profile.ProfileFragment"
+        android:label="@string/perfil"
+        tools:layout="@layout/fragment_profile" >
+        <action
+            android:id="@+id/action_nav_perfil_to_takePromotionFragment"
+            app:destination="@id/takePromotionFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/takePromotionFragment"
+        android:name="com.example.myapplication.ui.promotions.TakePromotionFragment"
+        android:label="Promociones" />
+    <fragment
+        android:id="@+id/nav_promocion"
+        android:name="com.example.myapplication.ui.promotions.GivePromotionFragment"
+        android:label="Promociones" />
+</navigation>

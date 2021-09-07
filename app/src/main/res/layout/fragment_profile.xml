@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".ui.profile.ProfileFragment">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/ivFotoSecundProfile"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:src="@drawable/side_nav_bar"
+            android:contentDescription="@string/imagen_de_fondo" />
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:src="@mipmap/ic_launcher_round"
+            android:id="@+id/ivFotoPrincProfile"
+            android:layout_width="130dp"
+            android:layout_height="120dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="120dp" />
+
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/tvPerfilNombreProfile"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textSize="25dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Vehiculo"
+        android:layout_gravity="center"
+        android:textSize="20dp" />
+
+    <TextView
+        android:id="@+id/tvPerfilVehiculo"
+        android:layout_marginTop="10dp"
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="18dp" />
+
+    <Button
+        android:id="@+id/btnPromociones"
+        android:text="@string/ver_promociones"
+        android:layout_marginTop="150dp"
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+</LinearLayout>
