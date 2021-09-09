@@ -56,17 +56,14 @@ public class MenuReservaFragment extends Fragment implements View.OnClickListene
     public void onClick(View v) {
         if(v==btnHora){
             Navigation.findNavController(v).navigate(R.id.horaFragment);
-
         }
 
         if(v==btnMedia){
             Navigation.findNavController(v).navigate(R.id.mediaFragment);
-
         }
 
         if(v==btnEstadia){
             Navigation.findNavController(v).navigate(R.id.estadiaFragment);
-
         }
     }
     @Override

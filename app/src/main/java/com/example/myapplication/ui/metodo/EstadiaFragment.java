@@ -48,13 +48,11 @@ public class EstadiaFragment extends Fragment {
     private EditText etHoraEstadia, etFechaEstadia;
     private Button btnReservaEstadia;
     private Calendar calFechaI, calFechaF, calInicio, calFinal;
-    private SharedPreferences prefs;
     private Integer idConductor, idGarage;
-    private APIService mAPIService = ApiUtils.getAPIService();
-    private List<Estadia> listEstadia = new ArrayList<>();
+    private final APIService mAPIService = ApiUtils.getAPIService();
+    private final List<Estadia> listEstadia = new ArrayList<>();
     private Estadia estadia;
     private DateFormat df;
-    private Date date;
     private String vehiculo;
     private int cantidad,dias,precio;
 
@@ -98,7 +96,7 @@ public class EstadiaFragment extends Fragment {
 
         etFechaEstadia.setOnClickListener(this::showFechaEstadia);
 
-        prefs = activity.getSharedPreferences("MyPrefsFile", Context.MODE_PRIVATE);
+        SharedPreferences prefs = activity.getSharedPreferences("MyPrefsFile", Context.MODE_PRIVATE);
         idConductor = prefs.getInt("idConductor", 0);
         idGarage = prefs.getInt("idGarage", 0);
         vehiculo = prefs.getString("Vehiculo", null);
@@ -211,13 +209,15 @@ public class EstadiaFragment extends Fragment {
         calFinal = new GregorianCalendar();
 
         df = new SimpleDateFormat("dd/MM/yyyy");
-        date = null;
+        Date date = null;
         try {
             date = df.parse(fecha);
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        calFinal.setTime(date);
+        if (date != null) {
+            calFinal.setTime(date);
+        }
         int startTime = calInicio.get(Calendar.DAY_OF_YEAR);
         int endTime = calFinal.get(Calendar.DAY_OF_YEAR);
         int diffTime = endTime - startTime;

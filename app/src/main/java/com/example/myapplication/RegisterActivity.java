@@ -29,9 +29,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     final Context context = RegisterActivity.this;
 
-    Conductor conductor;
     private APIService mAPIService;
-    private SharedPreferences.Editor editor;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

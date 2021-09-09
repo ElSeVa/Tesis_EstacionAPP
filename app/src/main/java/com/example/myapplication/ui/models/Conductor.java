@@ -1,15 +1,5 @@
 package com.example.myapplication.ui.models;
 
-import android.content.Intent;
-
-import com.example.myapplication.ui.api.Api;
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-
 public class Conductor {
 
     private Integer ID;

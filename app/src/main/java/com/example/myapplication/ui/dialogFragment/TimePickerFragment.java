@@ -1,5 +1,6 @@
 package com.example.myapplication.ui.dialogFragment;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.os.Bundle;
@@ -14,6 +15,8 @@ import androidx.fragment.app.FragmentManager;
 
 import com.example.myapplication.R;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Calendar;
 
 public class TimePickerFragment extends DialogFragment
@@ -21,7 +24,7 @@ public class TimePickerFragment extends DialogFragment
 
     EditText etHora,etHoraF, etHoraMedia, etHoraEstadia;
     @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
+    public @NotNull Dialog onCreateDialog(Bundle savedInstanceState) {
         // Use the current time as the default values for the picker
         final Calendar c = Calendar.getInstance();
         int hour = c.get(Calendar.HOUR_OF_DAY);
@@ -32,10 +35,9 @@ public class TimePickerFragment extends DialogFragment
         etHoraEstadia = getActivity().findViewById(R.id.etHoraEstadia);
 
         // Create a new instance of TimePickerDialog and return it
-        TimePickerDialog timePickerDialog = new TimePickerDialog(getActivity(), this, hour, minute,
-                DateFormat.is24HourFormat(getActivity()));
 
-        return timePickerDialog;
+        return new TimePickerDialog(getActivity(), this, hour, minute,
+                DateFormat.is24HourFormat(getActivity()));
     }
 
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
@@ -56,6 +58,7 @@ public class TimePickerFragment extends DialogFragment
         Toast.makeText(getActivity(),"Fecha elegida " + hourOfDay + ":" + minute  , Toast.LENGTH_SHORT).show();
     }
 
+    @SuppressLint("SetTextI18n")
     private void acomodandoText(int hourOfDay, int minute, EditText editText){
         if(hourOfDay<=9){
             if(minute <= 9){

@@ -6,19 +6,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.example.myapplication.ui.models.Item_Promocion;
-import com.example.myapplication.ui.models.Item_Reservacion;
-import com.example.myapplication.ui.models.Resena;
 
 import java.util.ArrayList;
 
 public class AdapterBasePromo extends BaseAdapter {
 
-    private Context context;
-    private ArrayList<Item_Promocion> promocions;
+    private final Context context;
+    private final ArrayList<Item_Promocion> promocions;
 
     public AdapterBasePromo(Context context, ArrayList<Item_Promocion> promocions){
         this.promocions = promocions;

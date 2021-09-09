@@ -1,5 +1,6 @@
 package com.example.myapplication.ui.metodo;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -26,7 +27,6 @@ import com.example.myapplication.ui.api.APIService;
 import com.example.myapplication.ui.api.ApiUtils;
 import com.example.myapplication.ui.dialogFragment.DatePickerFragment;
 import com.example.myapplication.ui.dialogFragment.TimePickerFragment;
-import com.example.myapplication.ui.home.HomeFragment;
 import com.example.myapplication.ui.models.Estadia;
 import com.example.myapplication.ui.models.Reservacion;
 
@@ -50,6 +50,7 @@ import retrofit2.Response;
 public class HoraFragment extends Fragment {
 
     private MainActivity activity;
+    @SuppressLint("UseSwitchCompatOrMaterialCode")
     private Switch switch1;
     private TextView tvHoraFTitulo,tvFechaTitulo;
     private EditText etFecha, etHora, etHoraF;
@@ -58,7 +59,7 @@ public class HoraFragment extends Fragment {
     private Date date;
     private int idConductor, idGarage;
     private final APIService mAPIService = ApiUtils.getAPIService();
-    private List<Estadia> listEstadia = new ArrayList<>();
+    private final List<Estadia> listEstadia = new ArrayList<>();
     private Estadia estadia;
     private String fecha, horaF, horaI, vehiculo;
     private Button btnReservaHora;
@@ -100,6 +101,7 @@ public class HoraFragment extends Fragment {
         return root;
     }
 
+    @SuppressLint("SimpleDateFormat")
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         calInicio = new GregorianCalendar();
         calFinal = new GregorianCalendar();
@@ -248,6 +250,7 @@ public class HoraFragment extends Fragment {
         }
     }
 
+    @SuppressLint("SimpleDateFormat")
     private int calcularCantidadDias(String fecha){
         calInicio = new GregorianCalendar();
         calFinal = new GregorianCalendar();
@@ -263,14 +266,13 @@ public class HoraFragment extends Fragment {
         calFinal.setTime(date);
         int startTime = calInicio.get(Calendar.DAY_OF_YEAR);
         int endTime = calFinal.get(Calendar.DAY_OF_YEAR);
-        int diffTime = endTime - startTime;
-/*
+        /*
         long startTime = calInicio.getTimeInMillis();
         long endTime = calFinal.getTimeInMillis();
         long diffTime = endTime - startTime;
         long diffDays = diffTime / (1000 * 60 * 60 * 24);
 */
-        return diffTime;
+        return endTime - startTime;
     }
 
     private Map<String, String> getFields(){
@@ -286,6 +288,7 @@ public class HoraFragment extends Fragment {
         return fields;
     }
 
+    @SuppressLint("SimpleDateFormat")
     private int calcularCantidadHora(String hora){
         calInicio = new GregorianCalendar();
         calFinal = new GregorianCalendar();
@@ -298,6 +301,7 @@ public class HoraFragment extends Fragment {
             e.printStackTrace();
         }
 
+        assert date != null;
         calFinal.setTime(date);
         int horaInicio = calInicio.get(Calendar.HOUR_OF_DAY);
         int horaFinal = calFinal.get(Calendar.HOUR_OF_DAY);

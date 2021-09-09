@@ -36,9 +36,6 @@ public class SplashScreenActivity extends AppCompatActivity implements GoogleApi
 
     private APIService mAPIService = ApiUtils.getAPIService();
 
-    private ProgressBar progressBar;
-    private int progressStatus = 0;
-    private Handler handler = new Handler();
     final Context context = SplashScreenActivity.this;
 
     private GoogleApiClient googleApiClient;
@@ -76,7 +73,6 @@ public class SplashScreenActivity extends AppCompatActivity implements GoogleApi
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
-        progressBar = findViewById(R.id.progressBar);
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
                 .build();
@@ -99,11 +95,11 @@ public class SplashScreenActivity extends AppCompatActivity implements GoogleApi
                             handlerSignInResult(googleSignInResult);
                         }
                     });
-                    SharedPreferences preferences = getSharedPreferences("MantenerUsuario", MODE_PRIVATE);
-                    if(preferences != null){
-                        String usuario = preferences.getString("Usuario",null);
-                        String password = preferences.getString("Password",null);
-                        boolean check = preferences.getBoolean("Check", false);
+                    SharedPreferences mantenerUsuario = getSharedPreferences("MantenerUsuario", MODE_PRIVATE);
+                    if(mantenerUsuario != null){
+                        String usuario = mantenerUsuario.getString("Usuario",null);
+                        String password = mantenerUsuario.getString("Password",null);
+                        boolean check = mantenerUsuario.getBoolean("Check", false);
                         if(check){
                             sendPost(usuario,password);
                         }

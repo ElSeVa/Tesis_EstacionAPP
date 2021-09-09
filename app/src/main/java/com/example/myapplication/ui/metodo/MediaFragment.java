@@ -1,5 +1,6 @@
 package com.example.myapplication.ui.metodo;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -25,7 +26,6 @@ import com.example.myapplication.ui.api.APIService;
 import com.example.myapplication.ui.api.ApiUtils;
 import com.example.myapplication.ui.dialogFragment.DatePickerFragment;
 import com.example.myapplication.ui.dialogFragment.TimePickerFragment;
-import com.example.myapplication.ui.models.Conductor;
 import com.example.myapplication.ui.models.Estadia;
 import com.example.myapplication.ui.models.Reservacion;
 
@@ -48,15 +48,15 @@ public class MediaFragment extends Fragment {
     private MainActivity activity;
     private EditText etHoraMedia, etFechaMedia;
     private Button btnReservaMedia;
+    @SuppressLint("UseSwitchCompatOrMaterialCode")
     private Switch swAm;
-    private Calendar calFechaI, calFechaF, calInicio, calFinal;
-    private SharedPreferences prefs;
+    private Calendar calFechaI;
+    private Calendar calFechaF;
     private Integer idConductor, idGarage;
-    private APIService mAPIService = ApiUtils.getAPIService();
-    private List<Estadia> listEstadia = new ArrayList<>();
+    private final APIService mAPIService = ApiUtils.getAPIService();
+    private final List<Estadia> listEstadia = new ArrayList<>();
     private Estadia estadia;
     private DateFormat df;
-    private Date date;
     private int cantidad,dias,precio;
     private String vehiculo;
 
@@ -91,8 +91,9 @@ public class MediaFragment extends Fragment {
         return root;
     }
 
+    @SuppressLint("SimpleDateFormat")
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        prefs = activity.getSharedPreferences("MyPrefsFile", Context.MODE_PRIVATE);
+        SharedPreferences prefs = activity.getSharedPreferences("MyPrefsFile", Context.MODE_PRIVATE);
         idConductor = prefs.getInt("idConductor", 0);
         idGarage = prefs.getInt("idGarage", 0);
         vehiculo = prefs.getString("Vehiculo", null);
@@ -144,7 +145,7 @@ public class MediaFragment extends Fragment {
                 }else{
                     calFechaF.add(Calendar.DAY_OF_MONTH,dias);
                     cantidad = 2 * dias;
-                    if(multiplo(cantidad,2)){
+                    if(multiplo(cantidad)){
                         if(swAm.isChecked()){
                             calFechaF.set(Calendar.AM_PM,Calendar.AM);
                             cantidad = cantidad - 1;
@@ -166,6 +167,7 @@ public class MediaFragment extends Fragment {
                             if(response.isSuccessful()){
                                 Toast.makeText(activity,"Registro Exitoso", Toast.LENGTH_SHORT).show();
                                 Reservacion reservacion = response.body();
+                                assert reservacion != null;
                                 SharedPreferences.Editor pref = activity.getSharedPreferences("Tiempo", Context.MODE_PRIVATE).edit();
                                 pref.putBoolean("timerRunning",true);
                                 pref.putInt("idReservacion",reservacion.getID());
@@ -225,8 +227,8 @@ public class MediaFragment extends Fragment {
         });
     }
 
-    private boolean multiplo(int x1, int x2){
-        return (x1%x2==0);
+    private boolean multiplo(int valor1){
+        return (valor1 % 2 ==0);
     }
 
     private void separarTexto(String texto, Calendar cal){
@@ -237,17 +239,19 @@ public class MediaFragment extends Fragment {
         cal.set(Calendar.MINUTE,minute);
     }
 
+    @SuppressLint("SimpleDateFormat")
     private int calcularCantidadDias(String fecha){
-        calInicio = new GregorianCalendar();
-        calFinal = new GregorianCalendar();
+        Calendar calInicio = new GregorianCalendar();
+        Calendar calFinal = new GregorianCalendar();
 
         df = new SimpleDateFormat("dd/MM/yyyy");
-        date = null;
+        Date date = null;
         try {
             date = df.parse(fecha);
         } catch (ParseException e) {
             e.printStackTrace();
         }
+        assert date != null;
         calFinal.setTime(date);
         int startTime = calInicio.get(Calendar.DAY_OF_YEAR);
         int endTime = calFinal.get(Calendar.DAY_OF_YEAR);

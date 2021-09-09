@@ -44,8 +44,6 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     private APIService mAPIService;
     private SharedPreferences.Editor editor;
 
-    private SignInButton signInButton;
-
     private static final int SIGN_IN_CODE = 8777;
 
     private GoogleApiClient googleApiClient;
@@ -69,7 +67,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
 
-        signInButton = (SignInButton) findViewById(R.id.signInButton);
+        SignInButton signInButton = (SignInButton) findViewById(R.id.signInButton);
 
         signInButton.setOnClickListener(v -> {
             Intent intent = Auth.GoogleSignInApi.getSignInIntent(googleApiClient);

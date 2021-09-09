@@ -26,7 +26,7 @@ import com.mapbox.mapboxsdk.maps.Style;
 
 public class MapaBox {
     private MapboxMap mapboxMap;
-    private Context context;
+    private final Context context;
     private static final String RED_ICON_ID = "RED_ICON_ID";
     private static final String YELLOW_ICON_ID = "YELLOW_ICON_ID";
     private static final String GREEN_ICON_ID = "GREEN_ICON_ID";
@@ -57,6 +57,7 @@ public class MapaBox {
 
     public static Icon drawableToIcon(@NonNull Context context, @DrawableRes int id) {
         Drawable vectorDrawable = ResourcesCompat.getDrawable(context.getResources(), id, context.getTheme());
+        assert vectorDrawable != null;
         Bitmap bitmap = Bitmap.createBitmap(vectorDrawable.getIntrinsicWidth(),
                 2*vectorDrawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);

@@ -49,21 +49,17 @@ import static android.content.Context.MODE_PRIVATE;
 
 public class GalleryFragment extends Fragment implements Callback<List<Imagenes>> {
 
-    private APIService mAPIService = ApiUtils.getAPIService();
+    private final APIService mAPIService = ApiUtils.getAPIService();
     private Button btnPerfilCambios;
     private Garage propietario;
     private Call<Garage> callGarage;
-    private Call<List<Imagenes>> callImagenes;
-    private Call<List<Estadia>> callEstadia;
-    private SharedPreferences preferences;
     private MainActivity activity;
     private ImageView ivFotoSecundGarage;
     private CircleImageView ivFotoPrincGarage;
     private TextView tvPerfilNombreGarage, tvPerfilDireccionGarage, tvPerfilVehiculosEstadia;
     private Spinner spPerfilDisponibilidad;
-    private String[] itemsHorario = new String[]{"Abierto","Cerrado","Completo"};
-    private ArrayAdapter<String> adapter;
-    private int idConductor, idGarage;
+    private final String[] itemsHorario = new String[]{"Abierto","Cerrado","Completo"};
+    private int idGarage;
 
 
     @Override
@@ -87,7 +83,7 @@ public class GalleryFragment extends Fragment implements Callback<List<Imagenes>
 
         btnPerfilCambios = root.findViewById(R.id.btnPerfilCambios);
 
-        adapter = new ArrayAdapter<>(activity, android.R.layout.simple_dropdown_item_1line,itemsHorario);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(activity, android.R.layout.simple_dropdown_item_1line, itemsHorario);
         spPerfilDisponibilidad.setAdapter(adapter);
 
         return root;
@@ -97,10 +93,10 @@ public class GalleryFragment extends Fragment implements Callback<List<Imagenes>
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        preferences = activity.getSharedPreferences("MyPrefsFile", Context.MODE_PRIVATE);
+        SharedPreferences preferences = activity.getSharedPreferences("MyPrefsFile", Context.MODE_PRIVATE);
 
         if(preferences != null){
-            idConductor = preferences.getInt("idConductor",0);
+            int idConductor = preferences.getInt("idConductor", 0);
             callGarage = mAPIService.findIDGarage(idConductor);
         }
 
@@ -164,7 +160,7 @@ public class GalleryFragment extends Fragment implements Callback<List<Imagenes>
     }
 
     private void llenarVehiculos(int idGarage) {
-        callEstadia = mAPIService.findAllFilterEstadiaID(idGarage,"Si");
+        Call<List<Estadia>> callEstadia = mAPIService.findAllFilterEstadiaID(idGarage, "Si");
         callEstadia.enqueue(new Callback<List<Estadia>>() {
             @Override
             public void onResponse(Call<List<Estadia>> call, Response<List<Estadia>> response) {
@@ -186,7 +182,7 @@ public class GalleryFragment extends Fragment implements Callback<List<Imagenes>
     }
 
     private void llenarImagenes(int idGarage){
-        callImagenes = mAPIService.findImagenes(idGarage);
+        Call<List<Imagenes>> callImagenes = mAPIService.findImagenes(idGarage);
         callImagenes.enqueue(this);
     }
 

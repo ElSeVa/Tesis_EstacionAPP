@@ -12,10 +12,8 @@ import java.lang.ref.WeakReference;
 
 public class LocationListeningCallback implements LocationEngineCallback<LocationEngineResult> {
 
-    private final WeakReference<Activity> activityWeakReference;
-
     public LocationListeningCallback(Activity activity) {
-        this.activityWeakReference = new WeakReference<>(activity);
+        WeakReference<Activity> activityWeakReference = new WeakReference<>(activity);
     }
 
     @Override

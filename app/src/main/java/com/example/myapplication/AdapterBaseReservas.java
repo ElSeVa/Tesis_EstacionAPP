@@ -12,8 +12,8 @@ import com.example.myapplication.ui.models.Item_Reservacion;
 import java.util.ArrayList;
 
 public class AdapterBaseReservas extends BaseAdapter {
-    private Context context;
-    private ArrayList<Item_Reservacion> reservas;
+    private final Context context;
+    private final ArrayList<Item_Reservacion> reservas;
 
     public AdapterBaseReservas(Context context, ArrayList<Item_Reservacion> reservas){
         this.reservas = reservas;

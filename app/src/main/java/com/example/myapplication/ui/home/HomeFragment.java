@@ -22,7 +22,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 import androidx.navigation.Navigation;
 
 import com.example.myapplication.MainActivity;
@@ -33,7 +32,6 @@ import com.example.myapplication.ui.api.APIService;
 import com.example.myapplication.ui.api.ApiUtils;
 import com.example.myapplication.ui.mapabox.LocationListeningCallback;
 import com.example.myapplication.ui.mapabox.MapaBox;
-import com.example.myapplication.ui.metodo.MapMuestra;
 import com.example.myapplication.ui.models.Estadia;
 import com.example.myapplication.ui.models.Garage;
 import com.example.myapplication.ui.models.Mapa;
@@ -71,8 +69,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
-import java.util.Observable;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -93,19 +89,18 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Permis
     private LocationComponentOptions locationComponentOptions;
     private APIService mAPIService;
     private SharedPreferences.Editor editor;
-    private Call<List<Estadia>> estadias;
-    private Call<Reservacion> reservacion;
     private Call<Reservacion> espera;
-    private List<Estadia> estadiaList = new ArrayList<>();
+    private final List<Estadia> estadiaList = new ArrayList<>();
     private Call<List<Mapa>> mapas;
     private Call<List<Garage>> garage;
-    private LocationListeningCallback callback = new LocationListeningCallback(activity);
-    private SharedPreferences prefs;
-    private String horario, precio, vehiculo, filtro;
+    private final LocationListeningCallback callback = new LocationListeningCallback(activity);
+    private String horario;
+    private String vehiculo;
+    private String filtro;
     private Button btnGarage;
     private FloatingActionButton fab_location_search;
-    private String geojsonSourceLayerId = "geojsonSourceLayerId";
-    private String symbolIconId = "symbolIconId";
+    private final String geojsonSourceLayerId = "geojsonSourceLayerId";
+    private final String symbolIconId = "symbolIconId";
     private TextView tempo;
     private static final int REQUEST_CODE_AUTOCOMPLETE = 1;
     long DEFAULT_INTERVAL_IN_MILLISECONDS = 1000L;
@@ -183,7 +178,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Permis
         mAPIService = ApiUtils.getAPIService();
         mapas = mAPIService.findAllMapa();
         garage = mAPIService.findAllGarage();
-        reservacion = mAPIService.findReservacion(idReservacion);
+        Call<Reservacion> reservacion = mAPIService.findReservacion(idReservacion);
         espera = mAPIService.findReservacion(idReservacion);
         mapaBox = new MapaBox(activity);
 
@@ -263,12 +258,13 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Permis
             });
         }
 
-        prefs = activity.getSharedPreferences("Filtros", Context.MODE_PRIVATE);
-        if(prefs != null){
-            vehiculo = prefs.getString("vehiculo", null);
-            horario = prefs.getString("horario", null);
-            precio = prefs.getString("precio", null);
-            filtro = prefs.getString("filtro", null);
+        SharedPreferences filtros = activity.getSharedPreferences("Filtros", Context.MODE_PRIVATE);
+        if(filtros != null){
+            vehiculo = filtros.getString("vehiculo", null);
+            horario = filtros.getString("horario", null);
+            String precio = filtros.getString("precio", null);
+            filtro = filtros.getString("filtro", null);
+            Call<List<Estadia>> estadias;
             if(precio.equals("Alto")){
                 estadias = mAPIService.findAllEstadiaPrecio("No");
             }else {

@@ -86,7 +86,7 @@ public class Temporizador extends CountDownTimer implements EventListeners {
 
     @Override
     public void update(boolean event) {
-        if(event == false){
+        if(!event){
             resetTimer();
         }
         setExecuteTime(event);

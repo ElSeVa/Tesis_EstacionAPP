@@ -14,8 +14,8 @@ import java.util.ArrayList;
 
 public class AdapterBaseComentarios extends BaseAdapter {
 
-    private Context context;
-    private ArrayList<Resena> comentarios;
+    private final Context context;
+    private final ArrayList<Resena> comentarios;
 
     public AdapterBaseComentarios(Context context, ArrayList<Resena> comentarios){
         this.comentarios = comentarios;

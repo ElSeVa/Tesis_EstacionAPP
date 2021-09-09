@@ -1,7 +1,6 @@
 package com.example.myapplication.ui.metodo;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -26,7 +25,6 @@ import com.example.myapplication.MainActivity;
 import com.example.myapplication.R;
 import com.example.myapplication.ui.api.APIService;
 import com.example.myapplication.ui.api.ApiUtils;
-import com.example.myapplication.ui.comments.ComentariosActivity;
 import com.example.myapplication.ui.models.Conductor;
 import com.example.myapplication.ui.models.Estadia;
 import com.example.myapplication.ui.models.Garage;
@@ -47,10 +45,11 @@ import retrofit2.Response;
 public class MapMuestraFragment extends Fragment implements Callback<List<Imagenes>> {
     private MainActivity activity;
 
-    private TextView tvNombreGarage, tvDireccionGarage, tvDisponibilidadGarage, tvVehiculosEstadia, tvError;
-    private Button btnReserva, btnComentarios;
-
-    private SharedPreferences prefs;
+    private TextView tvNombreGarage;
+    private TextView tvDireccionGarage;
+    private TextView tvDisponibilidadGarage;
+    private TextView tvVehiculosEstadia;
+    private Button btnReserva;
 
     private RatingBar ratingBar;
 
@@ -58,14 +57,12 @@ public class MapMuestraFragment extends Fragment implements Callback<List<Imagen
     private CircleImageView ivFotoPrinc;
 
     private Call<Conductor> conductorCall;
-    private Call<List<Imagenes>> imagenes;
     private Call<List<Garage>> garage;
-    private Call<List<Estadia>> estadia;
     private Call<List<Resena>> resena;
 
-    private Integer idGarage, idConductor;
+    private Integer idGarage;
 
-    private APIService mApiService = ApiUtils.getAPIService();
+    private final APIService mApiService = ApiUtils.getAPIService();
 
 
     @Override
@@ -101,19 +98,19 @@ public class MapMuestraFragment extends Fragment implements Callback<List<Imagen
         tvDireccionGarage = root.findViewById(R.id.tvDireccionGarage);
         tvDisponibilidadGarage = root.findViewById(R.id.tvDisponibilidadGarage);
         tvVehiculosEstadia = root.findViewById(R.id.tvVehiculosEstadia);
-        tvError = root.findViewById(R.id.tvError);
+        TextView tvError = root.findViewById(R.id.tvError);
 
 
         btnReserva = root.findViewById(R.id.btnReservacion);
-        btnComentarios = root.findViewById(R.id.btnComentarios);
+        Button btnComentarios = root.findViewById(R.id.btnComentarios);
 
-        prefs = activity.getSharedPreferences("MyPrefsFile", Context.MODE_PRIVATE);
+        SharedPreferences prefs = activity.getSharedPreferences("MyPrefsFile", Context.MODE_PRIVATE);
         idGarage = prefs.getInt("idGarage", 0);
-        idConductor = prefs.getInt("idConductor", 0);
+        int idConductor = prefs.getInt("idConductor", 0);
         resena = mApiService.findResenaID_Garage(idGarage);
         garage = mApiService.findAllGarage();
-        estadia = mApiService.findAllFilterEstadiaID(idGarage,"Si");
-        imagenes = mApiService.findImagenes(idGarage);
+        Call<List<Estadia>> estadia = mApiService.findAllFilterEstadiaID(idGarage, "Si");
+        Call<List<Imagenes>> imagenes = mApiService.findImagenes(idGarage);
 
         conductorCall = mApiService.findConductor(idConductor);
 
@@ -136,13 +133,9 @@ public class MapMuestraFragment extends Fragment implements Callback<List<Imagen
 
         asignarRating();
 
-        btnReserva.setOnClickListener(v -> {
-            Navigation.findNavController(v).navigate(R.id.menuReservaFragment);
-        });
+        btnReserva.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.menuReservaFragment));
 
-        btnComentarios.setOnClickListener(v -> {
-            Navigation.findNavController(v).navigate(R.id.comentariosFragment);
-        });
+        btnComentarios.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.comentariosFragment));
 
         return root;
     }

@@ -47,14 +47,9 @@ import retrofit2.Response;
 
 public class ProfileFragment extends Fragment {
 
-    private ImageView ivFotoSecundProfile;
-    private CircleImageView ivFotoPrincProfile;
-
     private final APIService mAPIService = ApiUtils.getAPIService();
 
-    private TextView tvPerfilNombreProfile,tvPerfilVehiculo;
-
-    private Button btnPromociones;
+    private TextView tvPerfilVehiculo;
 
     private GoogleSignInClient mGoogleSignInClient;
     private MainActivity activity;
@@ -69,11 +64,11 @@ public class ProfileFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_profile, container, false);
-        ivFotoPrincProfile = root.findViewById(R.id.ivFotoPrincProfile);
-        ivFotoSecundProfile = root.findViewById(R.id.ivFotoSecundProfile);
-        tvPerfilNombreProfile = root.findViewById(R.id.tvPerfilNombreProfile);
+        CircleImageView ivFotoPrincProfile = root.findViewById(R.id.ivFotoPrincProfile);
+        ImageView ivFotoSecundProfile = root.findViewById(R.id.ivFotoSecundProfile);
+        TextView tvPerfilNombreProfile = root.findViewById(R.id.tvPerfilNombreProfile);
         tvPerfilVehiculo = root.findViewById(R.id.tvPerfilVehiculo);
-        btnPromociones = root.findViewById(R.id.btnPromociones);
+        Button btnPromociones = root.findViewById(R.id.btnPromociones);
 
         SharedPreferences a = activity.getSharedPreferences("Cuenta", Context.MODE_PRIVATE);
         if(a != null){

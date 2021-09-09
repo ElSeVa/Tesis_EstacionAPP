@@ -36,14 +36,9 @@ import retrofit2.Response;
 public class GivePromotionFragment extends Fragment {
 
     private MainActivity activity;
-    private APIService mAPIService = ApiUtils.getAPIService();
+    private final APIService mAPIService = ApiUtils.getAPIService();
     private ListView listView;
-    private SharedPreferences preferences;
     private Call<Garage> garageCall;
-    private Call<List<Item_Promocion>> promocionCall;
-    private Call<Conductor> conductorCall;
-    private int idConductor;
-
 
     @Override
     public void onAttach(@NonNull @NotNull Context context) {
@@ -75,9 +70,9 @@ public class GivePromotionFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull @NotNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_give_promotion, container, false);
-        preferences = activity.getSharedPreferences("MyPrefsFile", Context.MODE_PRIVATE);
+        SharedPreferences preferences = activity.getSharedPreferences("MyPrefsFile", Context.MODE_PRIVATE);
         if(preferences != null){
-            idConductor = preferences.getInt("idConductor",0);
+            int idConductor = preferences.getInt("idConductor", 0);
             //conductorCall = mAPIService.findConductor(idConductor);
             garageCall = mAPIService.findIDGarage(idConductor);
         }
@@ -87,7 +82,7 @@ public class GivePromotionFragment extends Fragment {
     }
 
     private void completarItem(int idGarage) {
-        promocionCall = mAPIService.findReservacionGarage(idGarage);
+        Call<List<Item_Promocion>> promocionCall = mAPIService.findReservacionGarage(idGarage);
         promocionCall.enqueue(new Callback<List<Item_Promocion>>() {
             @Override
             public void onResponse(Call<List<Item_Promocion>> call, Response<List<Item_Promocion>> response) {
