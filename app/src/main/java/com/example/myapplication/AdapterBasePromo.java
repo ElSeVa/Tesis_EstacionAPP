@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.myapplication.ui.models.Item_Promocion;
@@ -19,9 +20,9 @@ public class AdapterBasePromo extends BaseExpandableListAdapter {
 
     private final Context context;
     private final List<Item_Promocion> listGroupPromotion;
-    private final HashMap<String, List<Item_Promocion>> listItemPromotion;
+    private final HashMap<Item_Promocion, List<Item_Promocion>> listItemPromotion;
 
-    public AdapterBasePromo(Context context, List<Item_Promocion> listGroupPromotion,HashMap<String, List<Item_Promocion>> listItemPromotion){
+    public AdapterBasePromo(Context context, List<Item_Promocion> listGroupPromotion,HashMap<Item_Promocion, List<Item_Promocion>> listItemPromotion){
         this.listGroupPromotion = listGroupPromotion;
         this.listItemPromotion = listItemPromotion;
         this.context = context;
@@ -86,7 +87,7 @@ public class AdapterBasePromo extends BaseExpandableListAdapter {
         }
 
         TextView tvFrecuencia = convertView.findViewById(R.id.list_frecuencia);
-        tvFrecuencia.setText(child.getFrecuencia());
+        tvFrecuencia.setText(child.getFrecuencia().toString());
 
         return convertView;
     }
