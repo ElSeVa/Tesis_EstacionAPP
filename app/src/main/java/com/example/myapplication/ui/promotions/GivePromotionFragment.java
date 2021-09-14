@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ExpandableListView;
 import android.widget.ListView;
 
 import androidx.annotation.NonNull;
@@ -27,6 +28,7 @@ import com.example.myapplication.ui.models.Reservacion;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import retrofit2.Call;
@@ -37,8 +39,10 @@ public class GivePromotionFragment extends Fragment {
 
     private MainActivity activity;
     private final APIService mAPIService = ApiUtils.getAPIService();
-    private ListView listView;
+    private ExpandableListView listView;
     private Call<Garage> garageCall;
+
+    private HashMap<String, List<Item_Promocion>> item_promocionHashMap;
 
     @Override
     public void onAttach(@NonNull @NotNull Context context) {
@@ -88,8 +92,12 @@ public class GivePromotionFragment extends Fragment {
             public void onResponse(Call<List<Item_Promocion>> call, Response<List<Item_Promocion>> response) {
                 if(response.isSuccessful()){
                     assert response.body() != null;
-                    ArrayList<Item_Promocion> promocionsList = new ArrayList<>(response.body());
-                    AdapterBasePromo adapterBase = new AdapterBasePromo(activity, promocionsList);
+                    item_promocionHashMap = new HashMap<>();
+                    List<Item_Promocion> promocionsList = new ArrayList<>(response.body());
+                    for (Item_Promocion list : promocionsList){
+                        item_promocionHashMap.put(list.getID().toString(),promocionsList);
+                    }
+                    AdapterBasePromo adapterBase = new AdapterBasePromo(activity, promocionsList,item_promocionHashMap);
                     listView.setAdapter(adapterBase);
                 }
             }

@@ -6,53 +6,94 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.BaseExpandableListAdapter;
 import android.widget.TextView;
 
 import com.example.myapplication.ui.models.Item_Promocion;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
-public class AdapterBasePromo extends BaseAdapter {
+public class AdapterBasePromo extends BaseExpandableListAdapter {
 
     private final Context context;
-    private final ArrayList<Item_Promocion> promocions;
+    private final List<Item_Promocion> listGroupPromotion;
+    private final HashMap<String, List<Item_Promocion>> listItemPromotion;
 
-    public AdapterBasePromo(Context context, ArrayList<Item_Promocion> promocions){
-        this.promocions = promocions;
+    public AdapterBasePromo(Context context, List<Item_Promocion> listGroupPromotion,HashMap<String, List<Item_Promocion>> listItemPromotion){
+        this.listGroupPromotion = listGroupPromotion;
+        this.listItemPromotion = listItemPromotion;
         this.context = context;
     }
 
     @Override
-    public int getCount() {
-        return promocions.size();
+    public int getGroupCount() {
+        return listGroupPromotion.size();
     }
 
     @Override
-    public Object getItem(int position) {
-        return promocions.get(position);
+    public int getChildrenCount(int groupPosition) {
+        return this.listItemPromotion.get(this.listGroupPromotion.get(groupPosition)).size();
     }
 
     @Override
-    public long getItemId(int position) {
-        return 0;
+    public Object getGroup(int groupPosition) {
+        return this.listGroupPromotion.get(groupPosition);
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+    public Object getChild(int groupPosition, int childPosition) {
+        return this.listItemPromotion.get(this.listGroupPromotion.get(groupPosition))
+                .get(childPosition);
+    }
 
-        // ¿Existe el view actual?
-        if (null == convertView) {
-            convertView = inflater.inflate(R.layout.item_list_promotion, parent, false);
+    @Override
+    public long getGroupId(int groupPosition) {
+        return groupPosition;
+    }
+
+    @Override
+    public long getChildId(int groupPosition, int childPosition) {
+        return childPosition;
+    }
+
+    @Override
+    public boolean hasStableIds() {
+        return false;
+    }
+
+    @Override
+    public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
+        Item_Promocion group = (Item_Promocion) getGroup(groupPosition);
+        if(convertView == null){
+            LayoutInflater layoutInflater = (LayoutInflater) this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            convertView = layoutInflater.inflate(R.layout.list_group_promotion,null);
+        }
+        TextView tvList_Parent = convertView.findViewById(R.id.list_parent);
+        TextView tvList_Vehiculo = convertView.findViewById(R.id.list_vehiculo);
+        tvList_Parent.setText(group.getNombre());
+        tvList_Vehiculo.setText(group.getTipoVehiculo());
+        return convertView;
+    }
+
+    @Override
+    public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
+        Item_Promocion child = (Item_Promocion) getChild(groupPosition,childPosition);
+        if(convertView == null){
+            LayoutInflater layoutInflater = (LayoutInflater) this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            convertView = layoutInflater.inflate(R.layout.list_item_promotion,null);
         }
 
-        Item_Promocion currentName  = (Item_Promocion) getItem(position);
+        TextView tvFrecuencia = convertView.findViewById(R.id.list_frecuencia);
+        tvFrecuencia.setText(child.getFrecuencia());
 
-        // Referenciamos el elemento a modificar y lo rellenamos
-        agregarTextView(convertView, currentName, position);
-
-        //Devolvemos la vista inflada
         return convertView;
+    }
+
+    @Override
+    public boolean isChildSelectable(int groupPosition, int childPosition) {
+        return false;
     }
 
     @SuppressLint("SetTextI18n")
