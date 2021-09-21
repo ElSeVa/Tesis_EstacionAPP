@@ -28,6 +28,8 @@ import com.google.android.gms.common.api.ResultCallback;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -112,10 +114,10 @@ public class SplashScreenActivity extends AppCompatActivity implements GoogleApi
     }
 
     public void sendPost(String email, String contrasena) {
-        Call<Conductor> callConductor = mAPIService.findConductorLogin(email,contrasena);
-        callConductor.enqueue(new Callback<Conductor>() {
+        Call<ArrayList<Conductor>> callConductor = mAPIService.findConductorLogin(email,contrasena);
+        callConductor.enqueue(new Callback<ArrayList<Conductor>>() {
             @Override
-            public void onResponse(Call<Conductor> call, Response<Conductor> response) {
+            public void onResponse(Call<ArrayList<Conductor>> call, Response<ArrayList<Conductor>> response) {
                 if(response.isSuccessful()){
                     mostrarMensaje("login exitoso");
                     cambiarIntent(MainActivity.class);
@@ -125,7 +127,7 @@ public class SplashScreenActivity extends AppCompatActivity implements GoogleApi
             }
 
             @Override
-            public void onFailure(Call<Conductor> call, Throwable t) {
+            public void onFailure(Call<ArrayList<Conductor>> call, Throwable t) {
                 mostrarMensaje("error consulta");
                 mostrarMensaje(t.getMessage());
             }

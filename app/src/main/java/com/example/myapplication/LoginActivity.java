@@ -27,6 +27,10 @@ import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.gson.Gson;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -85,12 +89,15 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     }
 
     public void sendPost(String email, String contrasena) {
-        Call<Conductor> callConductor = mAPIService.findConductorLogin(email,contrasena);
-        callConductor.enqueue(new Callback<Conductor>() {
+        Call<ArrayList<Conductor>> callConductor = mAPIService.findConductorLogin(email,contrasena);
+        callConductor.enqueue(new Callback<ArrayList<Conductor>>() {
             @Override
-            public void onResponse(Call<Conductor> call, Response<Conductor> response) {
+            public void onResponse(Call<ArrayList<Conductor>> call, Response<ArrayList<Conductor>> response) {
                 if(response.isSuccessful()){
-                    conductor = response.body();
+                    for(Conductor c : response.body()){
+                        conductor = c;
+                    }
+
                     mostrarMensaje("login exitoso");
                     if(cbRecordarLogin.isChecked()){
                         SharedPreferences.Editor preferences = getSharedPreferences("MantenerUsuario", MODE_PRIVATE).edit();
@@ -100,7 +107,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                         preferences.apply();
                     }
                     editor = getSharedPreferences("MyPrefsFile", MODE_PRIVATE).edit();
-                    editor.putInt("idConductor", conductor.getID());
+                    editor.putInt("idConductor", conductor.getId());
                     editor.putString("Vehiculo",conductor.getTipoVehiculo());
                     editor.apply();
                     cambiarIntent();
@@ -110,7 +117,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
             }
 
             @Override
-            public void onFailure(Call<Conductor> call, Throwable t) {
+            public void onFailure(Call<ArrayList<Conductor>> call, Throwable t) {
                 mostrarMensaje("error consulta");
                 mostrarMensaje(t.getMessage());
             }
@@ -138,7 +145,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                     if(response.isSuccessful()){
                         conductor = response.body();
                         editor = getSharedPreferences("MyPrefsFile", MODE_PRIVATE).edit();
-                        editor.putInt("idConductor", conductor.getID());
+                        editor.putInt("idConductor", conductor.getId());
                         editor.putString("Vehiculo",conductor.getTipoVehiculo());
                         editor.apply();
                         Intent intent = new Intent(context, MainActivity.class);

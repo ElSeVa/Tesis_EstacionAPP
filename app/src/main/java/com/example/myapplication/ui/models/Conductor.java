@@ -1,59 +1,75 @@
 package com.example.myapplication.ui.models;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 public class Conductor {
 
-    private Integer ID;
-    private String Nombre;
-    private String Contrasena;
-    private String Email;
-    private String TipoVehiculo;
-    private Integer Propietario;
+    @SerializedName("id")
+    @Expose
+    private Integer id;
+    @SerializedName("nombre")
+    @Expose
+    private String nombre;
+    @SerializedName("contrasena")
+    @Expose
+    private String contrasena;
+    @SerializedName("email")
+    @Expose
+    private String email;
+    @SerializedName("tipoVehiculo")
+    @Expose
+    private String tipoVehiculo;
+    @SerializedName("propietario")
+    @Expose
+    private Integer propietario;
 
-    public Integer getID() {
-        return ID;
+    public Integer getId() {
+        return id;
     }
 
-    public void setID(Integer ID) {
-        this.ID = ID;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getNombre() {
-        return Nombre;
+        return nombre;
     }
 
     public void setNombre(String nombre) {
-        Nombre = nombre;
+        this.nombre = nombre;
     }
 
     public String getContrasena() {
-        return Contrasena;
+        return contrasena;
     }
 
     public void setContrasena(String contrasena) {
-        Contrasena = contrasena;
+        this.contrasena = contrasena;
     }
 
     public String getEmail() {
-        return Email;
+        return email;
     }
 
     public void setEmail(String email) {
-        Email = email;
+        this.email = email;
     }
 
     public String getTipoVehiculo() {
-        return TipoVehiculo;
+        return tipoVehiculo;
     }
 
     public void setTipoVehiculo(String tipoVehiculo) {
-        TipoVehiculo = tipoVehiculo;
+        this.tipoVehiculo = tipoVehiculo;
     }
 
     public Integer getPropietario() {
-        return Propietario;
+        return propietario;
     }
 
     public void setPropietario(Integer propietario) {
-        Propietario = propietario;
+        this.propietario = propietario;
     }
+
 }

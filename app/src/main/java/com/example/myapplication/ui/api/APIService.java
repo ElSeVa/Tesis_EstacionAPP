@@ -12,12 +12,14 @@ import com.example.myapplication.ui.models.Mapa;
 import com.example.myapplication.ui.models.Resena;
 import com.example.myapplication.ui.models.Reservacion;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
+import retrofit2.http.Body;
 import retrofit2.http.Field;
 import retrofit2.http.FieldMap;
 import retrofit2.http.FormUrlEncoded;
@@ -39,34 +41,31 @@ public interface APIService {
 
 
     @Headers("Content-type: multipart/form-data")
-    @GET("Conductor.php")
-    Call<Conductor> findConductor(@Query(value="id", encoded=true) int id);
+    @GET("/conductor/{id}")
+    Call<Conductor> findConductor(@Path(value="id") int id);
 
     @Headers("Content-type: multipart/form-data")
-    @GET("Conductor.php")
+    @GET("/conductor/query")
     Call<Conductor> findConductorEmail(@Query(value="email", encoded=true) String email);
 
     @Headers("Content-type: multipart/form-data")
-    @GET("Conductor.php")
+    @GET("/conductor")
     Call<List<Conductor>> findAllConductor();
 
-    @Headers("Content-type: multipart/form-data")
-    @GET("Conductor.php")
-    Call<Conductor> findConductorLogin(@Query(value="email", encoded = true) String email, @Query(value="contrasena", encoded = true) String contrasena);
 
 /*
 *   2. Garage
 */
     @Headers("Content-type: multipart/form-data")
-    @GET("Garage.php")
-    Call<Garage> findGarage(@Query(value="id", encoded=true) int id);
+    @GET("/garage/{id}")
+    Call<Garage> findGarage(@Path(value="id", encoded=true) int id);
 
     @Headers("Content-type: multipart/form-data")
-    @GET("Garage.php")
-    Call<Garage> findIDGarage(@Query(value="idConductor", encoded=true) int idConductor);
+    @GET("/garage/conductor/{idConductor}")
+    Call<Garage> findIDGarage(@Path(value="idConductor", encoded=true) int idConductor);
 
     @Headers("Content-type: multipart/form-data")
-    @GET("Garage.php")
+    @GET("/garage")
     Call<List<Garage>> findAllGarage();
 
 /*
@@ -161,13 +160,13 @@ public interface APIService {
 *
 *   1. Conductor
 */
+    @POST("/conductor")
     @FormUrlEncoded
-    @POST("Conductor.php")
-    Call<Conductor> insertConductor(@Field("Nombre") String nombre,
-                                           @Field("Contrasena") String contrasena,
-                                           @Field("Email") String email,
-                                           @Field("TipoVehiculo") String tipoVehiculo,
-                                           @Field("Propietario") String propietario);
+    Call<Conductor> insertConductor(@Body Conductor conductor);
+
+    @POST("/conductor/login")
+    @FormUrlEncoded
+    Call<ArrayList<Conductor>> findConductorLogin(@Field("email") String email, @Field("contrasena") String contrasena);
 
 /*
 *   2. Reservaciones
@@ -175,13 +174,13 @@ public interface APIService {
     @FormUrlEncoded
     @POST("Reservacion.php")
     Call<Reservacion> insertReserva(@Field("Precio") int precio,
-                                           @Field("Estadia") String estadia,
-                                           @Field("Cantidad") int cantidad,
-                                           @Field("Fecha_inicio") String fecha_inicio,
-                                           @Field("Fecha_final") String Fecha_final,
-                                           @Field("Estado") String Estado,
-                                           @Field("ID_Conductor") int id_conductor,
-                                           @Field("ID_Garage") int id_garage);
+                                   @Field("Estadia") String estadia,
+                                   @Field("Cantidad") int cantidad,
+                                   @Field("Fecha_inicio") String fecha_inicio,
+                                   @Field("Fecha_final") String Fecha_final,
+                                   @Field("Estado") String Estado,
+                                   @Field("ID_Conductor") int id_conductor,
+                                   @Field("ID_Garage") int id_garage);
     @FormUrlEncoded
     @POST("Reservacion.php")
     Call<Reservacion> insertsReserva(@FieldMap Map<String, String> fields);
