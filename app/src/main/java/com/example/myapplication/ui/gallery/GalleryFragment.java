@@ -160,7 +160,7 @@ public class GalleryFragment extends Fragment implements Callback<List<Imagenes>
     }
 
     private void llenarVehiculos(int idGarage) {
-        Call<List<Estadia>> callEstadia = mAPIService.findAllFilterEstadiaID(idGarage, "Si");
+        Call<List<Estadia>> callEstadia = mAPIService.groupByPorIdGarage(idGarage, "Si");
         callEstadia.enqueue(new Callback<List<Estadia>>() {
             @Override
             public void onResponse(Call<List<Estadia>> call, Response<List<Estadia>> response) {

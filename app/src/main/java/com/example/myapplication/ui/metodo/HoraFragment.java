@@ -315,29 +315,28 @@ public class HoraFragment extends Fragment {
     }
 
     private void establecerEstadia(){
-        Call<List<Estadia>> estadiaCall = mAPIService.findEstadiaTipos(idGarage,vehiculo,"Hora");
+        Call<Estadia> estadiaCall = mAPIService.verificarEstadia(idGarage,vehiculo,"Hora");
 
-        estadiaCall.enqueue(new Callback<List<Estadia>>() {
+        estadiaCall.enqueue(new Callback<Estadia>() {
             @Override
-            public void onResponse(Call<List<Estadia>> call, Response<List<Estadia>> response) {
+            public void onResponse(Call<Estadia> call, @NotNull Response<Estadia> response) {
                 if(!response.isSuccessful() && response.body() == null){
-                    Toast.makeText(activity, String.valueOf(response.code()), Toast.LENGTH_SHORT).show();
-                    assert response.body() != null;
+                    Toast.makeText(activity,"Paso 1 " + response.code(), Toast.LENGTH_SHORT).show();
                 }else{
-                    Toast.makeText(activity, String.valueOf(response.code()), Toast.LENGTH_SHORT).show();
-                    assert response.body() != null;
+                    Toast.makeText(activity,"Paso 2 " + response.code(), Toast.LENGTH_SHORT).show();
                 }
-                for (Estadia s : response.body()){
-                    Toast.makeText(activity, "Estado: " + s.getPrecio(), Toast.LENGTH_SHORT).show();
+                Estadia estadia = response.body();
+                if (estadia != null) {
+                    Toast.makeText(activity, "Estado: " + estadia.getPrecio(), Toast.LENGTH_SHORT).show();
                 }
-                listEstadia.addAll(response.body());
+                listEstadia.add(estadia);
                 if(!listEstadia.isEmpty()){
                     Toast.makeText(activity, "Hay Estadia", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
-            public void onFailure(Call<List<Estadia>> call, Throwable t) {
+            public void onFailure(Call<Estadia> call, Throwable t) {
                 Toast.makeText(activity, String.valueOf(t.getMessage()), Toast.LENGTH_SHORT).show();
             }
         });

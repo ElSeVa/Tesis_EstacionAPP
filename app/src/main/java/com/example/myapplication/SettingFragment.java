@@ -168,7 +168,7 @@ public class SettingFragment extends Fragment{
     }
 
     private void crearItems(){
-        Call<List<Estadia>> estadia = mAPIService.findAllFilterEstadia("Si");
+        Call<List<Estadia>> estadia = mAPIService.groupBy("Si");
         estadia.enqueue(new Callback<List<Estadia>>() {
             @Override
             public void onResponse(Call<List<Estadia>> call, Response<List<Estadia>> response) {

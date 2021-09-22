@@ -168,11 +168,11 @@ public class EstadiaFragment extends Fragment {
     }
 
     private void establecerEstadia(){
-        Call<List<Estadia>> estadiaCall = mAPIService.findEstadiaTipos(idGarage,vehiculo,"Estadia");
+        Call<Estadia> estadiaCall = mAPIService.verificarEstadia(idGarage,vehiculo,"Estadia");
 
-        estadiaCall.enqueue(new Callback<List<Estadia>>() {
+        estadiaCall.enqueue(new Callback<Estadia>() {
             @Override
-            public void onResponse(Call<List<Estadia>> call, Response<List<Estadia>> response) {
+            public void onResponse(Call<Estadia> call, Response<Estadia> response) {
                 if(!response.isSuccessful() && response.body() == null){
                     Toast.makeText(activity, String.valueOf(response.code()), Toast.LENGTH_SHORT).show();
                     assert response.body() != null;
@@ -180,17 +180,16 @@ public class EstadiaFragment extends Fragment {
                     Toast.makeText(activity, String.valueOf(response.code()), Toast.LENGTH_SHORT).show();
                     assert response.body() != null;
                 }
-                for (Estadia s : response.body()){
-                    Toast.makeText(activity, "Estado: " + s.getPrecio(), Toast.LENGTH_SHORT).show();
-                }
-                listEstadia.addAll(response.body());
+                Estadia estadia = response.body();
+                Toast.makeText(activity, "Estado: " + estadia.getPrecio(), Toast.LENGTH_SHORT).show();
+                listEstadia.add(estadia);
                 if(!listEstadia.isEmpty()){
                     Toast.makeText(activity, "Hay Estadia", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
-            public void onFailure(Call<List<Estadia>> call, Throwable t) {
+            public void onFailure(Call<Estadia> call, Throwable t) {
                 Toast.makeText(activity, String.valueOf(t.getMessage()), Toast.LENGTH_SHORT).show();
             }
         });

@@ -20,13 +20,6 @@ public class Resena {
     @Expose
     private int idGarage;
 
-    public Resena(String usuario, String texto, int valoracion, int idGarage) {
-        this.usuario = usuario;
-        this.texto = texto;
-        this.valoracion = valoracion;
-        this.idGarage = idGarage;
-    }
-
     public int getId() {
         return id;
     }

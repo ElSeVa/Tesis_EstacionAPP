@@ -155,7 +155,11 @@ public class ComentariosFragment extends Fragment implements Callback<List<Image
             String nombre = conductor.getNombre();
             String texto = etTextoComentario.getText().toString();
             int valoracion = (int) Math.abs(rbValoracion.getRating());
-            Resena resena = new Resena(nombre,texto,valoracion,idGarage);
+            Resena resena = new Resena();
+            resena.setUsuario(nombre);
+            resena.setTexto(texto);
+            resena.setValoracion(valoracion);
+            resena.setIdGarage(idGarage);
             postResena = mAPIService.insertResena(resena);
             postResena.enqueue(new Callback<Resena>() {
                 @Override
@@ -164,7 +168,6 @@ public class ComentariosFragment extends Fragment implements Callback<List<Image
                         etTextoComentario.setText("");
                         rbValoracion.setRating(0);
                         mostrarMensaje("Exito");
-                        Resena resena = response.body();
                         resenaArrayList.add(resena);
                         adapterRecycleComentarios.notifyItemInserted(resenaArrayList.size());
                     }else{

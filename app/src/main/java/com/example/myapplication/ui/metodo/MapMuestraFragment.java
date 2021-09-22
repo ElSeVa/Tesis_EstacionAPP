@@ -109,7 +109,7 @@ public class MapMuestraFragment extends Fragment implements Callback<List<Imagen
         int idConductor = prefs.getInt("idConductor", 0);
         resena = mApiService.findResenaID_Garage(idGarage);
         garage = mApiService.findAllGarage();
-        Call<List<Estadia>> estadia = mApiService.findAllFilterEstadiaID(idGarage, "Si");
+        Call<List<Estadia>> estadia = mApiService.groupByPorIdGarage(idGarage, "Si");
         Call<List<Imagenes>> imagenes = mApiService.findImagenes(idGarage);
 
         conductorCall = mApiService.findConductor(idConductor);

@@ -266,9 +266,9 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Permis
             filtro = filtros.getString("filtro", null);
             Call<List<Estadia>> estadias;
             if(precio.equals("Alto")){
-                estadias = mAPIService.findAllEstadiaPrecio("No");
+                estadias = mAPIService.ordenarPrecios("No");
             }else {
-                estadias = mAPIService.findAllEstadiaPrecio("Si");
+                estadias = mAPIService.ordenarPrecios("Si");
             }
             estadias.enqueue(new Callback<List<Estadia>>() {
                 @Override

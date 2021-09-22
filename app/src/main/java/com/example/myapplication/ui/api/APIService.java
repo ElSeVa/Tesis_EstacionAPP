@@ -43,6 +43,7 @@ public interface APIService {
     @GET("/conductor/{id}")
     Call<Conductor> findConductor(@Path(value="id") Integer id);
 
+    @FormUrlEncoded
     @GET("/conductor/query")
     Call<Conductor> findConductorEmail(@Query(value="email", encoded=true) String email);
 
@@ -70,22 +71,22 @@ public interface APIService {
     Call<Estadia> findEstadia(@Path(value="id") int id);
 
     @GET("/estadia/garage/{id_garage}")
-    Call<List<Estadia>> findEstadiaID_Garage(@Path(value="id_garage", encoded=true) int idGarage);
+    Call<List<Estadia>> obtenerEstadiaPorIdGarage(@Path(value="id_garage", encoded=true) int idGarage);
 
     @GET("/verificar/{idGarage}/{vehiculo}/{horario}")
-    Call<List<Estadia>> findEstadiaTipos(@Path("idGarage") Integer idGarage, @Path("tipoVehiculo") String tipoVehiculo, @Path("estadia") String estadia);
+    Call<Estadia> verificarEstadia(@Path("idGarage") Integer idGarage, @Path("vehiculo") String tipoVehiculo, @Path("horario") String estadia);
 
     @GET("/estadia")
-    Call<List<Estadia>> findAllEstadia();
+    Call<List<Estadia>> obtenerEstadias();
 
     @GET("/estadia/ordenar")
-    Call<List<Estadia>> findAllEstadiaPrecio(@Query(value="precio", encoded = true) String precio);
+    Call<List<Estadia>> ordenarPrecios(@Query(value="precio", encoded = true) String precio);
 
     @GET("/estadia/filter/{id_garage}")
-    Call<List<Estadia>> findAllFilterEstadiaID(@Path(value="id_garage", encoded = true) Integer idGarage, @Query(value="filter", encoded = true) String filter);
+    Call<List<Estadia>> groupByPorIdGarage(@Path(value="id_garage", encoded = true) Integer idGarage, @Query(value="filter", encoded = true) String filter);
 
     @GET("/estadia/filter")
-    Call<List<Estadia>> findAllFilterEstadia(@Query(value="groupBy", encoded = true) String filter);
+    Call<List<Estadia>> groupBy(@Query(value="groupBy", encoded = true) String filter);
 
 /*
 *   4. Mapa
@@ -109,7 +110,7 @@ public interface APIService {
 *   6. Reseña
 */
     @GET("/resena/{id}")
-    Call<List<Resena>> findResena(@Path(value = "id") int id);
+    Call<Resena> findResena(@Path(value = "id") int id);
 
     @GET("/resena/garage/{idGarage}")
     Call<List<Resena>> findResenaID_Garage(@Path(value = "idGarage") int idGarage);
@@ -120,14 +121,13 @@ public interface APIService {
 /*
 *   7. Reservaciones
 */
+
     @GET("/reservacion/{id}")
     Call<Reservacion> findReservacion(@Path(value = "id", encoded = true) int id);
 
-    @Headers("Content-type: multipart/form-data")
     @GET("/reservacion/promo")
     Call<List<Item_Promocion>> findReservacionGarage(@Query(value = "id_garage", encoded = true) int idGarage);
 
-    @Headers("Content-type: multipart/form-data")
     @GET("/reservacion/query")
     Call<List<Item_Reservacion>> findReservacionConductor(@Query(value = "id_conductor", encoded = true) int idConductor);
 
@@ -142,6 +142,7 @@ public interface APIService {
     @POST("/conductor")
     Call<Conductor> insertConductor(@Body Conductor conductor);
 
+    @FormUrlEncoded
     @POST("/conductor/login")
     Call<Conductor> findConductorLogin(@Field("email") String email, @Field("contrasena") String contrasena);
 
