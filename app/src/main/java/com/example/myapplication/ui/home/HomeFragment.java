@@ -233,7 +233,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Permis
                     }
                     Reservacion reservacion = response.body();
                     if (reservacion != null && temporizador.getExecuteTime() ) {
-                        if(reservacion.getID() == idReservacion && reservacion.getEstado().equals("Esperando")){
+                        if(reservacion.getId() == idReservacion && reservacion.getEstado().equals("Esperando")){
                             Toast.makeText(activity, "Activando temporizador", Toast.LENGTH_SHORT).show();
                             //startTimer();
                             tempo.setVisibility(View.VISIBLE);
@@ -365,7 +365,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Permis
                         if(marker.getTitle().equals(responseGarage.getNombre())){
                             //Toast.makeText(activity, marker.getTitle(), Toast.LENGTH_LONG).show();
                             editor = activity.getSharedPreferences("MyPrefsFile", Context.MODE_PRIVATE).edit();
-                            editor.putInt("idGarage", responseGarage.getID());
+                            editor.putInt("idGarage", responseGarage.getId());
                             editor.apply();
 
                             btnGarage.setOnClickListener(v -> {
@@ -483,8 +483,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Permis
                             for (Garage garage : responseGarage.body()){
                                 for (Estadia estadia : estadiaList){
                                     if(filtro.equals("Si")){
-                                        if(garage.getID().equals(mapa.getID_Garage())
-                                                && estadia.getID_Garage().equals(mapa.getID_Garage())
+                                        if(garage.getId().equals(mapa.getIdGarage())
+                                                && estadia.getIdGarage().equals(mapa.getIdGarage())
                                                 && estadia.getVehiculoPermitido().equals(vehiculo)
                                                 && estadia.getHorario().equals(horario)){
                                             definirDisponibilidad(garage,mapa);
@@ -493,7 +493,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Permis
                                 }
 
                                 if(filtro.equals("No")){
-                                    if(garage.getID().equals(mapa.getID_Garage())){
+                                    if(garage.getId().equals(mapa.getIdGarage())){
                                         definirDisponibilidad(garage,mapa);
                                     }
                                 }

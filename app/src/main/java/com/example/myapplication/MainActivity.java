@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity implements MyDrawerControlle
     final Context context = MainActivity.this;
     private TextView tvNombreUsuario,tvEmailUsuario;
     private final APIService mAPIService = ApiUtils.getAPIService();
-    private int idConductor;
+    private Integer idConductor;
     private NavigationView navigationView;
     private ImageView ivCabecera;
     DrawerLayout drawer;

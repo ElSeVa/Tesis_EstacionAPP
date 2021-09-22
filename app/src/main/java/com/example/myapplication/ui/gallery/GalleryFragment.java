@@ -106,7 +106,7 @@ public class GalleryFragment extends Fragment implements Callback<List<Imagenes>
                 if(response.isSuccessful()){
                     propietario = response.body();
                     if(propietario != null){
-                        idGarage = propietario.getID();
+                        idGarage = propietario.getId();
                         tvPerfilNombreGarage.setText(propietario.getNombre());
                         tvPerfilDireccionGarage.setText(propietario.getDireccion());
                         seleccionSpinner(propietario.getDisponibilidad());

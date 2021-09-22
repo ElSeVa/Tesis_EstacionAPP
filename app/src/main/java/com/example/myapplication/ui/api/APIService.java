@@ -40,11 +40,9 @@ public interface APIService {
 */
 
 
-    @Headers("Content-type: multipart/form-data")
     @GET("/conductor/{id}")
-    Call<Conductor> findConductor(@Path(value="id") int id);
+    Call<Conductor> findConductor(@Path(value="id") Integer id);
 
-    @Headers("Content-type: multipart/form-data")
     @GET("/conductor/query")
     Call<Conductor> findConductorEmail(@Query(value="email", encoded=true) String email);
 
@@ -56,103 +54,84 @@ public interface APIService {
 /*
 *   2. Garage
 */
-    @Headers("Content-type: multipart/form-data")
     @GET("/garage/{id}")
     Call<Garage> findGarage(@Path(value="id", encoded=true) int id);
 
-    @Headers("Content-type: multipart/form-data")
     @GET("/garage/conductor/{idConductor}")
     Call<Garage> findIDGarage(@Path(value="idConductor", encoded=true) int idConductor);
 
-    @Headers("Content-type: multipart/form-data")
     @GET("/garage")
     Call<List<Garage>> findAllGarage();
 
 /*
 *   3. Estadia
 */
-    @Headers("Content-type: multipart/form-data")
-    @GET("Estadia.php")
-    Call<Estadia> findEstadia(@Query(value="id", encoded=true) int id);
+    @GET("/estadia/{id}")
+    Call<Estadia> findEstadia(@Path(value="id") int id);
 
-    @Headers("Content-type: multipart/form-data")
-    @GET("Estadia.php")
-    Call<List<Estadia>> findEstadiaID_Garage(@Query(value="idGarage", encoded=true) int idGarage);
+    @GET("/estadia/garage/{id_garage}")
+    Call<List<Estadia>> findEstadiaID_Garage(@Path(value="id_garage", encoded=true) int idGarage);
 
-    @Headers("Content-type: multipart/form-data")
-    @GET("Estadia.php")
-    Call<List<Estadia>> findEstadiaTipos(@Query("idGarage") Integer idGarage, @Query("tipoVehiculo") String tipoVehiculo, @Query("estadia") String estadia);
+    @GET("/verificar/{idGarage}/{vehiculo}/{horario}")
+    Call<List<Estadia>> findEstadiaTipos(@Path("idGarage") Integer idGarage, @Path("tipoVehiculo") String tipoVehiculo, @Path("estadia") String estadia);
 
-    @Headers("Content-type: multipart/form-data")
-    @GET("Estadia.php")
+    @GET("/estadia")
     Call<List<Estadia>> findAllEstadia();
 
-    @Headers("Content-type: multipart/form-data")
-    @GET("Estadia.php")
+    @GET("/estadia/ordenar")
     Call<List<Estadia>> findAllEstadiaPrecio(@Query(value="precio", encoded = true) String precio);
 
-    @Headers("Content-type: multipart/form-data")
-    @GET("Estadia.php")
-    Call<List<Estadia>> findAllFilterEstadiaID(@Query(value="idGarage", encoded = true) Integer idGarage, @Query(value="filter", encoded = true) String filter);
+    @GET("/estadia/filter/{id_garage}")
+    Call<List<Estadia>> findAllFilterEstadiaID(@Path(value="id_garage", encoded = true) Integer idGarage, @Query(value="filter", encoded = true) String filter);
 
-    @Headers("Content-type: multipart/form-data")
-    @GET("Estadia.php")
-    Call<List<Estadia>> findAllFilterEstadia(@Query(value="filter", encoded = true) String filter);
+    @GET("/estadia/filter")
+    Call<List<Estadia>> findAllFilterEstadia(@Query(value="groupBy", encoded = true) String filter);
 
 /*
 *   4. Mapa
 */
-    @Headers("Content-type: multipart/form-data")
-    @GET("Mapa.php")
-    Call<Mapa> findMapa(@Query(value="id", encoded=true) int id);
+    @GET("/mapa/{id}")
+    Call<Mapa> findMapa(@Path(value="id") int id);
 
-    @Headers("Content-type: multipart/form-data")
-    @GET("Mapa.php")
+    @GET("/mapa")
     Call<List<Mapa>> findAllMapa();
 
 /*
 *   5. Imagenes
 */
-    @Headers("Content-type: multipart/form-data")
-    @GET("Imagenes.php")
-    Call<List<Imagenes>> findImagenes(@Query(value = "idGarage", encoded = true) int id);
+    @GET("/imagenes/garage/{idGarage}")
+    Call<List<Imagenes>> findImagenes(@Path(value = "idGarage") int idGarage);
 
-    @Headers("Content-type: multipart/form-data")
-    @GET("Imagenes.php")
+    @GET("/imagenes")
     Call<List<Imagenes>> findAllImagenes();
 
 /*
 *   6. Reseña
 */
-    @Headers("Content-type: multipart/form-data")
-    @GET("Resenas.php")
-    Call<List<Resena>> findResena(@Query(value = "id", encoded = true) int id);
+    @GET("/resena/{id}")
+    Call<List<Resena>> findResena(@Path(value = "id") int id);
 
-    @Headers("Content-type: multipart/form-data")
-    @GET("Resenas.php")
-    Call<List<Resena>> findResenaID_Garage(@Query(value = "idGarage", encoded = true) int idGarage);
+    @GET("/resena/garage/{idGarage}")
+    Call<List<Resena>> findResenaID_Garage(@Path(value = "idGarage") int idGarage);
 
-    @Headers("Content-type: multipart/form-data")
-    @GET("Resenas.php")
+    @GET("/resena")
     Call<List<Resena>> findAllResena();
 
 /*
 *   7. Reservaciones
 */
-    @Headers("Content-type: multipart/form-data")
-    @GET("Reservacion.php")
-    Call<Reservacion> findReservacion(@Query(value = "id", encoded = true) int id);
+    @GET("/reservacion/{id}")
+    Call<Reservacion> findReservacion(@Path(value = "id", encoded = true) int id);
 
     @Headers("Content-type: multipart/form-data")
-    @GET("Reservacion.php")
-    Call<List<Item_Promocion>> findReservacionGarage(@Query(value = "idGarage", encoded = true) int idGarage);
+    @GET("/reservacion/promo")
+    Call<List<Item_Promocion>> findReservacionGarage(@Query(value = "id_garage", encoded = true) int idGarage);
 
     @Headers("Content-type: multipart/form-data")
-    @GET("Reservacion.php")
-    Call<List<Item_Reservacion>> findReservacionConductor(@Query(value = "idConductor", encoded = true) int idConductor);
+    @GET("/reservacion/query")
+    Call<List<Item_Reservacion>> findReservacionConductor(@Query(value = "id_conductor", encoded = true) int idConductor);
 
-    @Headers("Content-type: multipart/form-data")
-    @GET("Reservacion.php")
+    @GET("/reservacion")
     Call<List<Reservacion>> findAllReservacion();
 
 /*
@@ -161,18 +140,16 @@ public interface APIService {
 *   1. Conductor
 */
     @POST("/conductor")
-    @FormUrlEncoded
     Call<Conductor> insertConductor(@Body Conductor conductor);
 
     @POST("/conductor/login")
-    @FormUrlEncoded
-    Call<ArrayList<Conductor>> findConductorLogin(@Field("email") String email, @Field("contrasena") String contrasena);
+    Call<Conductor> findConductorLogin(@Field("email") String email, @Field("contrasena") String contrasena);
 
 /*
 *   2. Reservaciones
 */
     @FormUrlEncoded
-    @POST("Reservacion.php")
+    @POST("/reservacion")
     Call<Reservacion> insertReserva(@Field("Precio") int precio,
                                    @Field("Estadia") String estadia,
                                    @Field("Cantidad") int cantidad,
@@ -181,18 +158,13 @@ public interface APIService {
                                    @Field("Estado") String Estado,
                                    @Field("ID_Conductor") int id_conductor,
                                    @Field("ID_Garage") int id_garage);
-    @FormUrlEncoded
-    @POST("Reservacion.php")
-    Call<Reservacion> insertsReserva(@FieldMap Map<String, String> fields);
+    @POST("/reservacion")
+    Call<Reservacion> insertsReserva(@Body Reservacion reservacion);
 /*
 *   3. Resenas
 */
-    @FormUrlEncoded
-    @POST("Resenas.php")
-    Call<Resena> insertResena(@Field("Usuario") String usuario,
-                                @Field("Texto") String texto,
-                                @Field("Valoracion") int valoracion,
-                                @Field("ID_Garage") int id_garage);
+    @POST("/resena")
+    Call<Resena> insertResena(@Body Resena resena);
 /*
 *   Update
 *

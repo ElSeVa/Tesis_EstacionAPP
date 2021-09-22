@@ -1,41 +1,63 @@
 package com.example.myapplication.ui.models;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 public class Item_Reservacion {
 
-    private String Nombre;
-    private String Fecha_inicio;
-    private String Fecha_final;
-    private String Estado;
+    @SerializedName("id")
+    @Expose
+    private Integer id;
+    @SerializedName("nombre")
+    @Expose
+    private String nombre;
+    @SerializedName("fechaInicio")
+    @Expose
+    private String fechaInicio;
+    @SerializedName("fechaFinal")
+    @Expose
+    private String fechaFinal;
+    @SerializedName("estado")
+    @Expose
+    private String estado;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
     public String getNombre() {
-        return Nombre;
+        return nombre;
     }
 
     public void setNombre(String nombre) {
-        Nombre = nombre;
+        this.nombre = nombre;
     }
 
-    public String getFecha_inicio() {
-        return Fecha_inicio;
+    public String getFechaInicio() {
+        return fechaInicio;
     }
 
-    public void setFecha_inicio(String fecha_inicio) {
-        Fecha_inicio = fecha_inicio;
+    public void setFechaInicio(String fechaInicio) {
+        this.fechaInicio = fechaInicio;
     }
 
-    public String getFecha_final() {
-        return Fecha_final;
+    public String getFechaFinal() {
+        return fechaFinal;
     }
 
-    public void setFecha_final(String fecha_final) {
-        Fecha_final = fecha_final;
+    public void setFechaFinal(String fechaFinal) {
+        this.fechaFinal = fechaFinal;
     }
 
     public String getEstado() {
-        return Estado;
+        return estado;
     }
 
     public void setEstado(String estado) {
-        Estado = estado;
+        this.estado = estado;
     }
 }

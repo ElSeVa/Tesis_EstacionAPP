@@ -1,40 +1,51 @@
 package com.example.myapplication.ui.models;
 
-public class Item_Promocion {
-    private Integer ID;
-    private String Nombre;
-    private String TipoVehiculo;
-    private Integer Frecuencia;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
-    public Integer getID() {
-        return ID;
+public class Item_Promocion {
+    @SerializedName("id")
+    @Expose
+    private Integer id;
+    @SerializedName("nombre")
+    @Expose
+    private String nombre;
+    @SerializedName("tipoVehiculo")
+    @Expose
+    private String tipoVehiculo;
+    @SerializedName("frecuencia")
+    @Expose
+    private Integer frecuencia;
+
+    public Integer getId() {
+        return id;
     }
 
-    public void setID(Integer ID) {
-        this.ID = ID;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getNombre() {
-        return Nombre;
+        return nombre;
     }
 
     public void setNombre(String nombre) {
-        Nombre = nombre;
+        this.nombre = nombre;
     }
 
     public String getTipoVehiculo() {
-        return TipoVehiculo;
+        return tipoVehiculo;
     }
 
     public void setTipoVehiculo(String tipoVehiculo) {
-        TipoVehiculo = tipoVehiculo;
+        this.tipoVehiculo = tipoVehiculo;
     }
 
     public Integer getFrecuencia() {
-        return Frecuencia;
+        return frecuencia;
     }
 
     public void setFrecuencia(Integer frecuencia) {
-        Frecuencia = frecuencia;
+        this.frecuencia = frecuencia;
     }
 }

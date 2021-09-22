@@ -65,8 +65,8 @@ public class AdapterBaseReservas extends BaseAdapter {
 
         tvNumero.setText(String.valueOf(position+1));
         tvGarageNombre.setText(reservacion.getNombre());
-        tvFechaInicial.setText(reservacion.getFecha_inicio());
-        tvFechaFinal.setText(reservacion.getFecha_final());
+        tvFechaInicial.setText(reservacion.getFechaInicio());
+        tvFechaFinal.setText(reservacion.getFechaFinal());
         tvEstado.setText(reservacion.getEstado());
     }
 }

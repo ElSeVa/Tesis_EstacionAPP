@@ -5,21 +5,32 @@ import android.graphics.BitmapFactory;
 import android.media.Image;
 import android.util.Base64;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 import java.io.InputStream;
 import java.sql.Blob;
 
 public class Imagenes {
-    private Integer ID;
+    @SerializedName("id")
+    @Expose
+    private Integer id;
+    @SerializedName("tipo")
+    @Expose
     private String tipo;
+    @SerializedName("imagen")
+    @Expose
     private String imagen;
-    private Integer ID_Garage;
+    @SerializedName("idGarage")
+    @Expose
+    private Integer idGarage;
 
-    public Integer getID() {
-        return ID;
+    public Integer getId() {
+        return id;
     }
 
-    public void setID(Integer ID) {
-        this.ID = ID;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getTipo() {
@@ -34,15 +45,15 @@ public class Imagenes {
         return imagen;
     }
 
-    public void setImagen(String Imagen) {
-        this.imagen = Imagen;
+    public void setImagen(String imagen) {
+        this.imagen = imagen;
     }
 
-    public Integer getID_Garage() {
-        return ID_Garage;
+    public Integer getIdGarage() {
+        return idGarage;
     }
 
-    public void setID_Garage(Integer ID_Garage) {
-        this.ID_Garage = ID_Garage;
+    public void setIdGarage(Integer idGarage) {
+        this.idGarage = idGarage;
     }
 }

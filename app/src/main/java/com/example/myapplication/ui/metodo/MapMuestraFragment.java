@@ -176,12 +176,12 @@ public class MapMuestraFragment extends Fragment implements Callback<List<Imagen
             public void onResponse(@NotNull Call<List<Garage>> call, @NotNull Response<List<Garage>> response) {
                 if(response.isSuccessful() && response.body() != null){
                     for (Garage garage : response.body()){
-                        if(garage.getID().equals(idGarage) && responseEstadia.body() != null){
+                        if(garage.getId().equals(idGarage) && responseEstadia.body() != null){
                             tvNombreGarage.setText(garage.getNombre());
                             tvDireccionGarage.setText(garage.getDireccion());
                             tvDisponibilidadGarage.setText(garage.getDisponibilidad());
                             for (Estadia estadia : responseEstadia.body()){
-                                if(garage.getID().equals(estadia.getID_Garage())){
+                                if(garage.getId().equals(estadia.getIdGarage())){
                                     tvVehiculosEstadia.append(estadia.getVehiculoPermitido() + ", ");
                                 }
                             }

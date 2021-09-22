@@ -59,7 +59,7 @@ public class GivePromotionFragment extends Fragment {
                 if(response.isSuccessful()){
                     Garage g = response.body();
                     assert g!=null;
-                    completarItem(g.getID());
+                    completarItem(g.getId());
                 }
             }
 
@@ -96,7 +96,7 @@ public class GivePromotionFragment extends Fragment {
                     List<Item_Promocion> promocionsList = new ArrayList<>(response.body());
                     for (Item_Promocion listItem1 : promocionsList){
                         for(Item_Promocion listItem2 : promocionsList){
-                            if(listItem1.getID().equals(listItem2.getID())){
+                            if(listItem1.getId().equals(listItem2.getId())){
                                 List<Item_Promocion> listChild = new ArrayList<>();
                                 listChild.add(listItem2);
                                 item_promocionHashMap.put(listItem1,listChild);

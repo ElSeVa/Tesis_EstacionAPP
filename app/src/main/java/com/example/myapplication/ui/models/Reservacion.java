@@ -1,102 +1,121 @@
 package com.example.myapplication.ui.models;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 import java.util.Observable;
 import java.util.Observer;
 
 public class Reservacion {
 
-    private int ID;
-    private int Precio;
-    private String Estadia;
-    private int Cantidad;
-    private String Fecha_inicio;
-    private String Fecha_final;
-    private String Estado;
-    private int ID_Conductor;
-    private int ID_Garage;
+    @SerializedName("id")
+    @Expose
+    private int id;
+    @SerializedName("precio")
+    @Expose
+    private int precio;
+    @SerializedName("estadia")
+    @Expose
+    private String estadia;
+    @SerializedName("cantidad")
+    @Expose
+    private int cantidad;
+    @SerializedName("fechaInicio")
+    @Expose
+    private String fechaInicio;
+    @SerializedName("fechaFinal")
+    @Expose
+    private String fechaFinal;
+    @SerializedName("estado")
+    @Expose
+    private String estado;
+    @SerializedName("idConductor")
+    @Expose
+    private int idConductor;
+    @SerializedName("idGarage")
+    @Expose
+    private int idGarage;
 
-    public Reservacion(int Precio, String Estadia, int Cantidad, String Fecha_inicio, String Fecha_final, String Estado, int ID_Conductor, int ID_Garage) {
-        this.Precio = Precio;
-        this.Estadia = Estadia;
-        this.Cantidad = Cantidad;
-        this.Fecha_inicio = Fecha_inicio;
-        this.Fecha_final = Fecha_final;
-        this.Estado = Estado;
-        this.ID_Conductor = ID_Conductor;
-        this.ID_Garage = ID_Garage;
+    public Reservacion(int precio, String estadia, int cantidad, String fechaInicio, String fechaFinal, String estado, int idConductor, int idGarage) {
+        this.precio = precio;
+        this.estadia = estadia;
+        this.cantidad = cantidad;
+        this.fechaInicio = fechaInicio;
+        this.fechaFinal = fechaFinal;
+        this.estado = estado;
+        this.idConductor = idConductor;
+        this.idGarage = idGarage;
     }
 
-
-    public String getEstado() {
-        return Estado;
+    public int getId() {
+        return id;
     }
 
-    public void setEstado(String estado) {
-        Estado = estado;
-    }
-
-    public int getID() {
-        return ID;
-    }
-
-    public void setID(int ID) {
-        this.ID = ID;
+    public void setId(int id) {
+        this.id = id;
     }
 
     public int getPrecio() {
-        return Precio;
+        return precio;
     }
 
     public void setPrecio(int precio) {
-        Precio = precio;
+        this.precio = precio;
     }
 
     public String getEstadia() {
-        return Estadia;
+        return estadia;
     }
 
     public void setEstadia(String estadia) {
-        Estadia = estadia;
+        this.estadia = estadia;
     }
 
     public int getCantidad() {
-        return Cantidad;
+        return cantidad;
     }
 
     public void setCantidad(int cantidad) {
-        Cantidad = cantidad;
+        this.cantidad = cantidad;
     }
 
-    public String getFecha_inicio() {
-        return Fecha_inicio;
+    public String getFechaInicio() {
+        return fechaInicio;
     }
 
-    public void setFecha_inicio(String fecha_inicio) {
-        Fecha_inicio = fecha_inicio;
+    public void setFechaInicio(String fechaInicio) {
+        this.fechaInicio = fechaInicio;
     }
 
-    public String getFecha_final() {
-        return Fecha_final;
+    public String getFechaFinal() {
+        return fechaFinal;
     }
 
-    public void setFecha_final(String fecha_final) {
-        Fecha_final = fecha_final;
+    public void setFechaFinal(String fechaFinal) {
+        this.fechaFinal = fechaFinal;
     }
 
-    public int getID_Conductor() {
-        return ID_Conductor;
+    public String getEstado() {
+        return estado;
     }
 
-    public void setID_Conductor(int ID_Conductor) {
-        this.ID_Conductor = ID_Conductor;
+    public void setEstado(String estado) {
+        this.estado = estado;
     }
 
-    public int getID_Garage() {
-        return ID_Garage;
+    public int getIdConductor() {
+        return idConductor;
     }
 
-    public void setID_Garage(int ID_Garage) {
-        this.ID_Garage = ID_Garage;
+    public void setIdConductor(int idConductor) {
+        this.idConductor = idConductor;
     }
 
+    public int getIdGarage() {
+        return idGarage;
+    }
+
+    public void setIdGarage(int idGarage) {
+        this.idGarage = idGarage;
+    }
 }

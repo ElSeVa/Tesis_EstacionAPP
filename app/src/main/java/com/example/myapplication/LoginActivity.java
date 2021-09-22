@@ -89,14 +89,13 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     }
 
     public void sendPost(String email, String contrasena) {
-        Call<ArrayList<Conductor>> callConductor = mAPIService.findConductorLogin(email,contrasena);
-        callConductor.enqueue(new Callback<ArrayList<Conductor>>() {
+        Call<Conductor> callConductor = mAPIService.findConductorLogin(email,contrasena);
+        callConductor.enqueue(new Callback<Conductor>() {
             @Override
-            public void onResponse(Call<ArrayList<Conductor>> call, Response<ArrayList<Conductor>> response) {
+            public void onResponse(Call<Conductor> call, Response<Conductor> response) {
                 if(response.isSuccessful()){
-                    for(Conductor c : response.body()){
-                        conductor = c;
-                    }
+                    assert response.body() != null;
+                    conductor = response.body();
 
                     mostrarMensaje("login exitoso");
                     if(cbRecordarLogin.isChecked()){
@@ -117,7 +116,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
             }
 
             @Override
-            public void onFailure(Call<ArrayList<Conductor>> call, Throwable t) {
+            public void onFailure(Call<Conductor> call, Throwable t) {
                 mostrarMensaje("error consulta");
                 mostrarMensaje(t.getMessage());
             }
@@ -182,6 +181,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         Intent intent = new Intent(context, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
+
     }
 
     @Override

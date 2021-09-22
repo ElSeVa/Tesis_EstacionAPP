@@ -155,7 +155,8 @@ public class ComentariosFragment extends Fragment implements Callback<List<Image
             String nombre = conductor.getNombre();
             String texto = etTextoComentario.getText().toString();
             int valoracion = (int) Math.abs(rbValoracion.getRating());
-            postResena = mAPIService.insertResena(nombre,texto,valoracion,idGarage);
+            Resena resena = new Resena(nombre,texto,valoracion,idGarage);
+            postResena = mAPIService.insertResena(resena);
             postResena.enqueue(new Callback<Resena>() {
                 @Override
                 public void onResponse(@NotNull Call<Resena> call, @NotNull Response<Resena> response) {

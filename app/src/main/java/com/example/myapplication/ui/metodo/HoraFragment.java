@@ -201,8 +201,8 @@ public class HoraFragment extends Fragment {
                 if(precio!=0){
                     Toast.makeText(activity, "Precio: "+ precio + " ,Estadia: Hora, Cantidad: " +cantidad, Toast.LENGTH_SHORT).show();
                     Toast.makeText(activity, "Fecha_Inicio: " + df.format(calFechaI.getTime()) + ", Fecha_Final: " + df.format(calFechaF.getTime()), Toast.LENGTH_SHORT).show();
-                    Map<String, String> fields = getFields();
-                    Call<Reservacion> callReserva = mAPIService.insertsReserva(fields);
+                    Reservacion reservacion = new Reservacion(precio,"Hora",cantidad,df.format(calFechaI.getTime()),df.format(calFechaF.getTime()),"Esperando",idConductor,idGarage);
+                    Call<Reservacion> callReserva = mAPIService.insertsReserva(reservacion);
                     //Call<Reservacion> callReserva = mAPIService.insertReserva(precio,"Hora",cantidad,df.format(calFechaI.getTime()),df.format(calFechaF.getTime()),"Esperando",idConductor,idGarage);
                     callReserva.enqueue(new Callback<Reservacion>() {
                         @Override
@@ -212,7 +212,7 @@ public class HoraFragment extends Fragment {
                                 Reservacion reservacion = response.body();
                                 SharedPreferences.Editor pref = activity.getSharedPreferences("Tiempo", Context.MODE_PRIVATE).edit();
                                 pref.putBoolean("timerRunning",true);
-                                pref.putInt("idReservacion",reservacion.getID());
+                                pref.putInt("idReservacion",reservacion.getId());
                                 pref.apply();
 
                                 Navigation.findNavController(v).navigate(R.id.nav_home);

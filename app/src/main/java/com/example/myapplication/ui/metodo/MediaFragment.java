@@ -170,7 +170,7 @@ public class MediaFragment extends Fragment {
                                 assert reservacion != null;
                                 SharedPreferences.Editor pref = activity.getSharedPreferences("Tiempo", Context.MODE_PRIVATE).edit();
                                 pref.putBoolean("timerRunning",true);
-                                pref.putInt("idReservacion",reservacion.getID());
+                                pref.putInt("idReservacion",reservacion.getId());
                                 pref.apply();
 
                                 Navigation.findNavController(v).navigate(R.id.nav_home);
