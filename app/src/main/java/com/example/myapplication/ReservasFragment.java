@@ -49,7 +49,7 @@ public class ReservasFragment extends Fragment implements Callback<List<Item_Res
         SharedPreferences prefs = getActivity().getSharedPreferences("MyPrefsFile", MODE_PRIVATE);
         int idConductor = prefs.getInt("idConductor", 0);
 
-        Call<List<Item_Reservacion>> listCall = mAPIService.findReservacionConductor(idConductor);
+        Call<List<Item_Reservacion>> listCall = mAPIService.obtenerReservasConductor(idConductor);
         listCall.enqueue(this);
 
     }

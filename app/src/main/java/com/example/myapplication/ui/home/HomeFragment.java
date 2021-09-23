@@ -90,6 +90,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Permis
     private APIService mAPIService;
     private SharedPreferences.Editor editor;
     private Call<Reservacion> espera;
+    private Call<Reservacion> reservacion;
     private final List<Estadia> estadiaList = new ArrayList<>();
     private Call<List<Mapa>> mapas;
     private Call<List<Garage>> garage;
@@ -178,51 +179,53 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Permis
         mAPIService = ApiUtils.getAPIService();
         mapas = mAPIService.findAllMapa();
         garage = mAPIService.findAllGarage();
-        Call<Reservacion> reservacion = mAPIService.findReservacion(idReservacion);
-        espera = mAPIService.findReservacion(idReservacion);
+
         mapaBox = new MapaBox(activity);
 
         call = new CallReservaciones();
         call.agregar(temporizador);
+        if(idReservacion != 0){
+            reservacion = mAPIService.obtenerReservacionPorId(idReservacion);
+            espera = mAPIService.obtenerReservacionPorId(idReservacion);
 
-        mCountDownTimer = new CountDownTimer(START_TIME_IN_MILLIS,1000) {
-            @Override
-            public void onTick(long millisUntilFinished) {
-                espera.cancel();
-                espera = mAPIService.findReservacion(idReservacion);
-                if(!espera.isExecuted()){
-                    espera.enqueue(new Callback<Reservacion>() {
-                        @Override
-                        public void onResponse(Call<Reservacion> calls, Response<Reservacion> response) {
-                            if(response.isSuccessful()){
-                                Reservacion r = response.body();
-                                assert r != null;
-                                if(r.getEstado().equalsIgnoreCase("Esperando")){
-                                    call.notificar(true);
-                                }else{
-                                    mCountDownTimer.cancel();
-                                    stopTimer();
-                                    new Handler().postDelayed(() -> {
-                                        tempo.setVisibility(View.GONE);
-                                    },2000);
+            mCountDownTimer = new CountDownTimer(START_TIME_IN_MILLIS,1000) {
+                @Override
+                public void onTick(long millisUntilFinished) {
+                    espera.cancel();
+                    espera = mAPIService.obtenerReservacionPorId(idReservacion);
+                    if(!espera.isExecuted()){
+                        espera.enqueue(new Callback<Reservacion>() {
+                            @Override
+                            public void onResponse(Call<Reservacion> calls, Response<Reservacion> response) {
+                                if(response.isSuccessful()){
+                                    Reservacion r = response.body();
+                                    assert r != null;
+                                    if(r.getEstado().equalsIgnoreCase("Esperando")){
+                                        call.notificar(true);
+                                    }else{
+                                        mCountDownTimer.cancel();
+                                        stopTimer();
+                                        new Handler().postDelayed(() -> {
+                                            tempo.setVisibility(View.GONE);
+                                        },2000);
+                                    }
                                 }
                             }
-                        }
 
-                        @Override
-                        public void onFailure(Call<Reservacion> calls, Throwable t) {
-                            t.printStackTrace();
-                        }
-                    });
+                            @Override
+                            public void onFailure(Call<Reservacion> calls, Throwable t) {
+                                t.printStackTrace();
+                            }
+                        });
+                    }
+
                 }
-
-            }
-            @Override
-            public void onFinish() {
-                call.notificar(false);
-            }
-        }.start();
-
+                @Override
+                public void onFinish() {
+                    call.notificar(false);
+                }
+            }.start();
+        }
         if(temporizador.getExecuteTime()){
             Toast.makeText(activity, "Esta activado? " + temporizador.getExecuteTime(), Toast.LENGTH_SHORT).show();
             reservacion.enqueue(new Callback<Reservacion>() {
@@ -243,7 +246,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Permis
                             SharedPreferences.Editor editor = activity.getSharedPreferences("Tiempo", Context.MODE_PRIVATE).edit();
                             editor.putLong("millisLeft", START_TIME_IN_MILLIS);
                             editor.putBoolean("timerRunning", false);
-                            editor.putLong("endTime", 0);
+                            editor.putLong("endTime", 1800000);
                             editor.apply();
                             tempo.setVisibility(View.GONE);
                         }
@@ -262,13 +265,13 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Permis
         if(filtros != null){
             vehiculo = filtros.getString("vehiculo", null);
             horario = filtros.getString("horario", null);
-            String precio = filtros.getString("precio", null);
-            filtro = filtros.getString("filtro", null);
+            String precio = filtros.getString("precio", "Bajo");
+            filtro = filtros.getString("filtro", "No");
             Call<List<Estadia>> estadias;
             if(precio.equals("Alto")){
-                estadias = mAPIService.ordenarPrecios("No");
-            }else {
                 estadias = mAPIService.ordenarPrecios("Si");
+            }else {
+                estadias = mAPIService.ordenarPrecios("No");
             }
             estadias.enqueue(new Callback<List<Estadia>>() {
                 @Override
@@ -672,6 +675,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Permis
             editor.putLong("millisLeft",temporizador.getTiempo());
             editor.putBoolean("timerRunning",temporizador.getExecuteTime());
             editor.putLong("endTime",temporizador.getTiempoFinal());
+            editor.remove("idReservacion");
             editor.apply();
             call.notificar(false);
         }

@@ -130,7 +130,8 @@ public class EstadiaFragment extends Fragment {
                 Toast.makeText(activity, "Precio: "+ precio + " ,Estadia: Estadia, Cantidad: " +cantidad, Toast.LENGTH_SHORT).show();
                 Toast.makeText(activity, "Fecha_Inicio: " + df.format(calFechaI.getTime()) + ", Fecha_Final: " + df.format(calFechaF.getTime()), Toast.LENGTH_SHORT).show();
                 if(precio != 0){
-                    Call<Reservacion> call = mAPIService.insertReserva(precio,"Estadia",cantidad,df.format(calFechaI.getTime()),df.format(calFechaF.getTime()),"Esperando",idConductor,idGarage);
+                    Reservacion reservacion = new Reservacion(precio,"Estadia",cantidad,df.format(calFechaI.getTime()),df.format(calFechaF.getTime()),"Esperando",idConductor,idGarage);
+                    Call<Reservacion> call = mAPIService.insertsReserva(reservacion);
                     call.enqueue(new Callback<Reservacion>() {
                         @Override
                         public void onResponse(Call<Reservacion> call, Response<Reservacion> response) {

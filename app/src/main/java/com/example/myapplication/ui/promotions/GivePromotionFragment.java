@@ -86,7 +86,7 @@ public class GivePromotionFragment extends Fragment {
     }
 
     private void completarItem(int idGarage) {
-        Call<List<Item_Promocion>> promocionCall = mAPIService.findReservacionGarage(idGarage);
+        Call<List<Item_Promocion>> promocionCall = mAPIService.obtenerFrecuencia(idGarage);
         promocionCall.enqueue(new Callback<List<Item_Promocion>>() {
             @Override
             public void onResponse(Call<List<Item_Promocion>> call, Response<List<Item_Promocion>> response) {

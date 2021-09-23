@@ -73,7 +73,7 @@ public interface APIService {
     @GET("/estadia/garage/{id_garage}")
     Call<List<Estadia>> obtenerEstadiaPorIdGarage(@Path(value="id_garage", encoded=true) int idGarage);
 
-    @GET("/verificar/{idGarage}/{vehiculo}/{horario}")
+    @GET("/estadia/verificar/{idGarage}/{vehiculo}/{horario}")
     Call<Estadia> verificarEstadia(@Path("idGarage") Integer idGarage, @Path("vehiculo") String tipoVehiculo, @Path("horario") String estadia);
 
     @GET("/estadia")
@@ -101,7 +101,7 @@ public interface APIService {
 *   5. Imagenes
 */
     @GET("/imagenes/garage/{idGarage}")
-    Call<List<Imagenes>> findImagenes(@Path(value = "idGarage") int idGarage);
+    Call<List<Imagenes>> obtenerImagenesPorIdGarage(@Path(value = "idGarage") int idGarage);
 
     @GET("/imagenes")
     Call<List<Imagenes>> findAllImagenes();
@@ -110,29 +110,29 @@ public interface APIService {
 *   6. Reseña
 */
     @GET("/resena/{id}")
-    Call<Resena> findResena(@Path(value = "id") int id);
+    Call<Resena> obtenerPorId(@Path(value = "id") int id);
 
     @GET("/resena/garage/{idGarage}")
-    Call<List<Resena>> findResenaID_Garage(@Path(value = "idGarage") int idGarage);
+    Call<List<Resena>> obtenerPorIdGarage(@Path(value = "idGarage") int idGarage);
 
     @GET("/resena")
-    Call<List<Resena>> findAllResena();
+    Call<List<Resena>> obtenerResenas();
 
 /*
 *   7. Reservaciones
 */
 
     @GET("/reservacion/{id}")
-    Call<Reservacion> findReservacion(@Path(value = "id", encoded = true) int id);
+    Call<Reservacion> obtenerReservacionPorId(@Path(value = "id", encoded = true) int id);
 
     @GET("/reservacion/promo")
-    Call<List<Item_Promocion>> findReservacionGarage(@Query(value = "id_garage", encoded = true) int idGarage);
+    Call<List<Item_Promocion>> obtenerFrecuencia(@Query(value = "id_garage", encoded = true) int idGarage);
 
     @GET("/reservacion/query")
-    Call<List<Item_Reservacion>> findReservacionConductor(@Query(value = "id_conductor", encoded = true) int idConductor);
+    Call<List<Item_Reservacion>> obtenerReservasConductor(@Query(value = "id_conductor", encoded = true) int idConductor);
 
     @GET("/reservacion")
-    Call<List<Reservacion>> findAllReservacion();
+    Call<List<Reservacion>> obtenerReservaciones();
 
 /*
 *   Post
@@ -171,7 +171,6 @@ public interface APIService {
 *
 *   1. Garage
 */
-    @Headers("Content-type: multipart/form-data")
-    @PUT("Garage.php")
-    Call<Garage> updateDisponibilidad( @Query("Disponibilidad") String disponibilidad, @Query("ID") int id);
+    @POST("/garage/{id}")
+    Call<Garage> updateDisponibilidad( @Path("id") int id, @Body Garage garage);
 }

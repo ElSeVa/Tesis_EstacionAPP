@@ -126,8 +126,8 @@ public class GalleryFragment extends Fragment implements Callback<List<Imagenes>
         });
 
         btnPerfilCambios.setOnClickListener(v -> {
-            String disponibilidad = spPerfilDisponibilidad.getSelectedItem().toString();
-            Call<Garage> putGarage = mAPIService.updateDisponibilidad(disponibilidad, idGarage);
+            propietario.setDisponibilidad(spPerfilDisponibilidad.getSelectedItem().toString());
+            Call<Garage> putGarage = mAPIService.updateDisponibilidad(idGarage, propietario);
             putGarage.enqueue(new Callback<Garage>() {
                 @Override
                 public void onResponse(Call<Garage> call, Response<Garage> response) {
@@ -182,7 +182,7 @@ public class GalleryFragment extends Fragment implements Callback<List<Imagenes>
     }
 
     private void llenarImagenes(int idGarage){
-        Call<List<Imagenes>> callImagenes = mAPIService.findImagenes(idGarage);
+        Call<List<Imagenes>> callImagenes = mAPIService.obtenerImagenesPorIdGarage(idGarage);
         callImagenes.enqueue(this);
     }
 

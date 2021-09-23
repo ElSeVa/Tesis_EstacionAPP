@@ -82,7 +82,7 @@ public class SettingFragment extends Fragment{
 
         SharedPreferences preferences = activity.getSharedPreferences("Filtros", Context.MODE_PRIVATE);
         if(preferences != null){
-            String bo = preferences.getString("filtro",null);
+            String bo = preferences.getString("filtro","No");
             if(bo.equals("Si")){
                 String vehiculo = preferences.getString("vehiculo",null);
                 String horario = preferences.getString("horario",null);

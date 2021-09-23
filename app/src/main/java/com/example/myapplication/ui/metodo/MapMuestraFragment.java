@@ -107,10 +107,10 @@ public class MapMuestraFragment extends Fragment implements Callback<List<Imagen
         SharedPreferences prefs = activity.getSharedPreferences("MyPrefsFile", Context.MODE_PRIVATE);
         idGarage = prefs.getInt("idGarage", 0);
         int idConductor = prefs.getInt("idConductor", 0);
-        resena = mApiService.findResenaID_Garage(idGarage);
+        resena = mApiService.obtenerPorIdGarage(idGarage);
         garage = mApiService.findAllGarage();
         Call<List<Estadia>> estadia = mApiService.groupByPorIdGarage(idGarage, "Si");
-        Call<List<Imagenes>> imagenes = mApiService.findImagenes(idGarage);
+        Call<List<Imagenes>> imagenes = mApiService.obtenerImagenesPorIdGarage(idGarage);
 
         conductorCall = mApiService.findConductor(idConductor);
 

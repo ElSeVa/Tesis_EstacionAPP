@@ -111,8 +111,8 @@ public class ComentariosFragment extends Fragment implements Callback<List<Image
             idGarage = sharedPreferences.getInt("idGarage",0);
             int idConductor = sharedPreferences.getInt("idConductor",0);
             callConductor = mAPIService.findConductor(idConductor);
-            callResena = mAPIService.findResenaID_Garage(idGarage);
-            callImagenes = mAPIService.findImagenes(idGarage);
+            callResena = mAPIService.obtenerPorIdGarage(idGarage);
+            callImagenes = mAPIService.obtenerImagenesPorIdGarage(idGarage);
             callGarage = mAPIService.findGarage(idGarage);
             establecerConductor();
         }
