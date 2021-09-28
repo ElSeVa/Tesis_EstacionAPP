@@ -45,7 +45,6 @@ public class MapaBox {
     }
 
     public void mostrarMarcadores(Double latitud, Double longitud, String nombre, int icon){
-        Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(),icon);
         Icon finish_icon = drawableToIcon(context,icon);
 
         mapboxMap.addMarker(new MarkerOptions()

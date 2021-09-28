@@ -15,6 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.myapplication.preferencias.Preferencias;
 import com.example.myapplication.ui.api.APIService;
 
 import com.example.myapplication.ui.api.ApiUtils;
@@ -30,7 +31,9 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -48,6 +51,10 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     private APIService mAPIService;
     private SharedPreferences.Editor editor;
 
+    private final Map<String, String> mapLogin = new HashMap<>();
+    private final Map<String, String> mapMantener= new HashMap<>();
+    private final Preferencias loginPref = new Preferencias("Login");
+    private final Preferencias mantenerPref = new Preferencias("MantenerUsuario");
     private static final int SIGN_IN_CODE = 8777;
 
     private GoogleApiClient googleApiClient;
@@ -99,16 +106,27 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
 
                     mostrarMensaje("login exitoso");
                     if(cbRecordarLogin.isChecked()){
+                        mapMantener.put("Check",String.valueOf(cbRecordarLogin.isChecked()));
+                        mapMantener.put("Usuario", email);
+                        mapMantener.put("Password", contrasena);
+                        mantenerPref.setPrefMantener(context,mapMantener);
+                        /*
                         SharedPreferences.Editor preferences = getSharedPreferences("MantenerUsuario", MODE_PRIVATE).edit();
                         preferences.putBoolean("Check", cbRecordarLogin.isChecked());
                         preferences.putString("Usuario",email);
                         preferences.putString("Password",contrasena);
                         preferences.apply();
+                        */
                     }
-                    editor = getSharedPreferences("MyPrefsFile", MODE_PRIVATE).edit();
+                    mapLogin.put("idConductor",String.valueOf(conductor.getId()));
+                    mapLogin.put("Vehiculo", conductor.getTipoVehiculo());
+                    loginPref.setPrefLogin(context,mapLogin);
+                    /*
+                    editor = getSharedPreferences("Login", MODE_PRIVATE).edit();
                     editor.putInt("idConductor", conductor.getId());
                     editor.putString("Vehiculo",conductor.getTipoVehiculo());
                     editor.apply();
+                    */
                     cambiarIntent();
                 }else {
                     mostrarMensaje("login error");
@@ -143,10 +161,15 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                 public void onResponse(Call<Conductor> call, Response<Conductor> response) {
                     if(response.isSuccessful()){
                         conductor = response.body();
-                        editor = getSharedPreferences("MyPrefsFile", MODE_PRIVATE).edit();
+                        mapLogin.put("idConductor", String.valueOf(conductor.getId()));
+                        mapLogin.put("Vehiculo", conductor.getTipoVehiculo());
+                        loginPref.setPrefLogin(context,mapLogin);
+                        /*
+                        editor = getSharedPreferences("Login", MODE_PRIVATE).edit();
                         editor.putInt("idConductor", conductor.getId());
                         editor.putString("Vehiculo",conductor.getTipoVehiculo());
                         editor.apply();
+                        */
                         Intent intent = new Intent(context, MainActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(intent);

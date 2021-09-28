@@ -46,7 +46,7 @@ public class ReservasFragment extends Fragment implements Callback<List<Item_Res
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        SharedPreferences prefs = getActivity().getSharedPreferences("MyPrefsFile", MODE_PRIVATE);
+        SharedPreferences prefs = getActivity().getSharedPreferences("Login", MODE_PRIVATE);
         int idConductor = prefs.getInt("idConductor", 0);
 
         Call<List<Item_Reservacion>> listCall = mAPIService.obtenerReservasConductor(idConductor);

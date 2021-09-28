@@ -1,9 +1,14 @@
 package com.example.myapplication;
 
+import android.app.FragmentManager;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -13,9 +18,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.myapplication.preferencias.Preferencias;
 import com.example.myapplication.ui.api.APIService;
 import com.example.myapplication.ui.api.ApiUtils;
 import com.example.myapplication.ui.models.Conductor;
+import com.example.myapplication.ui.models.Reservacion;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -31,6 +38,9 @@ import com.google.android.material.navigation.NavigationView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
+import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.NavDestination;
 import androidx.navigation.Navigation;
@@ -42,6 +52,9 @@ import androidx.appcompat.widget.Toolbar;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import retrofit2.Call;
@@ -61,6 +74,10 @@ public class MainActivity extends AppCompatActivity implements MyDrawerControlle
     Toolbar toolbar;
     SharedPreferences.Editor cuenta;
     Uri photo = null;
+
+    private final Map<String, String> mapCuenta= new HashMap<>();
+    private final Preferencias loginPref = new Preferencias("Login");
+    private final Preferencias cuentaPref = new Preferencias("Cuenta");
 
     private GoogleApiClient googleApiClient;
 
@@ -89,11 +106,17 @@ public class MainActivity extends AppCompatActivity implements MyDrawerControlle
             Glide.with(this).load(account.getPhotoUrl()).override(200).into(ivCabecera);
             tvNombreUsuario.setText(account.getDisplayName());
             tvEmailUsuario.setText(account.getEmail());
+            mapCuenta.put("idConductor",String.valueOf(idConductor));
+            mapCuenta.put("Nombre",account.getDisplayName());
+            mapCuenta.put("Uri",Objects.requireNonNull(account.getPhotoUrl()).toString());
+            cuentaPref.setPrefCuenta(context,mapCuenta);
+            /*
             cuenta = getSharedPreferences("Cuenta", MODE_PRIVATE).edit();
             cuenta.putInt("idConductor",idConductor);
             cuenta.putString("Nombre",account.getDisplayName());
             cuenta.putString("Uri", Objects.requireNonNull(account.getPhotoUrl()).toString());
             cuenta.apply();
+            */
             photo = account.getPhotoUrl();
             Log.d("MIAPP",account.getPhotoUrl().toString());
         }else{
@@ -125,10 +148,21 @@ public class MainActivity extends AppCompatActivity implements MyDrawerControlle
                 .enableAutoManage(this, this)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
+        createNotificationChannel();
 
-        SharedPreferences prefs = getSharedPreferences("MyPrefsFile", MODE_PRIVATE);
-        idConductor = prefs.getInt("idConductor",0);
+        Notification builder = new NotificationCompat.Builder(this, "Canal 1")
+                .setSmallIcon(R.mipmap.ic_launcher_round)
+                .setContentTitle("Nueva Reserva")
+                .setContentText("Tienes una nueva reservacion para confirmar")
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT).build();
+
+
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+        //SharedPreferences prefs = getSharedPreferences("Login", MODE_PRIVATE);
+        idConductor = loginPref.getPrefInteger(context,"idConductor",0);
+        //idConductor = prefs.getInt("idConductor",0);
         Call<Conductor> conductorCall = mAPIService.findConductor(idConductor);
+
         navigationView = findViewById(R.id.nav_view);
         View hView = navigationView.getHeaderView(0);
         ivCabecera = hView.findViewById(R.id.ivCabecera);
@@ -143,14 +177,20 @@ public class MainActivity extends AppCompatActivity implements MyDrawerControlle
                     if(conductor.getPropietario() == 0){
                         Menu menu = navigationView.getMenu();
                         menu.setGroupVisible(R.id.groupGarage,false);
+                    }else{
+                        verificarEstadosGarage(notificationManager, builder);
                     }
-                    cuenta = getSharedPreferences("Cuenta", MODE_PRIVATE).edit();
-                    cuenta.putInt("idConductor",idConductor);
-                    cuenta.putString("Nombre",conductor.getNombre());
+                    mapCuenta.put("idConductor",String.valueOf(idConductor));
+                    mapCuenta.put("Nombre", conductor.getNombre());
+                    //cuenta = getSharedPreferences("Cuenta", MODE_PRIVATE).edit();
+                    //cuenta.putInt("idConductor",idConductor);
+                    //cuenta.putString("Nombre",conductor.getNombre());
                     if(photo!=null){
-                        cuenta.putString("Uri",photo.toString());
+                        mapCuenta.put("Uri",photo.toString());
+                        //cuenta.putString("Uri",photo.toString());
                     }
-                    cuenta.apply();
+                    cuentaPref.setPrefCuenta(context,mapCuenta);
+                    //cuenta.apply();
                     tvNombreUsuario.setText(conductor.getNombre());
                     tvEmailUsuario.setText(conductor.getEmail());
                 }
@@ -200,6 +240,45 @@ public class MainActivity extends AppCompatActivity implements MyDrawerControlle
             }
         });
 
+        //FragmentManager fragmentManager = getFragmentManager();
+        //fragmentManager.findFragmentById(R.id.btnReservaHora);
+
+    }
+
+    private void verificarEstadosGarage(NotificationManagerCompat notificationManager, Notification builder){
+        Call<List<Reservacion>> reservacionCall = mAPIService.obtenerReservasEstados(idConductor);
+        reservacionCall.enqueue(new Callback<List<Reservacion>>() {
+            @Override
+            public void onResponse(Call<List<Reservacion>> call, Response<List<Reservacion>> response) {
+                if(response.isSuccessful()){
+                    List<Reservacion> reservacionList = response.body();
+                    if(reservacionList.size() != 0){
+                        notificationManager.notify(0,builder);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Reservacion>> call, Throwable t) {
+
+            }
+        });
+    }
+
+    private void createNotificationChannel() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = getString(R.string.channel_name);
+            String description = getString(R.string.channel_description);
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel("Canal 1", name, importance);
+            channel.setDescription(description);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
     }
 
     private boolean verificacionDestino(NavDestination destination){
@@ -218,7 +297,7 @@ public class MainActivity extends AppCompatActivity implements MyDrawerControlle
         SharedPreferences.Editor Cuenta = getSharedPreferences("Cuenta", MODE_PRIVATE).edit();
         Cuenta.clear();
         Cuenta.apply();
-        SharedPreferences.Editor prefs = getSharedPreferences("MyPrefsFile", MODE_PRIVATE).edit();
+        SharedPreferences.Editor prefs = getSharedPreferences("Login", MODE_PRIVATE).edit();
         prefs.clear();
         prefs.apply();
         SharedPreferences.Editor Mantener = getSharedPreferences("MantenerUsuario", MODE_PRIVATE).edit();
@@ -269,4 +348,5 @@ public class MainActivity extends AppCompatActivity implements MyDrawerControlle
     public void onConnectionFailed(@NonNull @NotNull ConnectionResult connectionResult) {
         Toast.makeText(context, "No se puedo iniciar sesion", Toast.LENGTH_SHORT).show();
     }
+
 }

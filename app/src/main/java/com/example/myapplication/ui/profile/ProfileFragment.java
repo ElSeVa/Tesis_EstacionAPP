@@ -21,6 +21,7 @@ import androidx.navigation.Navigation;
 import com.bumptech.glide.Glide;
 import com.example.myapplication.MainActivity;
 import com.example.myapplication.R;
+import com.example.myapplication.preferencias.Preferencias;
 import com.example.myapplication.ui.api.APIService;
 import com.example.myapplication.ui.api.ApiUtils;
 import com.example.myapplication.ui.models.Conductor;
@@ -39,6 +40,9 @@ import com.google.firebase.auth.FirebaseUser;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -50,6 +54,7 @@ public class ProfileFragment extends Fragment {
     private final APIService mAPIService = ApiUtils.getAPIService();
 
     private TextView tvPerfilVehiculo;
+    private final Preferencias cuentaPref = new Preferencias("Cuenta");
 
     private GoogleSignInClient mGoogleSignInClient;
     private MainActivity activity;
@@ -70,11 +75,11 @@ public class ProfileFragment extends Fragment {
         tvPerfilVehiculo = root.findViewById(R.id.tvPerfilVehiculo);
         Button btnPromociones = root.findViewById(R.id.btnPromociones);
 
-        SharedPreferences a = activity.getSharedPreferences("Cuenta", Context.MODE_PRIVATE);
-        if(a != null){
-            int idConductor = a.getInt("idConductor",0);
-            String uri = a.getString("Uri",null);
-            String nombre = a.getString("Nombre",null);
+        //SharedPreferences a = activity.getSharedPreferences("Cuenta", Context.MODE_PRIVATE);
+        //if(a != null){
+            int idConductor = cuentaPref.getPrefInteger(activity,"idConductor",0);// a.getInt("idConductor",0);
+            String uri = cuentaPref.getPrefString(activity,"Uri",null);// a.getString("Uri",null);
+            String nombre = cuentaPref.getPrefString(activity,"Nombre",null);// a.getString("Nombre",null);
             if(uri != null){
                 Glide.with(activity).load(uri).into(ivFotoPrincProfile);
             }
@@ -98,7 +103,7 @@ public class ProfileFragment extends Fragment {
                 }
             });
 
-        }
+        //}
 
         btnPromociones.setOnClickListener(v -> {
             Navigation.findNavController(v).navigate(R.id.takePromotionFragment);

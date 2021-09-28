@@ -24,6 +24,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.myapplication.MainActivity;
 import com.example.myapplication.R;
+import com.example.myapplication.preferencias.Preferencias;
 import com.example.myapplication.ui.api.APIService;
 import com.example.myapplication.ui.api.ApiUtils;
 import com.example.myapplication.ui.models.Conductor;
@@ -37,7 +38,9 @@ import org.jetbrains.annotations.NotNull;
 import java.io.EOFException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -60,6 +63,7 @@ public class GalleryFragment extends Fragment implements Callback<List<Imagenes>
     private Spinner spPerfilDisponibilidad;
     private final String[] itemsHorario = new String[]{"Abierto","Cerrado","Completo"};
     private int idGarage;
+    private final Preferencias loginPref = new Preferencias("Login");
 
 
     @Override
@@ -93,12 +97,12 @@ public class GalleryFragment extends Fragment implements Callback<List<Imagenes>
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        SharedPreferences preferences = activity.getSharedPreferences("MyPrefsFile", Context.MODE_PRIVATE);
+        //SharedPreferences preferences = activity.getSharedPreferences("Login", Context.MODE_PRIVATE);
 
-        if(preferences != null){
-            int idConductor = preferences.getInt("idConductor", 0);
+        //if(preferences != null){
+            int idConductor = loginPref.getPrefInteger(activity,"idConductor",0);//preferences.getInt("idConductor", 0);
             callGarage = mAPIService.findIDGarage(idConductor);
-        }
+        //}
 
         callGarage.enqueue(new Callback<Garage>() {
             @Override

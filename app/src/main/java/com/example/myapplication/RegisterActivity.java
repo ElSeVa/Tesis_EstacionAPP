@@ -36,8 +36,6 @@ public class RegisterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.register_activity);
 
-
-
         etNombre = findViewById(R.id.etNombreR);
         etEmail = findViewById(R.id.etEmailR);
         etPassword = findViewById(R.id.etPasswordR);
@@ -65,7 +63,7 @@ public class RegisterActivity extends AppCompatActivity {
                 conductor.setPropietario(0);
                 String passwordAgain = etPasswordAgain.getText().toString();
 
-                if(!conductor.getNombre().isEmpty() && !conductor.getEmail().isEmpty() && !conductor.getContrasena().isEmpty() && !passwordAgain.isEmpty() && !conductor.getTipoVehiculo().isEmpty()){
+                if(verificarDatos(conductor) && !passwordAgain.isEmpty()){
                     if(conductor.getContrasena().equals(passwordAgain)){
                         sendPost(conductor);
                     }else {
@@ -99,6 +97,13 @@ public class RegisterActivity extends AppCompatActivity {
                 call.cancel();
             }
         });
+    }
+
+    private boolean verificarDatos(Conductor conductor){
+        return !conductor.getNombre().isEmpty()
+                && !conductor.getEmail().isEmpty()
+                && !conductor.getContrasena().isEmpty()
+                && !conductor.getTipoVehiculo().isEmpty();
     }
 
     public void loginIntent(View v){

@@ -19,6 +19,7 @@ import androidx.navigation.Navigation;
 
 import com.example.myapplication.MainActivity;
 import com.example.myapplication.R;
+import com.example.myapplication.preferencias.Preferencias;
 import com.example.myapplication.ui.api.APIService;
 import com.example.myapplication.ui.api.ApiUtils;
 import com.example.myapplication.ui.dialogFragment.DatePickerFragment;
@@ -36,7 +37,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -55,6 +58,9 @@ public class EstadiaFragment extends Fragment {
     private DateFormat df;
     private String vehiculo;
     private int cantidad,dias,precio;
+    private final Preferencias loginPref = new Preferencias("Login");
+    private final Preferencias tiempoPref = new Preferencias("Tiempo");
+    private final Map<String, String> mapTiempo= new HashMap<>();
 
     @Override
     public void onStart() {
@@ -96,10 +102,10 @@ public class EstadiaFragment extends Fragment {
 
         etFechaEstadia.setOnClickListener(this::showFechaEstadia);
 
-        SharedPreferences prefs = activity.getSharedPreferences("MyPrefsFile", Context.MODE_PRIVATE);
-        idConductor = prefs.getInt("idConductor", 0);
-        idGarage = prefs.getInt("idGarage", 0);
-        vehiculo = prefs.getString("Vehiculo", null);
+        SharedPreferences prefs = activity.getSharedPreferences("Login", Context.MODE_PRIVATE);
+        idConductor = loginPref.getPrefInteger(activity,"idConductor",0);// prefs.getInt("idConductor", 0);
+        idGarage = loginPref.getPrefInteger(activity,"idGarage",0);// prefs.getInt("idGarage", 0);
+        vehiculo = loginPref.getPrefString(activity,"Vehiculo",null);// prefs.getString("Vehiculo", null);
         establecerEstadia();
 
         if(!listEstadia.isEmpty()){
@@ -138,10 +144,11 @@ public class EstadiaFragment extends Fragment {
                             if(response.isSuccessful()){
                                 Toast.makeText(activity,"Registro Exitoso", Toast.LENGTH_SHORT).show();
                                 Reservacion reservacion = response.body();
-                                SharedPreferences.Editor pref = activity.getSharedPreferences("Tiempo", Context.MODE_PRIVATE).edit();
-                                pref.putBoolean("timerRunning",true);
-                                pref.putInt("idReservacion",reservacion.getId());
-                                pref.apply();
+
+                                //SharedPreferences.Editor pref = activity.getSharedPreferences("Tiempo", Context.MODE_PRIVATE).edit();
+                                mapTiempo.put("seEstaEjecutando",String.valueOf(true));//pref.putBoolean("seEstaEjecutando",true);
+                                mapTiempo.put("idReservacion",String.valueOf(reservacion.getId()));//pref.putInt("idReservacion",reservacion.getId());
+                                tiempoPref.setPrefTiempos(activity,mapTiempo);//pref.apply();
 
                                 Navigation.findNavController(v).navigate(R.id.nav_home);
                             }else{

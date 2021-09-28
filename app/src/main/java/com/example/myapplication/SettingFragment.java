@@ -22,6 +22,7 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.example.myapplication.preferencias.Preferencias;
 import com.example.myapplication.ui.api.APIService;
 import com.example.myapplication.ui.api.ApiUtils;
 import com.example.myapplication.ui.home.HomeFragment;
@@ -33,7 +34,9 @@ import org.jetbrains.annotations.NotNull;
 import org.w3c.dom.ls.LSInput;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -48,6 +51,8 @@ public class SettingFragment extends Fragment{
     private final List<String> items = new ArrayList<>();
     private final String[] itemsHorario = new String[]{"Hora","Media Estadia","Estadia"};
     private final String[] itemsPrecio = new String[]{"Alto","Bajo"};
+    private final Map<String, String> mapFiltros = new HashMap<>();
+    private final Preferencias filtrosPref = new Preferencias("Filtros");
 
     @Override
     public void onAttach(@NotNull Context context) {
@@ -82,11 +87,12 @@ public class SettingFragment extends Fragment{
 
         SharedPreferences preferences = activity.getSharedPreferences("Filtros", Context.MODE_PRIVATE);
         if(preferences != null){
+            String haceFiltro = filtrosPref.getPrefString(activity,"filtro","No");
             String bo = preferences.getString("filtro","No");
-            if(bo.equals("Si")){
-                String vehiculo = preferences.getString("vehiculo",null);
-                String horario = preferences.getString("horario",null);
-                String precio = preferences.getString("precio",null);
+            if(haceFiltro.equals("Si")){
+                String vehiculo = filtrosPref.getPrefString(activity,"vehiculo",null);//preferences.getString("vehiculo",null);
+                String horario = filtrosPref.getPrefString(activity,"horario",null);//preferences.getString("horario",null);
+                String precio = filtrosPref.getPrefString(activity,"precio",null);//preferences.getString("precio",null);
                 seleccionSpinnerHorario(horario);
                 seleccionSpinnerPrecio(precio);
                 seleccionSpinnerVehiculo(items,vehiculo);
@@ -147,13 +153,19 @@ public class SettingFragment extends Fragment{
     }
 
     private void enviarFiltros(String vehiculo, String horario, String precio, String filtro){
+        mapFiltros.put("vehiculo",vehiculo);
+        mapFiltros.put("horario",horario);
+        mapFiltros.put("precio",precio);
+        mapFiltros.put("filtro",filtro);
+        filtrosPref.setPrefFiltros(activity,mapFiltros);
+        /*
         SharedPreferences.Editor editor = activity.getSharedPreferences("Filtros", Context.MODE_PRIVATE).edit();
         editor.putString("vehiculo",vehiculo);
         editor.putString("horario",horario);
         editor.putString("precio",precio);
         editor.putString("filtro",filtro);
         editor.apply();
-
+        */
         //Toast.makeText(activity, "Tipo Vehiculo: " + vehiculo + ", Horario: "+ horario+", Precio: "+precio, Toast.LENGTH_SHORT).show();
 /*
         Fragment nuevoFragmento = new HomeFragment();

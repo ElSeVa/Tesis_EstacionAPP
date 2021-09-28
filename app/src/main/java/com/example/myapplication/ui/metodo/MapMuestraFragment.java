@@ -23,6 +23,7 @@ import androidx.navigation.Navigation;
 
 import com.example.myapplication.MainActivity;
 import com.example.myapplication.R;
+import com.example.myapplication.preferencias.Preferencias;
 import com.example.myapplication.ui.api.APIService;
 import com.example.myapplication.ui.api.ApiUtils;
 import com.example.myapplication.ui.models.Conductor;
@@ -61,6 +62,8 @@ public class MapMuestraFragment extends Fragment implements Callback<List<Imagen
     private Call<List<Resena>> resena;
 
     private Integer idGarage;
+
+    private final Preferencias loginPref = new Preferencias("Login");
 
     private final APIService mApiService = ApiUtils.getAPIService();
 
@@ -104,9 +107,9 @@ public class MapMuestraFragment extends Fragment implements Callback<List<Imagen
         btnReserva = root.findViewById(R.id.btnReservacion);
         Button btnComentarios = root.findViewById(R.id.btnComentarios);
 
-        SharedPreferences prefs = activity.getSharedPreferences("MyPrefsFile", Context.MODE_PRIVATE);
-        idGarage = prefs.getInt("idGarage", 0);
-        int idConductor = prefs.getInt("idConductor", 0);
+        //SharedPreferences prefs = activity.getSharedPreferences("Login", Context.MODE_PRIVATE);
+        idGarage = loginPref.getPrefInteger(activity,"idGarage",0);// prefs.getInt("idGarage", 0);
+        int idConductor = loginPref.getPrefInteger(activity,"idConductor",0);// prefs.getInt("idConductor", 0);
         resena = mApiService.obtenerPorIdGarage(idGarage);
         garage = mApiService.findAllGarage();
         Call<List<Estadia>> estadia = mApiService.groupByPorIdGarage(idGarage, "Si");

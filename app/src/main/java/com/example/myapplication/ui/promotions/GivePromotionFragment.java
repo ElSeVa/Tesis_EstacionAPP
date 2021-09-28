@@ -17,6 +17,7 @@ import com.example.myapplication.AdapterBasePromo;
 import com.example.myapplication.AdapterBaseReservas;
 import com.example.myapplication.MainActivity;
 import com.example.myapplication.R;
+import com.example.myapplication.preferencias.Preferencias;
 import com.example.myapplication.ui.api.APIService;
 import com.example.myapplication.ui.api.ApiUtils;
 import com.example.myapplication.ui.models.Conductor;
@@ -30,6 +31,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -43,7 +45,7 @@ public class GivePromotionFragment extends Fragment {
     private Call<Garage> garageCall;
 
     private HashMap<Item_Promocion, List<Item_Promocion>> item_promocionHashMap;
-
+    private final Preferencias loginPref = new Preferencias("Login");
     @Override
     public void onAttach(@NonNull @NotNull Context context) {
         super.onAttach(context);
@@ -74,12 +76,12 @@ public class GivePromotionFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull @NotNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_give_promotion, container, false);
-        SharedPreferences preferences = activity.getSharedPreferences("MyPrefsFile", Context.MODE_PRIVATE);
-        if(preferences != null){
-            int idConductor = preferences.getInt("idConductor", 0);
+        //SharedPreferences preferences = activity.getSharedPreferences("Login", Context.MODE_PRIVATE);
+        //if(preferences != null){
+            int idConductor = loginPref.getPrefInteger(activity,"idConductor",0);//preferences.getInt("idConductor", 0);
             //conductorCall = mAPIService.findConductor(idConductor);
             garageCall = mAPIService.findIDGarage(idConductor);
-        }
+        //}
 
         listView = root.findViewById(R.id.listPromo);
         return root;

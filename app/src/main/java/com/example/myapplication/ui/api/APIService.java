@@ -43,7 +43,6 @@ public interface APIService {
     @GET("/conductor/{id}")
     Call<Conductor> findConductor(@Path(value="id") Integer id);
 
-    @FormUrlEncoded
     @GET("/conductor/query")
     Call<Conductor> findConductorEmail(@Query(value="email", encoded=true) String email);
 
@@ -130,6 +129,9 @@ public interface APIService {
 
     @GET("/reservacion/query")
     Call<List<Item_Reservacion>> obtenerReservasConductor(@Query(value = "id_conductor", encoded = true) int idConductor);
+
+    @GET("/reservacion/estado/{idGarage}")
+    Call<List<Reservacion>> obtenerReservasEstados(@Path(value = "idGarage") int idGarage);
 
     @GET("/reservacion")
     Call<List<Reservacion>> obtenerReservaciones();

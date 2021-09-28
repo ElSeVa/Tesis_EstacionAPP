@@ -22,6 +22,7 @@ import androidx.navigation.Navigation;
 
 import com.example.myapplication.MainActivity;
 import com.example.myapplication.R;
+import com.example.myapplication.preferencias.Preferencias;
 import com.example.myapplication.ui.api.APIService;
 import com.example.myapplication.ui.api.ApiUtils;
 import com.example.myapplication.ui.dialogFragment.DatePickerFragment;
@@ -38,7 +39,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -59,7 +62,9 @@ public class MediaFragment extends Fragment {
     private DateFormat df;
     private int cantidad,dias,precio;
     private String vehiculo;
-
+    private final Preferencias loginPref = new Preferencias("Login");
+    private final Preferencias tiempoPref = new Preferencias("Tiempo");
+    private final Map<String, String> mapTiempo= new HashMap<>();
 
     @Override
     public void onStart() {
@@ -93,10 +98,10 @@ public class MediaFragment extends Fragment {
 
     @SuppressLint("SimpleDateFormat")
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        SharedPreferences prefs = activity.getSharedPreferences("MyPrefsFile", Context.MODE_PRIVATE);
-        idConductor = prefs.getInt("idConductor", 0);
-        idGarage = prefs.getInt("idGarage", 0);
-        vehiculo = prefs.getString("Vehiculo", null);
+        //SharedPreferences prefs = activity.getSharedPreferences("Login", Context.MODE_PRIVATE);
+        idConductor = loginPref.getPrefInteger(activity,"idConductor",0);// prefs.getInt("idConductor", 0);
+        idGarage = loginPref.getPrefInteger(activity,"idGarage",0);// prefs.getInt("idGarage", 0);
+        vehiculo = loginPref.getPrefString(activity,"Vehiculo",null);// prefs.getString("Vehiculo", null);
 
         etHoraMedia.setInputType(InputType.TYPE_NULL);
         etFechaMedia.setInputType(InputType.TYPE_NULL);
@@ -169,11 +174,15 @@ public class MediaFragment extends Fragment {
                                 Toast.makeText(activity,"Registro Exitoso", Toast.LENGTH_SHORT).show();
                                 Reservacion reservacion = response.body();
                                 assert reservacion != null;
+                                mapTiempo.put("seEstaEjecutando",String.valueOf(true));
+                                mapTiempo.put("idReservacion",String.valueOf(reservacion.getId()));
+                                tiempoPref.setPrefTiempos(activity,mapTiempo);
+                                /*
                                 SharedPreferences.Editor pref = activity.getSharedPreferences("Tiempo", Context.MODE_PRIVATE).edit();
-                                pref.putBoolean("timerRunning",true);
+                                pref.putBoolean("seEstaEjecutando",true);
                                 pref.putInt("idReservacion",reservacion.getId());
                                 pref.apply();
-
+                                */
                                 Navigation.findNavController(v).navigate(R.id.nav_home);
                             }else{
                                 Toast.makeText(activity,"Registro Fallido", Toast.LENGTH_SHORT).show();
