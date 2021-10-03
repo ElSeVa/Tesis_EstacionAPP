@@ -136,9 +136,9 @@ public class MapMuestraFragment extends Fragment implements Callback<List<Imagen
 
         asignarRating();
 
-        btnReserva.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.menuReservaFragment));
+        btnReserva.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.action_mapMuestraFragment_to_menuReservaFragment));
 
-        btnComentarios.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.comentariosFragment));
+        btnComentarios.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.action_mapMuestraFragment_to_comentariosFragment));
 
         return root;
     }

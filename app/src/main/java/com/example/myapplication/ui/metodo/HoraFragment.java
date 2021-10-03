@@ -18,7 +18,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.NavHostController;
+import androidx.navigation.NavOptions;
 import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.myapplication.MainActivity;
 import com.example.myapplication.R;
@@ -64,8 +68,8 @@ public class HoraFragment extends Fragment {
     private String fecha, horaF, horaI, vehiculo;
     private Button btnReservaHora;
     private final Preferencias loginPref = new Preferencias("Login");
-    private final Preferencias tiempoPref = new Preferencias("Tiempo");
-    private final Map<String, String> mapTiempo= new HashMap<>();
+    private Preferencias tiempoPref;
+    private final HashMap<String, String> mapTiempo= new HashMap<>();
 
     private int cantidad, precio;
     private int dias = 0;
@@ -213,6 +217,7 @@ public class HoraFragment extends Fragment {
                             if(response.isSuccessful() && response.body() != null){
                                 Toast.makeText(activity,"Registro Exitoso", Toast.LENGTH_SHORT).show();
                                 Reservacion reservacion = response.body();
+                                tiempoPref = new Preferencias("Tiempo"+reservacion.getIdConductor());
                                 mapTiempo.put("seEstaEjecutando",String.valueOf(true));
                                 mapTiempo.put("idReservacion",String.valueOf(reservacion.getId()));
                                 tiempoPref.setPrefTiempos(activity,mapTiempo);
@@ -222,7 +227,11 @@ public class HoraFragment extends Fragment {
                                 pref.putInt("idReservacion",reservacion.getId());
                                 pref.apply();
                                 */
-                                Navigation.findNavController(v).navigate(R.id.nav_home);
+                                //NavOptions.Builder navBuilder = new NavOptions.Builder();
+                                //NavOptions navOptions = navBuilder.setPopUpTo(R.id.nav_home,true).build();
+                                //NavHostFragment.findNavController(HoraFragment.this).navigate(R.id.nav_home, null, navOptions);
+                                Navigation.findNavController(v).navigate(R.id.action_horaFragment_to_nav_home3);
+
                             }else{
                                 Toast.makeText(activity,"Registro Fallido", Toast.LENGTH_SHORT).show();
                             }

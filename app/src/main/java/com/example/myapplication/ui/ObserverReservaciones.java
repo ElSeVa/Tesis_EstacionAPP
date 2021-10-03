@@ -16,8 +16,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class CallReservaciones implements EventManagers {
-    private List<EventListeners> personList = new ArrayList<>();
+public class ObserverReservaciones implements EventManagers {
+    private final List<EventListeners> personList = new ArrayList<>();
 
     @Override
     public void agregar(EventListeners observer) {

@@ -1,16 +1,26 @@
 package com.example.myapplication;
 
+import android.app.AlertDialog;
+import android.app.Fragment;
 import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.Menu;
 import android.widget.ImageView;
@@ -19,8 +29,10 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.myapplication.preferencias.Preferencias;
+import com.example.myapplication.ui.Temporizador;
 import com.example.myapplication.ui.api.APIService;
 import com.example.myapplication.ui.api.ApiUtils;
+import com.example.myapplication.ui.home.HomeFragment;
 import com.example.myapplication.ui.models.Conductor;
 import com.example.myapplication.ui.models.Reservacion;
 import com.google.android.gms.auth.api.Auth;
@@ -40,7 +52,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
-import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.NavDestination;
 import androidx.navigation.Navigation;
@@ -74,6 +85,8 @@ public class MainActivity extends AppCompatActivity implements MyDrawerControlle
     Toolbar toolbar;
     SharedPreferences.Editor cuenta;
     Uri photo = null;
+    private static String TAG = "Servicio";
+
 
     private final Map<String, String> mapCuenta= new HashMap<>();
     private final Preferencias loginPref = new Preferencias("Login");
@@ -156,6 +169,7 @@ public class MainActivity extends AppCompatActivity implements MyDrawerControlle
                 .setContentText("Tienes una nueva reservacion para confirmar")
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT).build();
 
+        startService(new Intent(MainActivity.this,Temporizador.class));
 
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
         //SharedPreferences prefs = getSharedPreferences("Login", MODE_PRIVATE);

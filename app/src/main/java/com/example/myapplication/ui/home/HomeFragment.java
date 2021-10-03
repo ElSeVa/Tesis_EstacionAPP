@@ -1,6 +1,7 @@
 package com.example.myapplication.ui.home;
 
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -28,7 +29,7 @@ import androidx.navigation.Navigation;
 import com.example.myapplication.MainActivity;
 import com.example.myapplication.R;
 import com.example.myapplication.preferencias.Preferencias;
-import com.example.myapplication.ui.CallReservaciones;
+import com.example.myapplication.ui.ObserverReservaciones;
 import com.example.myapplication.ui.Temporizador;
 import com.example.myapplication.ui.api.APIService;
 import com.example.myapplication.ui.api.ApiUtils;
@@ -81,6 +82,7 @@ import retrofit2.Response;
 import static android.os.Looper.getMainLooper;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconImage;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconOffset;
+import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.textVariableAnchor;
 
 public class HomeFragment extends Fragment implements OnMapReadyCallback, PermissionsListener, MapboxMap.OnMarkerClickListener{
 
@@ -106,19 +108,19 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Permis
     private FloatingActionButton fab_location_search;
     private final String geojsonSourceLayerId = "geojsonSourceLayerId";
     private final String symbolIconId = "symbolIconId";
-    private TextView tempo;
+    private TextView tvTemporizador;
     private static final int REQUEST_CODE_AUTOCOMPLETE = 1;
     long DEFAULT_INTERVAL_IN_MILLISECONDS = 1000L;
     long DEFAULT_MAX_WAIT_TIME = DEFAULT_INTERVAL_IN_MILLISECONDS * 5;
-    private static final long START_TIME_IN_MILLIS = 1800000;
-    private CountDownTimer mCountDownTimer;
+    private static final long tiempoTotal = 1800000;
+    private CountDownTimer contador;
     private boolean isExecute;
     private long tiempo;
     private long tiempoFinal;
-    //private SharedPreferences spTempo;
     private Temporizador temporizador;
     private int idReservacion;
-    private CallReservaciones call;
+    private final ObserverReservaciones observerReservaciones = new ObserverReservaciones();
+
     private final Preferencias filtrosPref = new Preferencias("Filtros");
     private final Preferencias tiempoPref = new Preferencias("Tiempo");
     private final Preferencias loginPref = new Preferencias("Login");
@@ -146,151 +148,109 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Permis
         super.onCreateView(inflater, container, savedInstanceState);
         Mapbox.getInstance(activity, getString(R.string.mapbox_access_token));
         View view = inflater.inflate(R.layout.fragment_home,container,false);
-
+        //!classificação
         btnGarage = view.findViewById(R.id.btnGarage);
         fab_location_search = view.findViewById(R.id.fab_location_search);
         mapView = (MapView) view.findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
-        tempo = view.findViewById(R.id.tempo);
-
+        tvTemporizador = view.findViewById(R.id.tempo);
         return view;
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        //spTempo = activity.getSharedPreferences("Tiempo", Context.MODE_PRIVATE);
-        //if(spTempo!=null){
-            tiempo = tiempoPref.getPrefLong(activity,"tiempoRestante",START_TIME_IN_MILLIS);
-            //tiempo = spTempo.getLong("millisLeft", START_TIME_IN_MILLIS);
-            isExecute = tiempoPref.getPrefBoolean(activity,"seEstaEjecutando",false);
-            //isExecute = spTempo.getBoolean("timerRunning", false);
-            tiempoFinal = tiempoPref.getPrefLong(activity,"tiempoFinal", 0L);
-            //tiempoFinal = spTempo.getLong("endTime", 0);
-            if(tiempoFinal == 0){
-                tiempoFinal = System.currentTimeMillis() + START_TIME_IN_MILLIS;
-            }
-            idReservacion = tiempoPref.getPrefInteger(activity,"idReservacion",0);
-            //idReservacion = spTempo.getInt("idReservacion",0);
-        //}
-
-        if(tiempo == START_TIME_IN_MILLIS || tiempo < 0){
-            temporizador = new Temporizador(START_TIME_IN_MILLIS,1000);
-        }
-
-        if(temporizador == null){
-            temporizador = new Temporizador(tiempo,1000);
-        }
-
-        temporizador.setTextView(tempo);
-        temporizador.setTiempo(tiempo);
-        temporizador.setTiempoFinal(tiempoFinal);
-        temporizador.setExecuteTime(isExecute);
-
+        //tiempo = tiempoPref.getPrefLong(activity,"tiempoRestante",tiempoTotal);
+        //tiempoFinal = tiempoPref.getPrefLong(activity,"tiempoFinal",0L);
         mAPIService = ApiUtils.getAPIService();
-        mapas = mAPIService.findAllMapa();
-        garage = mAPIService.findAllGarage();
+        idReservacion = tiempoPref.getPrefInteger(activity,"idReservacion",0);
+        temporizador = new Temporizador(activity,1000,loginPref.getPrefInteger(activity,"idConductor",0));
+        temporizador.setTextView(tvTemporizador);
+        temporizador.registerLifecycle(this);
 
-        mapaBox = new MapaBox(activity);
-
-        call = new CallReservaciones();
-        call.agregar(temporizador);
+        observerReservaciones.agregar(temporizador);
         if(idReservacion != 0){
+            Log.d("lifeCyCle","hay reserva");
             reservacion = mAPIService.obtenerReservacionPorId(idReservacion);
-            espera = mAPIService.obtenerReservacionPorId(idReservacion);
-
-            mCountDownTimer = new CountDownTimer(START_TIME_IN_MILLIS,1000) {
+            contador = new CountDownTimer(1800000,1000) {
                 @Override
                 public void onTick(long millisUntilFinished) {
-                    espera = mAPIService.obtenerReservacionPorId(idReservacion);
-                    if(!espera.isExecuted()){
-                        espera.enqueue(new Callback<Reservacion>() {
+                    reservacion = mAPIService.obtenerReservacionPorId(idReservacion);
+                    if(!reservacion.isExecuted()){
+                        reservacion.enqueue(new Callback<Reservacion>() {
                             @Override
-                            public void onResponse(Call<Reservacion> calls, Response<Reservacion> response) {
+                            public void onResponse(Call<Reservacion> call, Response<Reservacion> response) {
                                 if(response.isSuccessful()){
                                     Reservacion r = response.body();
                                     if (r != null) {
                                         if(r.getEstado().equalsIgnoreCase("Esperando")){
-                                            call.notificar(true);
+                                            observerReservaciones.notificar(true);
                                         }else{
-                                            mCountDownTimer.cancel();
-                                            stopTimer();
+                                            contador.onFinish();
                                             new Handler().postDelayed(() -> {
-                                                tempo.setVisibility(View.GONE);
+                                                tvTemporizador.setVisibility(View.GONE);
                                             },2000);
                                         }
                                     }
+
                                 }
                             }
 
+                            @SuppressLint("LogNotTimber")
                             @Override
-                            public void onFailure(Call<Reservacion> calls, Throwable t) {
+                            public void onFailure(Call<Reservacion> call, Throwable t) {
                                 Log.d("ERROR","Tira error todo el rato " + t.getMessage());
                             }
                         });
                     }
-                    espera.timeout();
+                    reservacion.timeout();
 
                 }
+
                 @Override
                 public void onFinish() {
-                    call.notificar(false);
+                    observerReservaciones.notificar(false);
                 }
             }.start();
         }
-        if(temporizador.getExecuteTime()){
-            Toast.makeText(activity, "Esta activado? " + temporizador.getExecuteTime(), Toast.LENGTH_SHORT).show();
-            reservacion.enqueue(new Callback<Reservacion>() {
-                @Override
-                public void onResponse(Call<Reservacion> calls, Response<Reservacion> response) {
-                    if(!response.isSuccessful() && response.body() == null){
-                        Toast.makeText(activity, "Code: " + response.code(), Toast.LENGTH_SHORT).show();
-                    }
-                    Reservacion reservacion = response.body();
-                    if (reservacion != null && temporizador.getExecuteTime() ) {
-                        if(reservacion.getId() == idReservacion && reservacion.getEstado().equals("Esperando")){
-                            Toast.makeText(activity, "Activando temporizador", Toast.LENGTH_SHORT).show();
-                            startTimer();
-                            tempo.setVisibility(View.VISIBLE);
-                        }else{
-                            Toast.makeText(activity, "No hay temporizador", Toast.LENGTH_SHORT).show();
-                            stopTimer();
-                            //SharedPreferences.Editor editor = activity.getSharedPreferences("Tiempo", Context.MODE_PRIVATE).edit();
-                            mapTiempo.putAll(crearClaveValorDefault());
-                            //Map<String, String> mapTiempo = crearClaveValorDefault();
-                            //Preferencias tiempoPref = new Preferencias("Tiempo");
-                            tiempoPref.setPrefTiempos(activity,mapTiempo);
-                            /*
-                            editor.putLong("millisLeft", START_TIME_IN_MILLIS);
-                            editor.putBoolean("timerRunning", false);
-                            editor.putLong("endTime", 0);
-                            editor.apply();
-                            */
-                            tempo.setVisibility(View.GONE);
-                        }
-                    }
-                    Toast.makeText(activity, "Timer Running? " + temporizador.getExecuteTime(), Toast.LENGTH_SHORT).show();
-                }
 
-                @Override
-                public void onFailure(Call<Reservacion> call, Throwable t) {
 
-                }
-            });
+        //if(temporizador.getTiempo() == tiempoTotal){
+        //    temporizador.setTiempo(tiempo);
+        //}
+
+        //temporizador.setExecuteTime(tiempoPref.getPrefBoolean(activity,"seEstaEjecutando",true));
+        //temporizador.setTiempoFinal(tiempoFinal);
+
+        //temporizador.start();
+        /*if(savedInstanceState == null){
+            if(tiempoPref.getPrefLong(activity,"tiempoRestante",tiempoTotal) != tiempoTotal){
+                tiempo = tiempoPref.getPrefLong(activity,"tiempoFinal",0L) - System.currentTimeMillis();
+                temporizador.setTiempo(tiempo);
+                temporizador.setTiempoFinal(System.currentTimeMillis() + temporizador.getTiempo());
+            }
+        }else{
+            tiempo = savedInstanceState.getLong("tiempoRestante");
+            tiempoFinal = System.currentTimeMillis() + tiempo;
+            temporizador.setTiempo(tiempo);
+            temporizador.setTiempoFinal(tiempoFinal);
         }
-        //Preferencias filtrosPref = new Preferencias("Filtros");
-        //SharedPreferences filtros = activity.getSharedPreferences("Filtros", Context.MODE_PRIVATE);
+        */
+
+        idReservacion = tiempoPref.getPrefInteger(activity,"idReservacion",0);
+        tvTemporizador.setVisibility(View.VISIBLE);
+        mapas = mAPIService.findAllMapa();
+        garage = mAPIService.findAllGarage();
+        mapaBox = new MapaBox(activity);
+
+
+
         vehiculo = filtrosPref.getPrefString(activity,"vehiculo",null);
         horario = filtrosPref.getPrefString(activity,"horario",null);
         String precio = filtrosPref.getPrefString(activity,"precio","Bajo");
         filtro = filtrosPref.getPrefString(activity,"filtro","No");
-        /*
-        vehiculo = filtros.getString("vehiculo", null);
-        horario = filtros.getString("horario", null);
-        String precio = filtros.getString("precio", "Bajo");
-        filtro = filtros.getString("filtro", "No");
-        */
+
         Call<List<Estadia>> estadias;
         if(precio.equals("Alto")){
             estadias = mAPIService.ordenarPrecios("Si");
@@ -312,13 +272,9 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Permis
 
             }
         });
-        //Toast.makeText(activity, "Tipo Vehiculo: " + vehiculo + ", Horario: "+ horario+", Precio: "+precio, Toast.LENGTH_SHORT).show();
-
 
         locationEngine = LocationEngineProvider.getBestLocationEngine(activity);
     }
-
-
 
     @Override
     public void onMapReady(@NonNull MapboxMap mapboxMap) {
@@ -600,87 +556,35 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Permis
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        mapView.onResume();
-
+    public void onSaveInstanceState(@NonNull Bundle estado) {
+        super.onSaveInstanceState(estado);
+        mapView.onSaveInstanceState(estado);
     }
+
+
 
     @Override
     public void onStart() {
         super.onStart();
         mapView.onStart();
-        //SharedPreferences prefs = activity.getSharedPreferences("Tiempo", Context.MODE_PRIVATE);
-        //if(prefs != null){
-            if(tiempo != START_TIME_IN_MILLIS && isExecute && tiempoFinal == 0){
-                tiempo = tiempoPref.getPrefLong(activity,"tiempoRestante",START_TIME_IN_MILLIS);
-                isExecute = tiempoPref.getPrefBoolean(activity,"seEstaEjecutando",false);
-                tiempoFinal = tiempoPref.getPrefLong(activity,"tiempoFinal",0L);
-                //tiempo = prefs.getLong("millisLeft", START_TIME_IN_MILLIS);
-                //isExecute = prefs.getBoolean("timerRunning", false);
-                //tiempoFinal = prefs.getLong("endTime", 0);
-            }
-        //}
-        temporizador.setTiempo(tiempo);
-        temporizador.setExecuteTime(isExecute);
-        temporizador.updateCountDownText();
-        if (temporizador.getExecuteTime()) {
-            temporizador.setTiempoFinal(tiempoFinal);
-            tiempo = tiempoFinal - System.currentTimeMillis();
-            temporizador.setTiempo(tiempo);
-            if (temporizador.getTiempo() < 0) {
-                temporizador.setTiempo(0);
-                temporizador.setExecuteTime(false);
-                temporizador.updateCountDownText();
-            } else {
-                startTimer();
-            }
-        }
-    }
-
-    @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        mapView.onSaveInstanceState(outState);
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        mapView.onPause();
-
-        mapTiempo.putAll(crearClaveValor());
-        tiempoPref.setPrefTiempos(activity,mapTiempo);
-        /*
-        SharedPreferences prefs = activity.getSharedPreferences("Tiempo", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putLong("millisLeft", temporizador.getTiempo());
-        editor.putBoolean("timerRunning", temporizador.getExecuteTime());
-        editor.putLong("endTime", temporizador.getTiempoFinal());
-        editor.apply();
-        */
-        if (temporizador != null) {
-            temporizador.cancel();
-        }
     }
 
     @Override
     public void onStop() {
         super.onStop();
         mapView.onStop();
-        mapTiempo.putAll(crearClaveValor());
-        tiempoPref.setPrefTiempos(activity,mapTiempo);
-        /*
-        SharedPreferences prefs = activity.getSharedPreferences("Tiempo", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putLong("millisLeft", temporizador.getTiempo());
-        editor.putBoolean("timerRunning", temporizador.getExecuteTime());
-        editor.putLong("endTime", temporizador.getTiempoFinal());
-        editor.apply();
-        */
-        if (temporizador != null) {
-            temporizador.cancel();
-        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mapView.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mapView.onPause();
     }
 
     @Override
@@ -695,48 +599,14 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Permis
         mapView.onDestroy();
     }
 
-    private void startTimer() {
-        if(temporizador!=null){
-            tiempoFinal = System.currentTimeMillis() + tiempo;
-            temporizador = new Temporizador(tiempo, 1000);
-            temporizador.setTextView(tempo);
-            temporizador.setTiempo(tiempo);
-            temporizador.setExecuteTime(isExecute);
-            temporizador.setTiempoFinal(tiempoFinal);
-            temporizador.start();
-            temporizador.setExecuteTime(true);
-        }
-    }
 
-    private void stopTimer() {
-        if (temporizador != null) {
-            temporizador.cancel();
-            temporizador.setExecuteTime(false);
-            mapTiempo.putAll(crearClaveValor());
-            tiempoPref.removePref(activity,"idReservacion");
-            tiempoPref.setPrefTiempos(activity,mapTiempo);
-            /*
-            SharedPreferences.Editor editor = spTempo.edit();
-            editor.putLong("millisLeft",temporizador.getTiempo());
-            editor.putBoolean("timerRunning",temporizador.getExecuteTime());
-            editor.putLong("endTime",temporizador.getTiempoFinal());
-            editor.remove("idReservacion");
-            editor.apply();
-            */
-            call.notificar(false);
-        }
-    }
 
-    private Map<String,String> crearClaveValor(){
-        Map<String, String> map = new HashMap<>();
-        map.put("tiempoRestante", String.valueOf(temporizador.getTiempo()));
-        map.put("seEstaEjecutando", String.valueOf(temporizador.getExecuteTime()));
-        map.put("tiempoFinal", String.valueOf(temporizador.getTiempoFinal()));
-        return map;
-    }
+
+
+
     private Map<String,String> crearClaveValorDefault(){
         Map<String, String> map = new HashMap<>();
-        map.put("tiempoRestante", String.valueOf(START_TIME_IN_MILLIS));
+        map.put("tiempoRestante", String.valueOf(tiempoTotal));
         map.put("seEstaEjecutando", String.valueOf(false));
         map.put("tiempoFinal", String.valueOf(0));
         return map;

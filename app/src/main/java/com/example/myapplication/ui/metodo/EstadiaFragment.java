@@ -15,7 +15,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavOptions;
 import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.myapplication.MainActivity;
 import com.example.myapplication.R;
@@ -59,8 +61,8 @@ public class EstadiaFragment extends Fragment {
     private String vehiculo;
     private int cantidad,dias,precio;
     private final Preferencias loginPref = new Preferencias("Login");
-    private final Preferencias tiempoPref = new Preferencias("Tiempo");
-    private final Map<String, String> mapTiempo= new HashMap<>();
+    private Preferencias tiempoPref;
+    private final HashMap<String, String> mapTiempo= new HashMap<>();
 
     @Override
     public void onStart() {
@@ -141,16 +143,20 @@ public class EstadiaFragment extends Fragment {
                     call.enqueue(new Callback<Reservacion>() {
                         @Override
                         public void onResponse(Call<Reservacion> call, Response<Reservacion> response) {
-                            if(response.isSuccessful()){
+                            if(response.isSuccessful() && response.body() != null){
                                 Toast.makeText(activity,"Registro Exitoso", Toast.LENGTH_SHORT).show();
                                 Reservacion reservacion = response.body();
 
                                 //SharedPreferences.Editor pref = activity.getSharedPreferences("Tiempo", Context.MODE_PRIVATE).edit();
                                 mapTiempo.put("seEstaEjecutando",String.valueOf(true));//pref.putBoolean("seEstaEjecutando",true);
                                 mapTiempo.put("idReservacion",String.valueOf(reservacion.getId()));//pref.putInt("idReservacion",reservacion.getId());
+                                tiempoPref = new Preferencias("Tiempo"+reservacion.getIdConductor());
                                 tiempoPref.setPrefTiempos(activity,mapTiempo);//pref.apply();
 
-                                Navigation.findNavController(v).navigate(R.id.nav_home);
+                                Navigation.findNavController(v).navigate(R.id.action_estadiaFragment_to_nav_home3);
+                                //NavOptions.Builder navBuilder = new NavOptions.Builder();
+                                //NavOptions navOptions = navBuilder.setPopUpTo(R.id.nav_home,true).build();
+                                //NavHostFragment.findNavController(EstadiaFragment.this).navigate(R.id.nav_home, null, navOptions);
                             }else{
                                 Toast.makeText(activity,"Registro Fallido", Toast.LENGTH_SHORT).show();
                             }

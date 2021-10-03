@@ -6,6 +6,7 @@ import android.widget.Switch;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 public class Preferencias implements ItemPreferencias{
@@ -43,22 +44,54 @@ public class Preferencias implements ItemPreferencias{
         return Preferencias.getBoolean(valor,porDefecto);
     }
 
+    public boolean setPrefLong(Context context, String key, Long value){
+        SharedPreferences settings = context.getSharedPreferences(this.PREFS_KEY, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putLong(key,value);
+        editor.apply();
+        return true;
+    }
+
+    public boolean setPrefBoolean(Context context, String key, Boolean value){
+        SharedPreferences settings = context.getSharedPreferences(this.PREFS_KEY, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putBoolean(key,value);
+        editor.apply();
+        return true;
+    }
+
+    public boolean setPrefString(Context context, String key, String value){
+        SharedPreferences settings = context.getSharedPreferences(this.PREFS_KEY, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putString(key,value);
+        editor.apply();
+        return true;
+    }
+
+    public boolean setPrefInt(Context context, String key, Integer value){
+        SharedPreferences settings = context.getSharedPreferences(this.PREFS_KEY, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putInt(key,value);
+        editor.apply();
+        return true;
+    }
+
     @Override
-    public void setPrefTiempos(Context context, Map<String, String> value) {
+    public void setPrefTiempos(Context context, HashMap<String,String> value) {
         SharedPreferences settings = context.getSharedPreferences(this.PREFS_KEY, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = settings.edit();
         for(Map.Entry<String, String> entry : value.entrySet()){
             if(entry.getKey().equalsIgnoreCase("tiempoRestante")){
-                editor.putLong("tiempoRestante",Long.parseLong(entry.getValue()));
+                editor.putLong("tiempoRestante", Long.parseLong(entry.getValue()));
             }
             if(entry.getKey().equalsIgnoreCase("seEstaEjecutando")){
-                editor.putBoolean("seEstaEjecutando",Boolean.parseBoolean(entry.getValue()));
+                editor.putBoolean("seEstaEjecutando", Boolean.parseBoolean(entry.getValue()));
             }
             if(entry.getKey().equalsIgnoreCase("tiempoFinal")){
-                editor.putLong("tiempoRestante",Long.parseLong(entry.getValue()));
+                editor.putLong("tiempoRestante", Long.parseLong(entry.getValue()));
             }
             if(entry.getKey().equalsIgnoreCase("idReservacion")){
-                editor.putInt("idReservacion",Integer.parseInt(entry.getValue()));
+                editor.putInt("idReservacion", Integer.parseInt(entry.getValue()));
             }
         }
         editor.apply();
@@ -137,5 +170,13 @@ public class Preferencias implements ItemPreferencias{
             }
         }
         editor.apply();
+    }
+
+    public boolean clearPref(Context context){
+        SharedPreferences settings = context.getSharedPreferences(this.PREFS_KEY, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.clear();
+        editor.apply();
+        return true;
     }
 }

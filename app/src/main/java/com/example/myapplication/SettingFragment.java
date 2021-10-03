@@ -104,12 +104,12 @@ public class SettingFragment extends Fragment{
             String horario = spHorario.getSelectedItem().toString();
             String precio = spPrecio.getSelectedItem().toString();
             enviarFiltros(vehiculo,horario,precio,"Si");
-            Navigation.findNavController(v).navigate(R.id.nav_home);
+            Navigation.findNavController(v).navigate(R.id.action_settingFragment_to_nav_home2);
         });
 
         btnLimpiar.setOnClickListener(v -> {
             enviarFiltros("","","","No");
-            Navigation.findNavController(v).navigate(R.id.nav_home);
+            Navigation.findNavController(v).navigate(R.id.action_settingFragment_to_nav_home2);
         });
         activity.setDrawer_unlocker();
         return root;
