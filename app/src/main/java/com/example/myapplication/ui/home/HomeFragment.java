@@ -122,7 +122,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Permis
     private final ObserverReservaciones observerReservaciones = new ObserverReservaciones();
 
     private final Preferencias filtrosPref = new Preferencias("Filtros");
-    private final Preferencias tiempoPref = new Preferencias("Tiempo");
+    private Preferencias tiempoPref;
     private final Preferencias loginPref = new Preferencias("Login");
     private final Map<String, String> mapTiempo= new HashMap<>();
     private final Map<String, String> mapLogin = new HashMap<>();
@@ -163,9 +163,11 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Permis
         super.onViewCreated(view, savedInstanceState);
         //tiempo = tiempoPref.getPrefLong(activity,"tiempoRestante",tiempoTotal);
         //tiempoFinal = tiempoPref.getPrefLong(activity,"tiempoFinal",0L);
+        int idConductor = loginPref.getPrefInteger(activity,"idConductor",0);
+        tiempoPref = new Preferencias("Tiempo"+idConductor);
         mAPIService = ApiUtils.getAPIService();
         idReservacion = tiempoPref.getPrefInteger(activity,"idReservacion",0);
-        temporizador = new Temporizador(activity,1000,loginPref.getPrefInteger(activity,"idConductor",0));
+        temporizador = new Temporizador(activity,1000,idConductor);
         temporizador.setTextView(tvTemporizador);
         temporizador.registerLifecycle(this);
 
