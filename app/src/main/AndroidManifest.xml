@@ -39,6 +39,9 @@
             android:launchMode="singleTop">
         </activity>
 
+        <service android:name=".notificaciones.NotificacionesServices" android:enabled="true"
+            tools:ignore="Instantiatable" />
+
     </application>
 
 </manifest>

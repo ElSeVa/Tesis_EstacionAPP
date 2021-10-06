@@ -28,6 +28,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.myapplication.notificaciones.NotificacionesHelper;
+import com.example.myapplication.notificaciones.NotificacionesServices;
 import com.example.myapplication.preferencias.Preferencias;
 import com.example.myapplication.ui.Temporizador;
 import com.example.myapplication.ui.api.APIService;
@@ -161,17 +163,10 @@ public class MainActivity extends AppCompatActivity implements MyDrawerControlle
                 .enableAutoManage(this, this)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
-        createNotificationChannel();
 
-        Notification builder = new NotificationCompat.Builder(this, "Canal 1")
-                .setSmallIcon(R.mipmap.ic_launcher_round)
-                .setContentTitle("Nueva Reserva")
-                .setContentText("Tienes una nueva reservacion para confirmar")
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT).build();
+        startService(new Intent(this, NotificacionesServices.class));
 
-        startService(new Intent(MainActivity.this,Temporizador.class));
-
-        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+        //NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
         //SharedPreferences prefs = getSharedPreferences("Login", MODE_PRIVATE);
         idConductor = loginPref.getPrefInteger(context,"idConductor",0);
         //idConductor = prefs.getInt("idConductor",0);
@@ -191,8 +186,6 @@ public class MainActivity extends AppCompatActivity implements MyDrawerControlle
                     if(conductor.getPropietario() == 0){
                         Menu menu = navigationView.getMenu();
                         menu.setGroupVisible(R.id.groupGarage,false);
-                    }else{
-                        verificarEstadosGarage(notificationManager, builder);
                     }
                     mapCuenta.put("idConductor",String.valueOf(idConductor));
                     mapCuenta.put("Nombre", conductor.getNombre());
@@ -259,41 +252,9 @@ public class MainActivity extends AppCompatActivity implements MyDrawerControlle
 
     }
 
-    private void verificarEstadosGarage(NotificationManagerCompat notificationManager, Notification builder){
-        Call<List<Reservacion>> reservacionCall = mAPIService.obtenerReservasEstados(idConductor);
-        reservacionCall.enqueue(new Callback<List<Reservacion>>() {
-            @Override
-            public void onResponse(Call<List<Reservacion>> call, Response<List<Reservacion>> response) {
-                if(response.isSuccessful()){
-                    List<Reservacion> reservacionList = response.body();
-                    if(reservacionList.size() != 0){
-                        notificationManager.notify(0,builder);
-                    }
-                }
-            }
 
-            @Override
-            public void onFailure(Call<List<Reservacion>> call, Throwable t) {
 
-            }
-        });
-    }
 
-    private void createNotificationChannel() {
-        // Create the NotificationChannel, but only on API 26+ because
-        // the NotificationChannel class is new and not in the support library
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence name = getString(R.string.channel_name);
-            String description = getString(R.string.channel_description);
-            int importance = NotificationManager.IMPORTANCE_DEFAULT;
-            NotificationChannel channel = new NotificationChannel("Canal 1", name, importance);
-            channel.setDescription(description);
-            // Register the channel with the system; you can't change the importance
-            // or other notification behaviors after this
-            NotificationManager notificationManager = getSystemService(NotificationManager.class);
-            notificationManager.createNotificationChannel(channel);
-        }
-    }
 
     private boolean verificacionDestino(NavDestination destination){
         return destination.getId() == R.id.nav_gallery
@@ -317,6 +278,7 @@ public class MainActivity extends AppCompatActivity implements MyDrawerControlle
         SharedPreferences.Editor Mantener = getSharedPreferences("MantenerUsuario", MODE_PRIVATE).edit();
         Mantener.clear();
         Mantener.apply();
+        stopService(new Intent(this, NotificacionesServices.class));
         Auth.GoogleSignInApi.signOut(googleApiClient).setResultCallback(new ResultCallback<Status>() {
             @Override
             public void onResult(@NonNull @NotNull Status status) {
