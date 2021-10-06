@@ -13,9 +13,7 @@ import com.example.myapplication.ui.models.Resena;
 import java.util.ArrayList;
 
 public class AdapterRecycleComentarios extends RecyclerView.Adapter<AdapterRecycleComentarios.ViewHolder> {
-    private ArrayList<Resena> localDataSet;
-
-
+    private final ArrayList<Resena> localDataSet;
 
     public AdapterRecycleComentarios(ArrayList<Resena> dataSet) {
         localDataSet = dataSet;

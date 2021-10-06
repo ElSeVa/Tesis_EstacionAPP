@@ -31,5 +31,8 @@
     <string name="perfil">Perfil</string>
     <string name="ver_promociones">Ver Promociones</string>
     <string name="dar_promociones">Dar Promociones</string>
+    <string name="imagen_fondo">Imagen secundaria de fondo</string>
+    <string name="channel_description">Pruebas de notificaciones</string>
+    <string name="tipo_de_vehiculo">Tipo de Vehiculo</string>
 
 </resources>

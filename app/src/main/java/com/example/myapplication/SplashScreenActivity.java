@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.myapplication.preferencias.Preferencias;
 import com.example.myapplication.ui.api.APIService;
 import com.example.myapplication.ui.api.ApiUtils;
 import com.example.myapplication.ui.models.Conductor;
@@ -28,17 +29,18 @@ import com.google.android.gms.common.api.ResultCallback;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 public class SplashScreenActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
 
-    private APIService mAPIService = ApiUtils.getAPIService();
-
-    private ProgressBar progressBar;
-    private int progressStatus = 0;
-    private Handler handler = new Handler();
+    private final APIService mAPIService = ApiUtils.getAPIService();
+    private final Preferencias mantenerPref = new Preferencias("MantenerUsuario");
     final Context context = SplashScreenActivity.this;
 
     private GoogleApiClient googleApiClient;
@@ -76,7 +78,6 @@ public class SplashScreenActivity extends AppCompatActivity implements GoogleApi
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
-        progressBar = findViewById(R.id.progressBar);
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
                 .build();
@@ -99,15 +100,17 @@ public class SplashScreenActivity extends AppCompatActivity implements GoogleApi
                             handlerSignInResult(googleSignInResult);
                         }
                     });
-                    SharedPreferences preferences = getSharedPreferences("MantenerUsuario", MODE_PRIVATE);
-                    if(preferences != null){
-                        String usuario = preferences.getString("Usuario",null);
-                        String password = preferences.getString("Password",null);
-                        boolean check = preferences.getBoolean("Check", false);
+
+                    //SharedPreferences mantenerUsuario = getSharedPreferences("MantenerUsuario", MODE_PRIVATE);
+                    //if(mantenerUsuario != null){
+
+                        String usuario = mantenerPref.getPrefString(context,"Usuario",null); //mantenerUsuario.getString("Usuario",null);
+                        String password = mantenerPref.getPrefString(context,"Password",null); //mantenerUsuario.getString("Password",null);
+                        boolean check = mantenerPref.getPrefBoolean(context,"Check",false); //mantenerUsuario.getBoolean("Check", false);
                         if(check){
                             sendPost(usuario,password);
                         }
-                    }
+                    //}
                     cambiarIntent(LoginActivity.class);
                 }
 

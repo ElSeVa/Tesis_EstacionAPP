@@ -35,58 +35,13 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
-            android:theme="@style/Theme.MyApplication.NoActionBar">
+            android:theme="@style/Theme.MyApplication.NoActionBar"
+            android:launchMode="singleTop">
         </activity>
 
-        <activity android:name=".ui.metodo.MapMuestra"
-            android:label="Perfil"
-            android:parentActivityName=".MainActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
-        </activity>
+        <service android:name=".notificaciones.NotificacionesServices" android:enabled="true"
+            tools:ignore="Instantiatable" />
 
-        <activity android:name=".ui.slideshow.SlideshowFragment"
-            android:label="Reservacion"
-            android:parentActivityName=".ui.metodo.MapMuestra">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.metodo.MapMuestra" />
-        </activity>
-
-        <activity android:name=".ui.comments.ComentariosActivity"
-            android:label="Comentarios">
-        </activity>
-
-        <activity
-            android:name=".ui.metodo.HoraActivity"
-            android:label="Reseva por Hora"
-            android:parentActivityName=".ui.slideshow.SlideshowFragment"
-            android:theme="@style/Theme.MyApplication.NoActionBar">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.slideshow.SlideshowFragment" />
-        </activity>
-
-        <activity
-            android:name=".ui.metodo.MediaActivity"
-            android:label="Reseva por Media estadia"
-            android:parentActivityName=".ui.slideshow.SlideshowFragment"
-            android:theme="@style/Theme.MyApplication.NoActionBar">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.slideshow.SlideshowFragment" />
-        </activity>
-
-        <activity
-            android:name=".ui.metodo.EstadiaActivity"
-            android:label="Reseva por Estadia"
-            android:parentActivityName=".ui.slideshow.SlideshowFragment"
-            android:theme="@style/Theme.MyApplication.NoActionBar">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.slideshow.SlideshowFragment" />
-        </activity>
     </application>
 
 </manifest>

@@ -1,50 +1,63 @@
 package com.example.myapplication.ui.models;
 
 
-public class Estadia {
-    private Integer ID;
-    private Integer Precio;
-    private String Horario;
-    private String VehiculoPermitido;
-    private Integer ID_Garage;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
-    public Integer getID() {
-        return ID;
+public class Estadia {
+    @SerializedName("id")
+    @Expose
+    private Integer id;
+    @SerializedName("precio")
+    @Expose
+    private Integer precio;
+    @SerializedName("horario")
+    @Expose
+    private String horario;
+    @SerializedName("vehiculoPermitido")
+    @Expose
+    private String vehiculoPermitido;
+    @SerializedName("idGarage")
+    @Expose
+    private Integer idGarage;
+
+    public Integer getId() {
+        return id;
     }
 
-    public void setID(Integer ID) {
-        this.ID = ID;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public Integer getPrecio() {
-        return Precio;
+        return precio;
     }
 
-    public void setPrecio(Integer Precio) {
-        this.Precio = Precio;
+    public void setPrecio(Integer precio) {
+        this.precio = precio;
     }
 
     public String getHorario() {
-        return Horario;
+        return horario;
     }
 
-    public void setHorario(String Horario) {
-        this.Horario = Horario;
+    public void setHorario(String horario) {
+        this.horario = horario;
     }
 
     public String getVehiculoPermitido() {
-        return VehiculoPermitido;
+        return vehiculoPermitido;
     }
 
-    public void setVehiculoPermitido(String VehiculoPermitido) {
-        this.VehiculoPermitido = VehiculoPermitido;
+    public void setVehiculoPermitido(String vehiculoPermitido) {
+        this.vehiculoPermitido = vehiculoPermitido;
     }
 
-    public Integer getID_Garage() {
-        return ID_Garage;
+    public Integer getIdGarage() {
+        return idGarage;
     }
 
-    public void setID_Garage(Integer ID_Garage) {
-        this.ID_Garage = ID_Garage;
+    public void setIdGarage(Integer idGarage) {
+        this.idGarage = idGarage;
     }
 }

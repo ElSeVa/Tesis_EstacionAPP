@@ -1,10 +1,13 @@
 package com.example.myapplication;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -15,6 +18,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.myapplication.preferencias.Preferencias;
 import com.example.myapplication.ui.api.APIService;
 
 import com.example.myapplication.ui.api.ApiUtils;
@@ -27,6 +31,12 @@ import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.gson.Gson;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -44,8 +54,10 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     private APIService mAPIService;
     private SharedPreferences.Editor editor;
 
-    private SignInButton signInButton;
-
+    private final Map<String, String> mapLogin = new HashMap<>();
+    private final Map<String, String> mapMantener= new HashMap<>();
+    private final Preferencias loginPref = new Preferencias("Login");
+    private final Preferencias mantenerPref = new Preferencias("MantenerUsuario");
     private static final int SIGN_IN_CODE = 8777;
 
     private GoogleApiClient googleApiClient;
@@ -69,7 +81,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
 
-        signInButton = (SignInButton) findViewById(R.id.signInButton);
+        SignInButton signInButton = (SignInButton) findViewById(R.id.signInButton);
 
         signInButton.setOnClickListener(v -> {
             Intent intent = Auth.GoogleSignInApi.getSignInIntent(googleApiClient);
@@ -86,25 +98,66 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
 
     }
 
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if(keyCode == KeyEvent.KEYCODE_BACK){
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage("¿Desea salir de la aplicacion?")
+                    .setPositiveButton("Si", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            if (dialog != null) {
+                                dialog.dismiss();
+                            }
+                            Intent intent = new Intent(Intent.ACTION_MAIN);
+                            intent.addCategory(Intent.CATEGORY_HOME);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(intent);
+                        }
+                    })
+                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+            builder.show();
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
     public void sendPost(String email, String contrasena) {
         Call<Conductor> callConductor = mAPIService.findConductorLogin(email,contrasena);
         callConductor.enqueue(new Callback<Conductor>() {
             @Override
             public void onResponse(Call<Conductor> call, Response<Conductor> response) {
                 if(response.isSuccessful()){
+                    assert response.body() != null;
                     conductor = response.body();
+
                     mostrarMensaje("login exitoso");
                     if(cbRecordarLogin.isChecked()){
+                        mapMantener.put("Check",String.valueOf(cbRecordarLogin.isChecked()));
+                        mapMantener.put("Usuario", email);
+                        mapMantener.put("Password", contrasena);
+                        mantenerPref.setPrefMantener(context,mapMantener);
+                        /*
                         SharedPreferences.Editor preferences = getSharedPreferences("MantenerUsuario", MODE_PRIVATE).edit();
                         preferences.putBoolean("Check", cbRecordarLogin.isChecked());
                         preferences.putString("Usuario",email);
                         preferences.putString("Password",contrasena);
                         preferences.apply();
+                        */
                     }
-                    editor = getSharedPreferences("MyPrefsFile", MODE_PRIVATE).edit();
-                    editor.putInt("idConductor", conductor.getID());
+                    mapLogin.put("idConductor",String.valueOf(conductor.getId()));
+                    mapLogin.put("Vehiculo", conductor.getTipoVehiculo());
+                    loginPref.setPrefLogin(context,mapLogin);
+                    /*
+                    editor = getSharedPreferences("Login", MODE_PRIVATE).edit();
+                    editor.putInt("idConductor", conductor.getId());
                     editor.putString("Vehiculo",conductor.getTipoVehiculo());
                     editor.apply();
+                    */
                     cambiarIntent();
                 }else {
                     mostrarMensaje("login error");
@@ -139,10 +192,15 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                 public void onResponse(Call<Conductor> call, Response<Conductor> response) {
                     if(response.isSuccessful()){
                         conductor = response.body();
-                        editor = getSharedPreferences("MyPrefsFile", MODE_PRIVATE).edit();
-                        editor.putInt("idConductor", conductor.getID());
+                        mapLogin.put("idConductor", String.valueOf(conductor.getId()));
+                        mapLogin.put("Vehiculo", conductor.getTipoVehiculo());
+                        loginPref.setPrefLogin(context,mapLogin);
+                        /*
+                        editor = getSharedPreferences("Login", MODE_PRIVATE).edit();
+                        editor.putInt("idConductor", conductor.getId());
                         editor.putString("Vehiculo",conductor.getTipoVehiculo());
                         editor.apply();
+                        */
                         Intent intent = new Intent(context, MainActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(intent);
@@ -177,6 +235,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         Intent intent = new Intent(context, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
+
     }
 
     @Override

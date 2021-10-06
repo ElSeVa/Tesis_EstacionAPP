@@ -12,8 +12,8 @@ import com.example.myapplication.ui.models.Item_Reservacion;
 import java.util.ArrayList;
 
 public class AdapterBaseReservas extends BaseAdapter {
-    private Context context;
-    private ArrayList<Item_Reservacion> reservas;
+    private final Context context;
+    private final ArrayList<Item_Reservacion> reservas;
 
     public AdapterBaseReservas(Context context, ArrayList<Item_Reservacion> reservas){
         this.reservas = reservas;
@@ -65,8 +65,8 @@ public class AdapterBaseReservas extends BaseAdapter {
 
         tvNumero.setText(String.valueOf(position+1));
         tvGarageNombre.setText(reservacion.getNombre());
-        tvFechaInicial.setText(reservacion.getFecha_inicio());
-        tvFechaFinal.setText(reservacion.getFecha_final());
+        tvFechaInicial.setText(reservacion.getFechaInicio());
+        tvFechaFinal.setText(reservacion.getFechaFinal());
         tvEstado.setText(reservacion.getEstado());
     }
 }

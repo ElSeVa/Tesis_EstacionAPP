@@ -29,16 +29,12 @@ public class RegisterActivity extends AppCompatActivity {
 
     final Context context = RegisterActivity.this;
 
-    Conductor conductor;
     private APIService mAPIService;
-    private SharedPreferences.Editor editor;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.register_activity);
-
-
 
         etNombre = findViewById(R.id.etNombreR);
         etEmail = findViewById(R.id.etEmailR);
@@ -58,15 +54,18 @@ public class RegisterActivity extends AppCompatActivity {
         btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String nombre = etNombre.getText().toString();
-                String email = etEmail.getText().toString();
-                String password = etPassword.getText().toString();
-                String passwordAgain = etPasswordAgain.getText().toString();
-                String tipoVehiculo = etVehiculo.getText().toString();
 
-                if(!nombre.isEmpty() && !email.isEmpty() && !password.isEmpty() && !passwordAgain.isEmpty() && !tipoVehiculo.isEmpty()){
-                    if(password.equals(passwordAgain)){
-                        sendPost(nombre, password, email, tipoVehiculo, String.valueOf(0));
+                Conductor conductor = new Conductor();
+                conductor.setNombre(etNombre.getText().toString());
+                conductor.setEmail(etEmail.getText().toString());
+                conductor.setContrasena(etPassword.getText().toString());
+                conductor.setTipoVehiculo(etVehiculo.getText().toString());
+                conductor.setPropietario(0);
+                String passwordAgain = etPasswordAgain.getText().toString();
+
+                if(verificarDatos(conductor) && !passwordAgain.isEmpty()){
+                    if(conductor.getContrasena().equals(passwordAgain)){
+                        sendPost(conductor);
                     }else {
                         mostrarMensaje("Las contrasenas no coinciden");
                     }
@@ -78,8 +77,8 @@ public class RegisterActivity extends AppCompatActivity {
 
     }
 
-    public void sendPost(String nombre, String contrasena, String email, String tipoVehiculo, String propietario) {
-        Call<Conductor> callConductor = mAPIService.insertConductor(nombre, contrasena, email, tipoVehiculo, propietario);
+    public void sendPost(Conductor conductor) {
+        Call<Conductor> callConductor = mAPIService.insertConductor(conductor);
         callConductor.enqueue(new Callback<Conductor>() {
             @Override
             public void onResponse(Call<Conductor> call, Response<Conductor> response) {
@@ -98,6 +97,13 @@ public class RegisterActivity extends AppCompatActivity {
                 call.cancel();
             }
         });
+    }
+
+    private boolean verificarDatos(Conductor conductor){
+        return !conductor.getNombre().isEmpty()
+                && !conductor.getEmail().isEmpty()
+                && !conductor.getContrasena().isEmpty()
+                && !conductor.getTipoVehiculo().isEmpty();
     }
 
     public void loginIntent(View v){

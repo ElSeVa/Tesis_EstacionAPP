@@ -1,7 +1,6 @@
 package com.example.myapplication.ui.metodo;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -24,9 +23,9 @@ import androidx.navigation.Navigation;
 
 import com.example.myapplication.MainActivity;
 import com.example.myapplication.R;
+import com.example.myapplication.preferencias.Preferencias;
 import com.example.myapplication.ui.api.APIService;
 import com.example.myapplication.ui.api.ApiUtils;
-import com.example.myapplication.ui.comments.ComentariosActivity;
 import com.example.myapplication.ui.models.Conductor;
 import com.example.myapplication.ui.models.Estadia;
 import com.example.myapplication.ui.models.Garage;
@@ -47,10 +46,11 @@ import retrofit2.Response;
 public class MapMuestraFragment extends Fragment implements Callback<List<Imagenes>> {
     private MainActivity activity;
 
-    private TextView tvNombreGarage, tvDireccionGarage, tvDisponibilidadGarage, tvVehiculosEstadia, tvError;
-    private Button btnReserva, btnComentarios;
-
-    private SharedPreferences prefs;
+    private TextView tvNombreGarage;
+    private TextView tvDireccionGarage;
+    private TextView tvDisponibilidadGarage;
+    private TextView tvVehiculosEstadia;
+    private Button btnReserva;
 
     private RatingBar ratingBar;
 
@@ -58,14 +58,14 @@ public class MapMuestraFragment extends Fragment implements Callback<List<Imagen
     private CircleImageView ivFotoPrinc;
 
     private Call<Conductor> conductorCall;
-    private Call<List<Imagenes>> imagenes;
     private Call<List<Garage>> garage;
-    private Call<List<Estadia>> estadia;
     private Call<List<Resena>> resena;
 
-    private Integer idGarage, idConductor;
+    private Integer idGarage;
 
-    private APIService mApiService = ApiUtils.getAPIService();
+    private final Preferencias loginPref = new Preferencias("Login");
+
+    private final APIService mApiService = ApiUtils.getAPIService();
 
 
     @Override
@@ -101,19 +101,19 @@ public class MapMuestraFragment extends Fragment implements Callback<List<Imagen
         tvDireccionGarage = root.findViewById(R.id.tvDireccionGarage);
         tvDisponibilidadGarage = root.findViewById(R.id.tvDisponibilidadGarage);
         tvVehiculosEstadia = root.findViewById(R.id.tvVehiculosEstadia);
-        tvError = root.findViewById(R.id.tvError);
+        TextView tvError = root.findViewById(R.id.tvError);
 
 
         btnReserva = root.findViewById(R.id.btnReservacion);
-        btnComentarios = root.findViewById(R.id.btnComentarios);
+        Button btnComentarios = root.findViewById(R.id.btnComentarios);
 
-        prefs = activity.getSharedPreferences("MyPrefsFile", Context.MODE_PRIVATE);
-        idGarage = prefs.getInt("idGarage", 0);
-        idConductor = prefs.getInt("idConductor", 0);
-        resena = mApiService.findResenaID_Garage(idGarage);
+        //SharedPreferences prefs = activity.getSharedPreferences("Login", Context.MODE_PRIVATE);
+        idGarage = loginPref.getPrefInteger(activity,"idGarage",0);// prefs.getInt("idGarage", 0);
+        int idConductor = loginPref.getPrefInteger(activity,"idConductor",0);// prefs.getInt("idConductor", 0);
+        resena = mApiService.obtenerPorIdGarage(idGarage);
         garage = mApiService.findAllGarage();
-        estadia = mApiService.findAllFilterEstadiaID(idGarage,"Si");
-        imagenes = mApiService.findImagenes(idGarage);
+        Call<List<Estadia>> estadia = mApiService.groupByPorIdGarage(idGarage, "Si");
+        Call<List<Imagenes>> imagenes = mApiService.obtenerImagenesPorIdGarage(idGarage);
 
         conductorCall = mApiService.findConductor(idConductor);
 
@@ -136,13 +136,9 @@ public class MapMuestraFragment extends Fragment implements Callback<List<Imagen
 
         asignarRating();
 
-        btnReserva.setOnClickListener(v -> {
-            Navigation.findNavController(v).navigate(R.id.menuReservaFragment);
-        });
+        btnReserva.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.action_mapMuestraFragment_to_menuReservaFragment));
 
-        btnComentarios.setOnClickListener(v -> {
-            Navigation.findNavController(v).navigate(R.id.comentariosFragment);
-        });
+        btnComentarios.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.action_mapMuestraFragment_to_comentariosFragment));
 
         return root;
     }
@@ -183,12 +179,12 @@ public class MapMuestraFragment extends Fragment implements Callback<List<Imagen
             public void onResponse(@NotNull Call<List<Garage>> call, @NotNull Response<List<Garage>> response) {
                 if(response.isSuccessful() && response.body() != null){
                     for (Garage garage : response.body()){
-                        if(garage.getID().equals(idGarage) && responseEstadia.body() != null){
+                        if(garage.getId().equals(idGarage) && responseEstadia.body() != null){
                             tvNombreGarage.setText(garage.getNombre());
                             tvDireccionGarage.setText(garage.getDireccion());
                             tvDisponibilidadGarage.setText(garage.getDisponibilidad());
                             for (Estadia estadia : responseEstadia.body()){
-                                if(garage.getID().equals(estadia.getID_Garage())){
+                                if(garage.getId().equals(estadia.getIdGarage())){
                                     tvVehiculosEstadia.append(estadia.getVehiculoPermitido() + ", ");
                                 }
                             }

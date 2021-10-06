@@ -1,5 +1,6 @@
 package com.example.myapplication.ui.dialogFragment;
 
+import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.os.Bundle;
@@ -15,6 +16,8 @@ import androidx.fragment.app.FragmentManager;
 
 import com.example.myapplication.R;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Calendar;
 
 public class DatePickerFragment extends DialogFragment
@@ -22,7 +25,7 @@ public class DatePickerFragment extends DialogFragment
     EditText etFecha, etFechaMedia, etFechaEstadia;
 
     @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
+    public @NotNull Dialog onCreateDialog(Bundle savedInstanceState) {
         // Use the current date as the default date in the picker
         final Calendar c = Calendar.getInstance();
         int year = c.get(Calendar.YEAR);
@@ -38,6 +41,7 @@ public class DatePickerFragment extends DialogFragment
         return datePickerDialog;
     }
 
+    @SuppressLint("SetTextI18n")
     public void onDateSet(DatePicker view, int year, int month, int day) {
         FragmentManager fragmanager = getActivity().getSupportFragmentManager();
 

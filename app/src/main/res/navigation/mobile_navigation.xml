@@ -37,7 +37,9 @@
         tools:layout="@layout/fragment_setting">
         <action
             android:id="@+id/action_settingFragment_to_nav_home2"
-            app:destination="@id/nav_home" />
+            app:destination="@id/nav_home"
+            app:popUpTo="@+id/nav_home"
+            app:popUpToInclusive="true"/>
     </fragment>
     <fragment
         android:id="@+id/reservasFragment"
@@ -46,12 +48,15 @@
         tools:layout="@layout/fragment_reservas">
         <action
             android:id="@+id/action_reservasFragment_to_nav_home2"
-            app:destination="@id/nav_home" />
+            app:destination="@id/nav_home"
+            app:popUpTo="@+id/nav_home"
+            app:popUpToInclusive="true"/>
     </fragment>
     <fragment
         android:id="@+id/mapMuestraFragment"
         android:name="com.example.myapplication.ui.metodo.MapMuestraFragment"
-        android:label="Detalles de Garage">
+        android:label="Detalles de Garage"
+        tools:layout="@layout/map_muestra_activity">
         <argument
             android:name="HaceReserva"
             app:argType="boolean"
@@ -68,17 +73,10 @@
             app:destination="@id/comentariosFragment" />
     </fragment>
     <fragment
-        android:id="@+id/horaFragment"
-        android:name="com.example.myapplication.ui.metodo.HoraFragment"
-        android:label="Estadia por Hora">
-        <action
-            android:id="@+id/action_horaFragment_to_nav_home3"
-            app:destination="@id/nav_home" />
-    </fragment>
-    <fragment
         android:id="@+id/menuReservaFragment"
         android:name="com.example.myapplication.ui.slideshow.MenuReservaFragment"
-        android:label="Menu de Reservas">
+        android:label="Menu de Reservas"
+        tools:layout="@layout/fragment_slideshow">
         <action
             android:id="@+id/action_menuReservaFragment_to_estadiaFragment"
             app:destination="@id/estadiaFragment" />
@@ -90,25 +88,43 @@
             app:destination="@id/horaFragment" />
     </fragment>
     <fragment
+        android:id="@+id/horaFragment"
+        android:name="com.example.myapplication.ui.metodo.HoraFragment"
+        android:label="Estadia por Hora"
+        tools:layout="@layout/fragment_reserva_hora">
+        <action
+            android:id="@+id/action_horaFragment_to_nav_home3"
+            app:destination="@id/nav_home"
+            app:popUpTo="@+id/nav_home"
+            app:popUpToInclusive="true"/>
+    </fragment>
+    <fragment
         android:id="@+id/mediaFragment"
         android:name="com.example.myapplication.ui.metodo.MediaFragment"
-        android:label="Media Estadia">
+        android:label="Media Estadia"
+        tools:layout="@layout/fragment_reserva_media">
         <action
             android:id="@+id/action_mediaFragment_to_nav_home3"
-            app:destination="@id/nav_home" />
+            app:destination="@id/nav_home"
+            app:popUpTo="@+id/nav_home"
+            app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/estadiaFragment"
         android:name="com.example.myapplication.ui.metodo.EstadiaFragment"
-        android:label="Estadia">
+        android:label="Estadia"
+        tools:layout="@layout/fragment_reserva_estadia">
         <action
             android:id="@+id/action_estadiaFragment_to_nav_home3"
-            app:destination="@id/nav_home" />
+            app:destination="@id/nav_home"
+            app:popUpTo="@+id/nav_home"
+            app:popUpToInclusive="true"/>
     </fragment>
     <fragment
         android:id="@+id/comentariosFragment"
         android:name="com.example.myapplication.ui.comments.ComentariosFragment"
-        android:label="Comentarios" />
+        android:label="Comentarios"
+        tools:layout="@layout/activity_comments"/>
     <fragment
         android:id="@+id/nav_perfil"
         android:name="com.example.myapplication.ui.profile.ProfileFragment"
@@ -121,9 +137,11 @@
     <fragment
         android:id="@+id/takePromotionFragment"
         android:name="com.example.myapplication.ui.promotions.TakePromotionFragment"
-        android:label="Promociones" />
+        android:label="Promociones"
+        tools:layout="@layout/fragment_take_promotion"/>
     <fragment
         android:id="@+id/nav_promocion"
         android:name="com.example.myapplication.ui.promotions.GivePromotionFragment"
-        android:label="Promociones" />
+        android:label="Promociones"
+        tools:layout="@layout/fragment_give_promotion"/>
 </navigation>

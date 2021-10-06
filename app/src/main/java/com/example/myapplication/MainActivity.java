@@ -1,64 +1,59 @@
 package com.example.myapplication;
 
+import android.app.AlertDialog;
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.util.Log;
-import android.view.MenuItem;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.Menu;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.SearchView;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.myapplication.notificaciones.NotificacionesHelper;
+import com.example.myapplication.notificaciones.NotificacionesServices;
+import com.example.myapplication.preferencias.Preferencias;
+import com.example.myapplication.ui.Temporizador;
 import com.example.myapplication.ui.api.APIService;
 import com.example.myapplication.ui.api.ApiUtils;
-import com.example.myapplication.ui.gallery.GalleryFragment;
 import com.example.myapplication.ui.home.HomeFragment;
-import com.example.myapplication.ui.mapabox.MapaBox;
 import com.example.myapplication.ui.models.Conductor;
-import com.example.myapplication.ui.models.Estadia;
-import com.example.myapplication.ui.slideshow.SlideshowFragment;
+import com.example.myapplication.ui.models.Reservacion;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApi;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
-import com.mapbox.api.geocoding.v5.MapboxGeocoding;
-import com.mapbox.api.geocoding.v5.models.CarmenFeature;
-import com.mapbox.api.geocoding.v5.models.GeocodingResponse;
-import com.mapbox.geojson.Point;
-import com.mapbox.mapboxsdk.Mapbox;
-import com.mapbox.mapboxsdk.camera.CameraPosition;
-import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
-import com.mapbox.mapboxsdk.geometry.LatLng;
-import com.mapbox.mapboxsdk.maps.MapView;
-import com.mapbox.mapboxsdk.maps.MapboxMap;
-import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.NavDestination;
 import androidx.navigation.Navigation;
@@ -70,8 +65,9 @@ import androidx.appcompat.widget.Toolbar;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import retrofit2.Call;
@@ -84,13 +80,19 @@ public class MainActivity extends AppCompatActivity implements MyDrawerControlle
     final Context context = MainActivity.this;
     private TextView tvNombreUsuario,tvEmailUsuario;
     private final APIService mAPIService = ApiUtils.getAPIService();
-    private int idConductor;
+    private Integer idConductor;
     private NavigationView navigationView;
-    private ImageView imageView;
+    private ImageView ivCabecera;
     DrawerLayout drawer;
     Toolbar toolbar;
-    SharedPreferences.Editor a;
+    SharedPreferences.Editor cuenta;
     Uri photo = null;
+    private static String TAG = "Servicio";
+
+
+    private final Map<String, String> mapCuenta= new HashMap<>();
+    private final Preferencias loginPref = new Preferencias("Login");
+    private final Preferencias cuentaPref = new Preferencias("Cuenta");
 
     private GoogleApiClient googleApiClient;
 
@@ -116,14 +118,20 @@ public class MainActivity extends AppCompatActivity implements MyDrawerControlle
         if(googleSignInResult.isSuccess()){
             GoogleSignInAccount account = googleSignInResult.getSignInAccount();
             assert account != null;
-            Glide.with(this).load(account.getPhotoUrl()).override(200).into(imageView);
+            Glide.with(this).load(account.getPhotoUrl()).override(200).into(ivCabecera);
             tvNombreUsuario.setText(account.getDisplayName());
             tvEmailUsuario.setText(account.getEmail());
-            a = getSharedPreferences("Cuenta", MODE_PRIVATE).edit();
-            a.putInt("idConductor",idConductor);
-            a.putString("Nombre",account.getDisplayName());
-            a.putString("Uri", Objects.requireNonNull(account.getPhotoUrl()).toString());
-            a.apply();
+            mapCuenta.put("idConductor",String.valueOf(idConductor));
+            mapCuenta.put("Nombre",account.getDisplayName());
+            mapCuenta.put("Uri",Objects.requireNonNull(account.getPhotoUrl()).toString());
+            cuentaPref.setPrefCuenta(context,mapCuenta);
+            /*
+            cuenta = getSharedPreferences("Cuenta", MODE_PRIVATE).edit();
+            cuenta.putInt("idConductor",idConductor);
+            cuenta.putString("Nombre",account.getDisplayName());
+            cuenta.putString("Uri", Objects.requireNonNull(account.getPhotoUrl()).toString());
+            cuenta.apply();
+            */
             photo = account.getPhotoUrl();
             Log.d("MIAPP",account.getPhotoUrl().toString());
         }else{
@@ -156,12 +164,17 @@ public class MainActivity extends AppCompatActivity implements MyDrawerControlle
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
 
-        SharedPreferences prefs = getSharedPreferences("MyPrefsFile", MODE_PRIVATE);
-        idConductor = prefs.getInt("idConductor",0);
+        startService(new Intent(this, NotificacionesServices.class));
+
+        //NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+        //SharedPreferences prefs = getSharedPreferences("Login", MODE_PRIVATE);
+        idConductor = loginPref.getPrefInteger(context,"idConductor",0);
+        //idConductor = prefs.getInt("idConductor",0);
         Call<Conductor> conductorCall = mAPIService.findConductor(idConductor);
+
         navigationView = findViewById(R.id.nav_view);
         View hView = navigationView.getHeaderView(0);
-        imageView = hView.findViewById(R.id.imageView);
+        ivCabecera = hView.findViewById(R.id.ivCabecera);
         tvNombreUsuario = hView.findViewById(R.id.tvNombreUsuario);
         tvEmailUsuario = hView.findViewById(R.id.tvEmailUsuario);
 
@@ -174,13 +187,17 @@ public class MainActivity extends AppCompatActivity implements MyDrawerControlle
                         Menu menu = navigationView.getMenu();
                         menu.setGroupVisible(R.id.groupGarage,false);
                     }
-                    a = getSharedPreferences("Cuenta", MODE_PRIVATE).edit();
-                    a.putInt("idConductor",idConductor);
-                    a.putString("Nombre",conductor.getNombre());
+                    mapCuenta.put("idConductor",String.valueOf(idConductor));
+                    mapCuenta.put("Nombre", conductor.getNombre());
+                    //cuenta = getSharedPreferences("Cuenta", MODE_PRIVATE).edit();
+                    //cuenta.putInt("idConductor",idConductor);
+                    //cuenta.putString("Nombre",conductor.getNombre());
                     if(photo!=null){
-                        a.putString("Uri",photo.toString());
+                        mapCuenta.put("Uri",photo.toString());
+                        //cuenta.putString("Uri",photo.toString());
                     }
-                    a.apply();
+                    cuentaPref.setPrefCuenta(context,mapCuenta);
+                    //cuenta.apply();
                     tvNombreUsuario.setText(conductor.getNombre());
                     tvEmailUsuario.setText(conductor.getEmail());
                 }
@@ -230,7 +247,14 @@ public class MainActivity extends AppCompatActivity implements MyDrawerControlle
             }
         });
 
+        //FragmentManager fragmentManager = getFragmentManager();
+        //fragmentManager.findFragmentById(R.id.btnReservaHora);
+
     }
+
+
+
+
 
     private boolean verificacionDestino(NavDestination destination){
         return destination.getId() == R.id.nav_gallery
@@ -248,12 +272,13 @@ public class MainActivity extends AppCompatActivity implements MyDrawerControlle
         SharedPreferences.Editor Cuenta = getSharedPreferences("Cuenta", MODE_PRIVATE).edit();
         Cuenta.clear();
         Cuenta.apply();
-        SharedPreferences.Editor prefs = getSharedPreferences("MyPrefsFile", MODE_PRIVATE).edit();
+        SharedPreferences.Editor prefs = getSharedPreferences("Login", MODE_PRIVATE).edit();
         prefs.clear();
         prefs.apply();
         SharedPreferences.Editor Mantener = getSharedPreferences("MantenerUsuario", MODE_PRIVATE).edit();
         Mantener.clear();
         Mantener.apply();
+        stopService(new Intent(this, NotificacionesServices.class));
         Auth.GoogleSignInApi.signOut(googleApiClient).setResultCallback(new ResultCallback<Status>() {
             @Override
             public void onResult(@NonNull @NotNull Status status) {
@@ -299,4 +324,5 @@ public class MainActivity extends AppCompatActivity implements MyDrawerControlle
     public void onConnectionFailed(@NonNull @NotNull ConnectionResult connectionResult) {
         Toast.makeText(context, "No se puedo iniciar sesion", Toast.LENGTH_SHORT).show();
     }
+
 }

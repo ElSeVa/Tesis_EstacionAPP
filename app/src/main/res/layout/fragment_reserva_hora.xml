@@ -4,7 +4,7 @@
      xmlns:tools="http://schemas.android.com/tools"
      android:layout_width="match_parent"
      android:layout_height="match_parent"
-     tools:context=".ui.metodo.HoraActivity">
+     tools:context=".ui.metodo.HoraFragment">
 
      <TextView
          android:id="@+id/tvHoraTitulo"

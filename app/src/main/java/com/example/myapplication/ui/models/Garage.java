@@ -1,58 +1,73 @@
 package com.example.myapplication.ui.models;
 
-public class Garage {
-    private Integer ID;
-    private String Nombre;
-    private String Direccion;
-    private String Disponibilidad;
-    private String Telefono;
-    private Integer ID_Conductor;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
-    public Integer getID() {
-        return ID;
+public class Garage {
+    @SerializedName("id")
+    @Expose
+    private Integer id;
+    @SerializedName("nombre")
+    @Expose
+    private String nombre;
+    @SerializedName("direccion")
+    @Expose
+    private String direccion;
+    @SerializedName("disponibilidad")
+    @Expose
+    private String disponibilidad;
+    @SerializedName("telefono")
+    @Expose
+    private String telefono;
+    @SerializedName("idConductor")
+    @Expose
+    private Integer idConductor;
+
+    public Integer getId() {
+        return id;
     }
 
-    public void setID(Integer ID) {
-        this.ID = ID;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getNombre() {
-        return Nombre;
+        return nombre;
     }
 
     public void setNombre(String nombre) {
-        Nombre = nombre;
+        this.nombre = nombre;
     }
 
     public String getDireccion() {
-        return Direccion;
+        return direccion;
     }
 
     public void setDireccion(String direccion) {
-        Direccion = direccion;
+        this.direccion = direccion;
     }
 
     public String getDisponibilidad() {
-        return Disponibilidad;
+        return disponibilidad;
     }
 
     public void setDisponibilidad(String disponibilidad) {
-        Disponibilidad = disponibilidad;
+        this.disponibilidad = disponibilidad;
     }
 
     public String getTelefono() {
-        return Telefono;
+        return telefono;
     }
 
     public void setTelefono(String telefono) {
-        Telefono = telefono;
+        this.telefono = telefono;
     }
 
-    public Integer getID_Conductor() {
-        return ID_Conductor;
+    public Integer getIdConductor() {
+        return idConductor;
     }
 
-    public void setID_Conductor(Integer ID_Conductor) {
-        this.ID_Conductor = ID_Conductor;
+    public void setIdConductor(Integer idConductor) {
+        this.idConductor = idConductor;
     }
 }

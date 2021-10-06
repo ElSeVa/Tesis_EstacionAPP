@@ -1,7 +1,7 @@
 package com.example.myapplication.ui.metodo;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.InputType;
 import android.transition.TransitionInflater;
@@ -18,15 +18,19 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.NavHostController;
+import androidx.navigation.NavOptions;
 import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.myapplication.MainActivity;
 import com.example.myapplication.R;
+import com.example.myapplication.preferencias.Preferencias;
 import com.example.myapplication.ui.api.APIService;
 import com.example.myapplication.ui.api.ApiUtils;
 import com.example.myapplication.ui.dialogFragment.DatePickerFragment;
 import com.example.myapplication.ui.dialogFragment.TimePickerFragment;
-import com.example.myapplication.ui.home.HomeFragment;
 import com.example.myapplication.ui.models.Estadia;
 import com.example.myapplication.ui.models.Reservacion;
 
@@ -50,6 +54,7 @@ import retrofit2.Response;
 public class HoraFragment extends Fragment {
 
     private MainActivity activity;
+    @SuppressLint("UseSwitchCompatOrMaterialCode")
     private Switch switch1;
     private TextView tvHoraFTitulo,tvFechaTitulo;
     private EditText etFecha, etHora, etHoraF;
@@ -58,10 +63,13 @@ public class HoraFragment extends Fragment {
     private Date date;
     private int idConductor, idGarage;
     private final APIService mAPIService = ApiUtils.getAPIService();
-    private List<Estadia> listEstadia = new ArrayList<>();
+    private final List<Estadia> listEstadia = new ArrayList<>();
     private Estadia estadia;
     private String fecha, horaF, horaI, vehiculo;
     private Button btnReservaHora;
+    private final Preferencias loginPref = new Preferencias("Login");
+    private Preferencias tiempoPref;
+    private final HashMap<String, String> mapTiempo= new HashMap<>();
 
     private int cantidad, precio;
     private int dias = 0;
@@ -100,6 +108,7 @@ public class HoraFragment extends Fragment {
         return root;
     }
 
+    @SuppressLint("SimpleDateFormat")
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         calInicio = new GregorianCalendar();
         calFinal = new GregorianCalendar();
@@ -113,10 +122,10 @@ public class HoraFragment extends Fragment {
 
         etFecha.setOnClickListener(this::showFecha);
 
-        SharedPreferences prefs = activity.getSharedPreferences("MyPrefsFile", Context.MODE_PRIVATE);
-        idConductor = prefs.getInt("idConductor", 0);
-        idGarage = prefs.getInt("idGarage", 0);
-        vehiculo = prefs.getString("Vehiculo", null);
+        //SharedPreferences prefs = activity.getSharedPreferences("Login", Context.MODE_PRIVATE);
+        idConductor = loginPref.getPrefInteger(activity,"idConductor",0);//prefs.getInt("idConductor", 0);
+        idGarage = loginPref.getPrefInteger(activity,"idGarage",0);//prefs.getInt("idGarage", 0);
+        vehiculo = loginPref.getPrefString(activity,"Vehiculo",null);//prefs.getString("Vehiculo", null);
 
         establecerEstadia();
 
@@ -199,8 +208,8 @@ public class HoraFragment extends Fragment {
                 if(precio!=0){
                     Toast.makeText(activity, "Precio: "+ precio + " ,Estadia: Hora, Cantidad: " +cantidad, Toast.LENGTH_SHORT).show();
                     Toast.makeText(activity, "Fecha_Inicio: " + df.format(calFechaI.getTime()) + ", Fecha_Final: " + df.format(calFechaF.getTime()), Toast.LENGTH_SHORT).show();
-                    Map<String, String> fields = getFields();
-                    Call<Reservacion> callReserva = mAPIService.insertsReserva(fields);
+                    Reservacion reservacion = new Reservacion(precio,"Hora",cantidad,df.format(calFechaI.getTime()),df.format(calFechaF.getTime()),"Esperando",idConductor,idGarage);
+                    Call<Reservacion> callReserva = mAPIService.insertsReserva(reservacion);
                     //Call<Reservacion> callReserva = mAPIService.insertReserva(precio,"Hora",cantidad,df.format(calFechaI.getTime()),df.format(calFechaF.getTime()),"Esperando",idConductor,idGarage);
                     callReserva.enqueue(new Callback<Reservacion>() {
                         @Override
@@ -208,12 +217,21 @@ public class HoraFragment extends Fragment {
                             if(response.isSuccessful() && response.body() != null){
                                 Toast.makeText(activity,"Registro Exitoso", Toast.LENGTH_SHORT).show();
                                 Reservacion reservacion = response.body();
+                                tiempoPref = new Preferencias("Tiempo"+reservacion.getIdConductor());
+                                mapTiempo.put("seEstaEjecutando",String.valueOf(true));
+                                mapTiempo.put("idReservacion",String.valueOf(reservacion.getId()));
+                                tiempoPref.setPrefTiempos(activity,mapTiempo);
+                                /*
                                 SharedPreferences.Editor pref = activity.getSharedPreferences("Tiempo", Context.MODE_PRIVATE).edit();
-                                pref.putBoolean("timerRunning",true);
-                                pref.putInt("idReservacion",reservacion.getID());
+                                pref.putBoolean("seEstaEjecutando",true);
+                                pref.putInt("idReservacion",reservacion.getId());
                                 pref.apply();
+                                */
+                                //NavOptions.Builder navBuilder = new NavOptions.Builder();
+                                //NavOptions navOptions = navBuilder.setPopUpTo(R.id.nav_home,true).build();
+                                //NavHostFragment.findNavController(HoraFragment.this).navigate(R.id.nav_home, null, navOptions);
+                                Navigation.findNavController(v).navigate(R.id.action_horaFragment_to_nav_home3);
 
-                                Navigation.findNavController(v).navigate(R.id.nav_home);
                             }else{
                                 Toast.makeText(activity,"Registro Fallido", Toast.LENGTH_SHORT).show();
                             }
@@ -248,6 +266,7 @@ public class HoraFragment extends Fragment {
         }
     }
 
+    @SuppressLint("SimpleDateFormat")
     private int calcularCantidadDias(String fecha){
         calInicio = new GregorianCalendar();
         calFinal = new GregorianCalendar();
@@ -263,14 +282,13 @@ public class HoraFragment extends Fragment {
         calFinal.setTime(date);
         int startTime = calInicio.get(Calendar.DAY_OF_YEAR);
         int endTime = calFinal.get(Calendar.DAY_OF_YEAR);
-        int diffTime = endTime - startTime;
-/*
+        /*
         long startTime = calInicio.getTimeInMillis();
         long endTime = calFinal.getTimeInMillis();
         long diffTime = endTime - startTime;
         long diffDays = diffTime / (1000 * 60 * 60 * 24);
 */
-        return diffTime;
+        return endTime - startTime;
     }
 
     private Map<String, String> getFields(){
@@ -286,6 +304,7 @@ public class HoraFragment extends Fragment {
         return fields;
     }
 
+    @SuppressLint("SimpleDateFormat")
     private int calcularCantidadHora(String hora){
         calInicio = new GregorianCalendar();
         calFinal = new GregorianCalendar();
@@ -298,6 +317,7 @@ public class HoraFragment extends Fragment {
             e.printStackTrace();
         }
 
+        assert date != null;
         calFinal.setTime(date);
         int horaInicio = calInicio.get(Calendar.HOUR_OF_DAY);
         int horaFinal = calFinal.get(Calendar.HOUR_OF_DAY);
@@ -311,29 +331,28 @@ public class HoraFragment extends Fragment {
     }
 
     private void establecerEstadia(){
-        Call<List<Estadia>> estadiaCall = mAPIService.findEstadiaTipos(idGarage,vehiculo,"Hora");
+        Call<Estadia> estadiaCall = mAPIService.verificarEstadia(idGarage,vehiculo,"Hora");
 
-        estadiaCall.enqueue(new Callback<List<Estadia>>() {
+        estadiaCall.enqueue(new Callback<Estadia>() {
             @Override
-            public void onResponse(Call<List<Estadia>> call, Response<List<Estadia>> response) {
+            public void onResponse(Call<Estadia> call, @NotNull Response<Estadia> response) {
                 if(!response.isSuccessful() && response.body() == null){
-                    Toast.makeText(activity, String.valueOf(response.code()), Toast.LENGTH_SHORT).show();
-                    assert response.body() != null;
+                    Toast.makeText(activity,"Paso 1 " + response.code(), Toast.LENGTH_SHORT).show();
                 }else{
-                    Toast.makeText(activity, String.valueOf(response.code()), Toast.LENGTH_SHORT).show();
-                    assert response.body() != null;
+                    Toast.makeText(activity,"Paso 2 " + response.code(), Toast.LENGTH_SHORT).show();
                 }
-                for (Estadia s : response.body()){
-                    Toast.makeText(activity, "Estado: " + s.getPrecio(), Toast.LENGTH_SHORT).show();
+                Estadia estadia = response.body();
+                if (estadia != null) {
+                    Toast.makeText(activity, "Estado: " + estadia.getPrecio(), Toast.LENGTH_SHORT).show();
                 }
-                listEstadia.addAll(response.body());
+                listEstadia.add(estadia);
                 if(!listEstadia.isEmpty()){
                     Toast.makeText(activity, "Hay Estadia", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
-            public void onFailure(Call<List<Estadia>> call, Throwable t) {
+            public void onFailure(Call<Estadia> call, Throwable t) {
                 Toast.makeText(activity, String.valueOf(t.getMessage()), Toast.LENGTH_SHORT).show();
             }
         });

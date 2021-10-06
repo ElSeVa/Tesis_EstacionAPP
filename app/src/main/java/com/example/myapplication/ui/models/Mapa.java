@@ -1,17 +1,29 @@
 package com.example.myapplication.ui.models;
 
-public class Mapa {
-    private Integer ID;
-    private String latitud;
-    private String longitud;
-    private Integer ID_Garage;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
-    public Integer getID() {
-        return ID;
+public class Mapa {
+
+    @SerializedName("id")
+    @Expose
+    private Integer id;
+    @SerializedName("latitud")
+    @Expose
+    private String latitud;
+    @SerializedName("longitud")
+    @Expose
+    private String longitud;
+    @SerializedName("idGarage")
+    @Expose
+    private Integer idGarage;
+
+    public Integer getId() {
+        return id;
     }
 
-    public void setID(Integer ID) {
-        this.ID = ID;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getLatitud() {
@@ -30,11 +42,11 @@ public class Mapa {
         this.longitud = longitud;
     }
 
-    public Integer getID_Garage() {
-        return ID_Garage;
+    public Integer getIdGarage() {
+        return idGarage;
     }
 
-    public void setID_Garage(Integer ID_Garage) {
-        this.ID_Garage = ID_Garage;
+    public void setIdGarage(Integer idGarage) {
+        this.idGarage = idGarage;
     }
 }

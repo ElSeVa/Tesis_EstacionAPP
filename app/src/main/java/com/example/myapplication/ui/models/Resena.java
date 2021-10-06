@@ -1,49 +1,62 @@
 package com.example.myapplication.ui.models;
 
-public class Resena {
-    private int ID;
-    private String Usuario;
-    private String Texto;
-    private int Valoracion;
-    private int ID_Garage;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
-    public Integer getID() {
-        return ID;
+public class Resena {
+    @SerializedName("id")
+    @Expose
+    private int id;
+    @SerializedName("usuario")
+    @Expose
+    private String usuario;
+    @SerializedName("texto")
+    @Expose
+    private String texto;
+    @SerializedName("valoracion")
+    @Expose
+    private int valoracion;
+    @SerializedName("idGarage")
+    @Expose
+    private int idGarage;
+
+    public int getId() {
+        return id;
     }
 
-    public void setID(Integer ID) {
-        this.ID = ID;
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getUsuario() {
-        return Usuario;
+        return usuario;
     }
 
     public void setUsuario(String usuario) {
-        Usuario = usuario;
+        this.usuario = usuario;
     }
 
     public String getTexto() {
-        return Texto;
+        return texto;
     }
 
     public void setTexto(String texto) {
-        Texto = texto;
+        this.texto = texto;
     }
 
-    public Integer getValoracion() {
-        return Valoracion;
+    public int getValoracion() {
+        return valoracion;
     }
 
-    public void setValoracion(Integer valoracion) {
-        Valoracion = valoracion;
+    public void setValoracion(int valoracion) {
+        this.valoracion = valoracion;
     }
 
-    public Integer getID_Garage() {
-        return ID_Garage;
+    public int getIdGarage() {
+        return idGarage;
     }
 
-    public void setID_Garage(Integer ID_Garage) {
-        this.ID_Garage = ID_Garage;
+    public void setIdGarage(int idGarage) {
+        this.idGarage = idGarage;
     }
 }

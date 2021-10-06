@@ -22,6 +22,7 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.example.myapplication.preferencias.Preferencias;
 import com.example.myapplication.ui.api.APIService;
 import com.example.myapplication.ui.api.ApiUtils;
 import com.example.myapplication.ui.home.HomeFragment;
@@ -33,61 +34,25 @@ import org.jetbrains.annotations.NotNull;
 import org.w3c.dom.ls.LSInput;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link SettingFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class SettingFragment extends Fragment{
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+
     private Spinner spVehiculos, spHorario, spPrecio;
     private MainActivity activity;
-    private APIService mAPIService = ApiUtils.getAPIService();
-    private List<String> items = new ArrayList<>();
-    private Button btnActualizar, btnLimpiar;
-    private String[] itemsHorario = new String[]{"Hora","Media Estadia","Estadia"};
-    private String[] itemsPrecio = new String[]{"Alto","Bajo"};
-    private ArrayAdapter<String> adapter;
-    private SharedPreferences.Editor editor;
-
-
-
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    public SettingFragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment SettingFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static SettingFragment newInstance(String param1, String param2) {
-        SettingFragment fragment = new SettingFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
+    private final APIService mAPIService = ApiUtils.getAPIService();
+    private final List<String> items = new ArrayList<>();
+    private final String[] itemsHorario = new String[]{"Hora","Media Estadia","Estadia"};
+    private final String[] itemsPrecio = new String[]{"Alto","Bajo"};
+    private final Map<String, String> mapFiltros = new HashMap<>();
+    private final Preferencias filtrosPref = new Preferencias("Filtros");
 
     @Override
     public void onAttach(@NotNull Context context) {
@@ -98,13 +63,7 @@ public class SettingFragment extends Fragment{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-
         crearItems();
-
     }
 
 
@@ -118,21 +77,22 @@ public class SettingFragment extends Fragment{
         spHorario =(Spinner) root.findViewById(R.id.spHorario);
         spPrecio =(Spinner) root.findViewById(R.id.spPrecio);
 
-        adapter = new ArrayAdapter<>(activity, android.R.layout.simple_dropdown_item_1line,itemsHorario);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(activity, android.R.layout.simple_dropdown_item_1line, itemsHorario);
         spHorario.setAdapter(adapter);
         adapter = new ArrayAdapter<>(activity, android.R.layout.simple_dropdown_item_1line,itemsPrecio);
         spPrecio.setAdapter(adapter);
 
-        btnActualizar = root.findViewById(R.id.btnActualizar);
-        btnLimpiar = root.findViewById(R.id.btnLimpiar);
+        Button btnActualizar = root.findViewById(R.id.btnActualizar);
+        Button btnLimpiar = root.findViewById(R.id.btnLimpiar);
 
         SharedPreferences preferences = activity.getSharedPreferences("Filtros", Context.MODE_PRIVATE);
         if(preferences != null){
-            String bo = preferences.getString("filtro",null);
-            if(bo.equals("Si")){
-                String vehiculo = preferences.getString("vehiculo",null);
-                String horario = preferences.getString("horario",null);
-                String precio = preferences.getString("precio",null);
+            String haceFiltro = filtrosPref.getPrefString(activity,"filtro","No");
+            String bo = preferences.getString("filtro","No");
+            if(haceFiltro.equals("Si")){
+                String vehiculo = filtrosPref.getPrefString(activity,"vehiculo",null);//preferences.getString("vehiculo",null);
+                String horario = filtrosPref.getPrefString(activity,"horario",null);//preferences.getString("horario",null);
+                String precio = filtrosPref.getPrefString(activity,"precio",null);//preferences.getString("precio",null);
                 seleccionSpinnerHorario(horario);
                 seleccionSpinnerPrecio(precio);
                 seleccionSpinnerVehiculo(items,vehiculo);
@@ -144,12 +104,12 @@ public class SettingFragment extends Fragment{
             String horario = spHorario.getSelectedItem().toString();
             String precio = spPrecio.getSelectedItem().toString();
             enviarFiltros(vehiculo,horario,precio,"Si");
-            Navigation.findNavController(v).navigate(R.id.nav_home);
+            Navigation.findNavController(v).navigate(R.id.action_settingFragment_to_nav_home2);
         });
 
         btnLimpiar.setOnClickListener(v -> {
             enviarFiltros("","","","No");
-            Navigation.findNavController(v).navigate(R.id.nav_home);
+            Navigation.findNavController(v).navigate(R.id.action_settingFragment_to_nav_home2);
         });
         activity.setDrawer_unlocker();
         return root;
@@ -193,13 +153,19 @@ public class SettingFragment extends Fragment{
     }
 
     private void enviarFiltros(String vehiculo, String horario, String precio, String filtro){
-        editor = activity.getSharedPreferences("Filtros", Context.MODE_PRIVATE).edit();
+        mapFiltros.put("vehiculo",vehiculo);
+        mapFiltros.put("horario",horario);
+        mapFiltros.put("precio",precio);
+        mapFiltros.put("filtro",filtro);
+        filtrosPref.setPrefFiltros(activity,mapFiltros);
+        /*
+        SharedPreferences.Editor editor = activity.getSharedPreferences("Filtros", Context.MODE_PRIVATE).edit();
         editor.putString("vehiculo",vehiculo);
         editor.putString("horario",horario);
         editor.putString("precio",precio);
         editor.putString("filtro",filtro);
         editor.apply();
-
+        */
         //Toast.makeText(activity, "Tipo Vehiculo: " + vehiculo + ", Horario: "+ horario+", Precio: "+precio, Toast.LENGTH_SHORT).show();
 /*
         Fragment nuevoFragmento = new HomeFragment();
@@ -214,11 +180,12 @@ public class SettingFragment extends Fragment{
     }
 
     private void crearItems(){
-        Call<List<Estadia>> estadia = mAPIService.findAllFilterEstadia("Si");
+        Call<List<Estadia>> estadia = mAPIService.groupBy("Si");
         estadia.enqueue(new Callback<List<Estadia>>() {
             @Override
             public void onResponse(Call<List<Estadia>> call, Response<List<Estadia>> response) {
                 if(response.isSuccessful()){
+                    assert response.body() != null;
                     for (Estadia estadia : response.body()){
                         items.add(estadia.getVehiculoPermitido());
                     }
@@ -234,8 +201,6 @@ public class SettingFragment extends Fragment{
                 t.printStackTrace();
             }
         });
-
-
 
     }
 

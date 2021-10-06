@@ -24,6 +24,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.myapplication.AdapterRecycleComentarios;
 import com.example.myapplication.MainActivity;
 import com.example.myapplication.R;
+import com.example.myapplication.preferencias.Preferencias;
 import com.example.myapplication.ui.api.APIService;
 import com.example.myapplication.ui.api.ApiUtils;
 import com.example.myapplication.ui.models.Conductor;
@@ -34,7 +35,9 @@ import com.example.myapplication.ui.models.Resena;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -72,6 +75,7 @@ public class ComentariosFragment extends Fragment implements Callback<List<Image
     private int idGarage;
 
     private AdapterRecycleComentarios adapterRecycleComentarios;
+    private final Preferencias loginPref = new Preferencias("Login");
 
     @Override
     public void onAttach(@NotNull Context context) {
@@ -106,13 +110,13 @@ public class ComentariosFragment extends Fragment implements Callback<List<Image
         mAPIService = ApiUtils.getAPIService();
 
 
-        SharedPreferences sharedPreferences = activity.getSharedPreferences("MyPrefsFile", Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = activity.getSharedPreferences("Login", Context.MODE_PRIVATE);
         if(sharedPreferences != null){
-            idGarage = sharedPreferences.getInt("idGarage",0);
-            int idConductor = sharedPreferences.getInt("idConductor",0);
+            idGarage = loginPref.getPrefInteger(activity,"idGarage",0);//sharedPreferences.getInt("idGarage",0);
+            int idConductor = loginPref.getPrefInteger(activity,"idConductor",0);//sharedPreferences.getInt("idConductor",0);
             callConductor = mAPIService.findConductor(idConductor);
-            callResena = mAPIService.findResenaID_Garage(idGarage);
-            callImagenes = mAPIService.findImagenes(idGarage);
+            callResena = mAPIService.obtenerPorIdGarage(idGarage);
+            callImagenes = mAPIService.obtenerImagenesPorIdGarage(idGarage);
             callGarage = mAPIService.findGarage(idGarage);
             establecerConductor();
         }
@@ -155,7 +159,12 @@ public class ComentariosFragment extends Fragment implements Callback<List<Image
             String nombre = conductor.getNombre();
             String texto = etTextoComentario.getText().toString();
             int valoracion = (int) Math.abs(rbValoracion.getRating());
-            postResena = mAPIService.insertResena(nombre,texto,valoracion,idGarage);
+            Resena resena = new Resena();
+            resena.setUsuario(nombre);
+            resena.setTexto(texto);
+            resena.setValoracion(valoracion);
+            resena.setIdGarage(idGarage);
+            postResena = mAPIService.insertResena(resena);
             postResena.enqueue(new Callback<Resena>() {
                 @Override
                 public void onResponse(@NotNull Call<Resena> call, @NotNull Response<Resena> response) {
@@ -163,7 +172,6 @@ public class ComentariosFragment extends Fragment implements Callback<List<Image
                         etTextoComentario.setText("");
                         rbValoracion.setRating(0);
                         mostrarMensaje("Exito");
-                        Resena resena = response.body();
                         resenaArrayList.add(resena);
                         adapterRecycleComentarios.notifyItemInserted(resenaArrayList.size());
                     }else{

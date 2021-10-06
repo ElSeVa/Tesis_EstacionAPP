@@ -1,6 +1,7 @@
 package com.example.myapplication.ui.home;
 
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -11,6 +12,7 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.transition.TransitionInflater;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,18 +24,17 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 import androidx.navigation.Navigation;
 
 import com.example.myapplication.MainActivity;
 import com.example.myapplication.R;
-import com.example.myapplication.ui.CallReservaciones;
+import com.example.myapplication.preferencias.Preferencias;
+import com.example.myapplication.ui.ObserverReservaciones;
 import com.example.myapplication.ui.Temporizador;
 import com.example.myapplication.ui.api.APIService;
 import com.example.myapplication.ui.api.ApiUtils;
 import com.example.myapplication.ui.mapabox.LocationListeningCallback;
 import com.example.myapplication.ui.mapabox.MapaBox;
-import com.example.myapplication.ui.metodo.MapMuestra;
 import com.example.myapplication.ui.models.Estadia;
 import com.example.myapplication.ui.models.Garage;
 import com.example.myapplication.ui.models.Mapa;
@@ -70,9 +71,9 @@ import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
-import java.util.Observable;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -81,6 +82,7 @@ import retrofit2.Response;
 import static android.os.Looper.getMainLooper;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconImage;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconOffset;
+import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.textVariableAnchor;
 
 public class HomeFragment extends Fragment implements OnMapReadyCallback, PermissionsListener, MapboxMap.OnMarkerClickListener{
 
@@ -93,32 +95,37 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Permis
     private LocationComponentOptions locationComponentOptions;
     private APIService mAPIService;
     private SharedPreferences.Editor editor;
-    private Call<List<Estadia>> estadias;
-    private Call<Reservacion> reservacion;
     private Call<Reservacion> espera;
-    private List<Estadia> estadiaList = new ArrayList<>();
+    private Call<Reservacion> reservacion;
+    private final List<Estadia> estadiaList = new ArrayList<>();
     private Call<List<Mapa>> mapas;
     private Call<List<Garage>> garage;
-    private LocationListeningCallback callback = new LocationListeningCallback(activity);
-    private SharedPreferences prefs;
-    private String horario, precio, vehiculo, filtro;
+    private final LocationListeningCallback callback = new LocationListeningCallback(activity);
+    private String horario;
+    private String vehiculo;
+    private String filtro;
     private Button btnGarage;
     private FloatingActionButton fab_location_search;
-    private String geojsonSourceLayerId = "geojsonSourceLayerId";
-    private String symbolIconId = "symbolIconId";
-    private TextView tempo;
+    private final String geojsonSourceLayerId = "geojsonSourceLayerId";
+    private final String symbolIconId = "symbolIconId";
+    private TextView tvTemporizador;
     private static final int REQUEST_CODE_AUTOCOMPLETE = 1;
     long DEFAULT_INTERVAL_IN_MILLISECONDS = 1000L;
     long DEFAULT_MAX_WAIT_TIME = DEFAULT_INTERVAL_IN_MILLISECONDS * 5;
-    private static final long START_TIME_IN_MILLIS = 1800000;
-    private CountDownTimer mCountDownTimer;
+    private static final long tiempoTotal = 1800000;
+    private CountDownTimer contador;
     private boolean isExecute;
     private long tiempo;
     private long tiempoFinal;
-    private SharedPreferences spTempo;
     private Temporizador temporizador;
     private int idReservacion;
-    private CallReservaciones call;
+    private final ObserverReservaciones observerReservaciones = new ObserverReservaciones();
+
+    private final Preferencias filtrosPref = new Preferencias("Filtros");
+    private Preferencias tiempoPref;
+    private final Preferencias loginPref = new Preferencias("Login");
+    private final Map<String, String> mapTiempo= new HashMap<>();
+    private final Map<String, String> mapLogin = new HashMap<>();
 
     @Override
     public void onAttach(@NotNull Context context) {
@@ -141,158 +148,132 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Permis
         super.onCreateView(inflater, container, savedInstanceState);
         Mapbox.getInstance(activity, getString(R.string.mapbox_access_token));
         View view = inflater.inflate(R.layout.fragment_home,container,false);
-
+        //!classificação
         btnGarage = view.findViewById(R.id.btnGarage);
         fab_location_search = view.findViewById(R.id.fab_location_search);
         mapView = (MapView) view.findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
-        tempo = view.findViewById(R.id.tempo);
-
+        tvTemporizador = view.findViewById(R.id.tempo);
         return view;
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        spTempo = activity.getSharedPreferences("Tiempo", Context.MODE_PRIVATE);
-
-        if(spTempo!=null){
-            tiempo = spTempo.getLong("millisLeft", START_TIME_IN_MILLIS);
-            isExecute = spTempo.getBoolean("timerRunning", false);
-            tiempoFinal = spTempo.getLong("endTime", 0);
-            if(tiempoFinal == 0){
-                tiempoFinal = System.currentTimeMillis() + START_TIME_IN_MILLIS;
-            }
-            idReservacion = spTempo.getInt("idReservacion",0);
-        }
-
-        if(tiempo == START_TIME_IN_MILLIS || tiempo < 0){
-            temporizador = new Temporizador(START_TIME_IN_MILLIS,1000);
-        }
-
-        if(temporizador == null){
-            temporizador = new Temporizador(tiempo,1000);
-        }
-
-        temporizador.setTextView(tempo);
-        temporizador.setTiempo(tiempo);
-        temporizador.setTiempoFinal(tiempoFinal);
-        temporizador.setExecuteTime(isExecute);
-
+        //tiempo = tiempoPref.getPrefLong(activity,"tiempoRestante",tiempoTotal);
+        //tiempoFinal = tiempoPref.getPrefLong(activity,"tiempoFinal",0L);
+        int idConductor = loginPref.getPrefInteger(activity,"idConductor",0);
+        tiempoPref = new Preferencias("Tiempo"+idConductor);
         mAPIService = ApiUtils.getAPIService();
-        mapas = mAPIService.findAllMapa();
-        garage = mAPIService.findAllGarage();
-        reservacion = mAPIService.findReservacion(idReservacion);
-        espera = mAPIService.findReservacion(idReservacion);
-        mapaBox = new MapaBox(activity);
+        idReservacion = tiempoPref.getPrefInteger(activity,"idReservacion",0);
+        temporizador = new Temporizador(activity,1000,idConductor);
+        temporizador.setTextView(tvTemporizador);
+        temporizador.registerLifecycle(this);
 
-        call = new CallReservaciones();
-        call.agregar(temporizador);
+        observerReservaciones.agregar(temporizador);
+        if(idReservacion != 0){
+            Log.d("lifeCyCle","hay reserva");
+            reservacion = mAPIService.obtenerReservacionPorId(idReservacion);
+            contador = new CountDownTimer(1800000,1000) {
+                @Override
+                public void onTick(long millisUntilFinished) {
+                    reservacion = mAPIService.obtenerReservacionPorId(idReservacion);
+                    if(!reservacion.isExecuted()){
+                        reservacion.enqueue(new Callback<Reservacion>() {
+                            @Override
+                            public void onResponse(Call<Reservacion> call, Response<Reservacion> response) {
+                                if(response.isSuccessful()){
+                                    Reservacion r = response.body();
+                                    if (r != null) {
+                                        if(r.getEstado().equalsIgnoreCase("Esperando")){
+                                            observerReservaciones.notificar(true);
+                                        }else{
+                                            contador.onFinish();
+                                            new Handler().postDelayed(() -> {
+                                                tvTemporizador.setVisibility(View.GONE);
+                                            },2000);
+                                        }
+                                    }
 
-        mCountDownTimer = new CountDownTimer(START_TIME_IN_MILLIS,1000) {
-            @Override
-            public void onTick(long millisUntilFinished) {
-                espera.cancel();
-                espera = mAPIService.findReservacion(idReservacion);
-                if(!espera.isExecuted()){
-                    espera.enqueue(new Callback<Reservacion>() {
-                        @Override
-                        public void onResponse(Call<Reservacion> calls, Response<Reservacion> response) {
-                            if(response.isSuccessful()){
-                                Reservacion r = response.body();
-                                assert r != null;
-                                if(r.getEstado().equalsIgnoreCase("Esperando")){
-                                    call.notificar(true);
-                                }else{
-                                    mCountDownTimer.cancel();
-                                    stopTimer();
-                                    new Handler().postDelayed(() -> {
-                                        tempo.setVisibility(View.GONE);
-                                    },2000);
                                 }
                             }
-                        }
 
-                        @Override
-                        public void onFailure(Call<Reservacion> calls, Throwable t) {
-                            t.printStackTrace();
-                        }
-                    });
-                }
-
-            }
-            @Override
-            public void onFinish() {
-                call.notificar(false);
-            }
-        }.start();
-
-        if(temporizador.getExecuteTime()){
-            Toast.makeText(activity, "Esta activado? " + temporizador.getExecuteTime(), Toast.LENGTH_SHORT).show();
-            reservacion.enqueue(new Callback<Reservacion>() {
-                @Override
-                public void onResponse(Call<Reservacion> calls, Response<Reservacion> response) {
-                    if(!response.isSuccessful() && response.body() == null){
-                        Toast.makeText(activity, "Code: " + response.code(), Toast.LENGTH_SHORT).show();
+                            @SuppressLint("LogNotTimber")
+                            @Override
+                            public void onFailure(Call<Reservacion> call, Throwable t) {
+                                Log.d("ERROR","Tira error todo el rato " + t.getMessage());
+                            }
+                        });
                     }
-                    Reservacion reservacion = response.body();
-                    if (reservacion != null && temporizador.getExecuteTime() ) {
-                        if(reservacion.getID() == idReservacion && reservacion.getEstado().equals("Esperando")){
-                            Toast.makeText(activity, "Activando temporizador", Toast.LENGTH_SHORT).show();
-                            //startTimer();
-                            tempo.setVisibility(View.VISIBLE);
-                        }else{
-                            Toast.makeText(activity, "No hay temporizador", Toast.LENGTH_SHORT).show();
-                            stopTimer();
-                            SharedPreferences.Editor editor = activity.getSharedPreferences("Tiempo", Context.MODE_PRIVATE).edit();
-                            editor.putLong("millisLeft", START_TIME_IN_MILLIS);
-                            editor.putBoolean("timerRunning", false);
-                            editor.putLong("endTime", 0);
-                            editor.apply();
-                            tempo.setVisibility(View.GONE);
-                        }
-                    }
-                    Toast.makeText(activity, "Timer Running? " + temporizador.getExecuteTime(), Toast.LENGTH_SHORT).show();
+                    reservacion.timeout();
+
                 }
 
                 @Override
-                public void onFailure(Call<Reservacion> call, Throwable t) {
-
+                public void onFinish() {
+                    observerReservaciones.notificar(false);
                 }
-            });
+            }.start();
         }
 
-        prefs = activity.getSharedPreferences("Filtros", Context.MODE_PRIVATE);
-        if(prefs != null){
-            vehiculo = prefs.getString("vehiculo", null);
-            horario = prefs.getString("horario", null);
-            precio = prefs.getString("precio", null);
-            filtro = prefs.getString("filtro", null);
-            if(precio.equals("Alto")){
-                estadias = mAPIService.findAllEstadiaPrecio("No");
-            }else {
-                estadias = mAPIService.findAllEstadiaPrecio("Si");
+
+        //if(temporizador.getTiempo() == tiempoTotal){
+        //    temporizador.setTiempo(tiempo);
+        //}
+
+        //temporizador.setExecuteTime(tiempoPref.getPrefBoolean(activity,"seEstaEjecutando",true));
+        //temporizador.setTiempoFinal(tiempoFinal);
+
+        //temporizador.start();
+        /*if(savedInstanceState == null){
+            if(tiempoPref.getPrefLong(activity,"tiempoRestante",tiempoTotal) != tiempoTotal){
+                tiempo = tiempoPref.getPrefLong(activity,"tiempoFinal",0L) - System.currentTimeMillis();
+                temporizador.setTiempo(tiempo);
+                temporizador.setTiempoFinal(System.currentTimeMillis() + temporizador.getTiempo());
             }
-            estadias.enqueue(new Callback<List<Estadia>>() {
-                @Override
-                public void onResponse(Call<List<Estadia>> call, Response<List<Estadia>> response) {
-                    if(response.isSuccessful()){
-                        if(response.body() != null){
-                            estadiaList.addAll(response.body());
-                        }
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<List<Estadia>> call, Throwable t) {
-
-                }
-            });
-            //Toast.makeText(activity, "Tipo Vehiculo: " + vehiculo + ", Horario: "+ horario+", Precio: "+precio, Toast.LENGTH_SHORT).show();
         }else{
-            filtro = "No";
+            tiempo = savedInstanceState.getLong("tiempoRestante");
+            tiempoFinal = System.currentTimeMillis() + tiempo;
+            temporizador.setTiempo(tiempo);
+            temporizador.setTiempoFinal(tiempoFinal);
         }
+        */
+
+        idReservacion = tiempoPref.getPrefInteger(activity,"idReservacion",0);
+        tvTemporizador.setVisibility(View.VISIBLE);
+        mapas = mAPIService.findAllMapa();
+        garage = mAPIService.findAllGarage();
+        mapaBox = new MapaBox(activity);
+
+
+
+        vehiculo = filtrosPref.getPrefString(activity,"vehiculo",null);
+        horario = filtrosPref.getPrefString(activity,"horario",null);
+        String precio = filtrosPref.getPrefString(activity,"precio","Bajo");
+        filtro = filtrosPref.getPrefString(activity,"filtro","No");
+
+        Call<List<Estadia>> estadias;
+        if(precio.equals("Alto")){
+            estadias = mAPIService.ordenarPrecios("Si");
+        }else {
+            estadias = mAPIService.ordenarPrecios("No");
+        }
+        estadias.enqueue(new Callback<List<Estadia>>() {
+            @Override
+            public void onResponse(Call<List<Estadia>> call, Response<List<Estadia>> response) {
+                if(response.isSuccessful()){
+                    if(response.body() != null){
+                        estadiaList.addAll(response.body());
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Estadia>> call, Throwable t) {
+
+            }
+        });
 
         locationEngine = LocationEngineProvider.getBestLocationEngine(activity);
     }
@@ -368,10 +349,15 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Permis
                     for (Garage responseGarage : response.body()){
                         if(marker.getTitle().equals(responseGarage.getNombre())){
                             //Toast.makeText(activity, marker.getTitle(), Toast.LENGTH_LONG).show();
+                            //Preferencias loginPref = new Preferencias("Login");
+                            //Map<String, String> mapLogin = new HashMap<>();
+                            mapLogin.put("idGarage",responseGarage.getId().toString());
+                            loginPref.setPrefLogin(activity,mapLogin);
+                            /*
                             editor = activity.getSharedPreferences("MyPrefsFile", Context.MODE_PRIVATE).edit();
-                            editor.putInt("idGarage", responseGarage.getID());
+                            editor.putInt("idGarage", responseGarage.getId());
                             editor.apply();
-
+                            */
                             btnGarage.setOnClickListener(v -> {
                                 Navigation.findNavController(v).navigate(R.id.mapMuestraFragment);
                             });
@@ -487,8 +473,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Permis
                             for (Garage garage : responseGarage.body()){
                                 for (Estadia estadia : estadiaList){
                                     if(filtro.equals("Si")){
-                                        if(garage.getID().equals(mapa.getID_Garage())
-                                                && estadia.getID_Garage().equals(mapa.getID_Garage())
+                                        if(garage.getId().equals(mapa.getIdGarage())
+                                                && estadia.getIdGarage().equals(mapa.getIdGarage())
                                                 && estadia.getVehiculoPermitido().equals(vehiculo)
                                                 && estadia.getHorario().equals(horario)){
                                             definirDisponibilidad(garage,mapa);
@@ -497,7 +483,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Permis
                                 }
 
                                 if(filtro.equals("No")){
-                                    if(garage.getID().equals(mapa.getID_Garage())){
+                                    if(garage.getId().equals(mapa.getIdGarage())){
                                         definirDisponibilidad(garage,mapa);
                                     }
                                 }
@@ -572,75 +558,35 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Permis
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        mapView.onResume();
-
+    public void onSaveInstanceState(@NonNull Bundle estado) {
+        super.onSaveInstanceState(estado);
+        mapView.onSaveInstanceState(estado);
     }
+
+
 
     @Override
     public void onStart() {
         super.onStart();
         mapView.onStart();
-        SharedPreferences prefs = activity.getSharedPreferences("Tiempo", Context.MODE_PRIVATE);
-        if(prefs != null){
-            if(tiempo != START_TIME_IN_MILLIS && isExecute && tiempoFinal == 0){
-                tiempo = prefs.getLong("millisLeft", START_TIME_IN_MILLIS);
-                isExecute = prefs.getBoolean("timerRunning", false);
-                tiempoFinal = prefs.getLong("endTime", 0);
-            }
-        }
-        temporizador.setTiempo(tiempo);
-        temporizador.setExecuteTime(isExecute);
-        temporizador.updateCountDownText();
-        if (temporizador.getExecuteTime()) {
-            temporizador.setTiempoFinal(tiempoFinal);
-            tiempo = tiempoFinal - System.currentTimeMillis();
-            temporizador.setTiempo(tiempo);
-            if (temporizador.getTiempo() < 0) {
-                temporizador.setTiempo(0);
-                temporizador.setExecuteTime(false);
-                temporizador.updateCountDownText();
-            } else {
-                startTimer();
-            }
-        }
-    }
-
-    @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        mapView.onSaveInstanceState(outState);
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        mapView.onPause();
-        SharedPreferences prefs = activity.getSharedPreferences("Tiempo", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putLong("millisLeft", temporizador.getTiempo());
-        editor.putBoolean("timerRunning", temporizador.getExecuteTime());
-        editor.putLong("endTime", temporizador.getTiempoFinal());
-        editor.apply();
-        if (temporizador != null) {
-            temporizador.cancel();
-        }
     }
 
     @Override
     public void onStop() {
         super.onStop();
         mapView.onStop();
-        SharedPreferences prefs = activity.getSharedPreferences("Tiempo", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putLong("millisLeft", temporizador.getTiempo());
-        editor.putBoolean("timerRunning", temporizador.getExecuteTime());
-        editor.putLong("endTime", temporizador.getTiempoFinal());
-        editor.apply();
-        if (temporizador != null) {
-            temporizador.cancel();
-        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mapView.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mapView.onPause();
     }
 
     @Override
@@ -655,30 +601,16 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Permis
         mapView.onDestroy();
     }
 
-    private void startTimer() {
-        if(temporizador!=null){
-            tiempoFinal = System.currentTimeMillis() + tiempo;
-            temporizador = new Temporizador(tiempo, 1000);
-            temporizador.setTextView(tempo);
-            temporizador.setTiempo(tiempo);
-            temporizador.setExecuteTime(isExecute);
-            temporizador.setTiempoFinal(tiempoFinal);
-            temporizador.start();
-            temporizador.setExecuteTime(true);
-        }
-    }
 
-    private void stopTimer() {
-        if (temporizador != null) {
-            temporizador.cancel();
-            temporizador.setExecuteTime(false);
-            SharedPreferences.Editor editor = spTempo.edit();
-            editor.putLong("millisLeft",temporizador.getTiempo());
-            editor.putBoolean("timerRunning",temporizador.getExecuteTime());
-            editor.putLong("endTime",temporizador.getTiempoFinal());
-            editor.apply();
-            call.notificar(false);
-        }
-    }
 
+
+
+
+    private Map<String,String> crearClaveValorDefault(){
+        Map<String, String> map = new HashMap<>();
+        map.put("tiempoRestante", String.valueOf(tiempoTotal));
+        map.put("seEstaEjecutando", String.valueOf(false));
+        map.put("tiempoFinal", String.valueOf(0));
+        return map;
+    }
 }
