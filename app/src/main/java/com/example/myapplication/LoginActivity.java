@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -52,10 +53,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
 
     Conductor conductor;
     private APIService mAPIService;
-    private SharedPreferences.Editor editor;
 
-    private final Map<String, String> mapLogin = new HashMap<>();
-    private final Map<String, String> mapMantener= new HashMap<>();
     private final Preferencias loginPref = new Preferencias("Login");
     private final Preferencias mantenerPref = new Preferencias("MantenerUsuario");
     private static final int SIGN_IN_CODE = 8777;
@@ -137,10 +135,13 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
 
                     mostrarMensaje("login exitoso");
                     if(cbRecordarLogin.isChecked()){
-                        mapMantener.put("Check",String.valueOf(cbRecordarLogin.isChecked()));
-                        mapMantener.put("Usuario", email);
-                        mapMantener.put("Password", contrasena);
-                        mantenerPref.setPrefMantener(context,mapMantener);
+                        mantenerPref.setPrefBoolean(context,"Check",cbRecordarLogin.isChecked());
+                        mantenerPref.setPrefString(context,"Usuario",email);
+                        mantenerPref.setPrefString(context,"Password",contrasena);
+                        //mapMantener.put("Check",String.valueOf());
+                        //mapMantener.put("Usuario", email);
+                        //mapMantener.put("Password", contrasena);
+                        //mantenerPref.setPrefMantener(context,mapMantener);
                         /*
                         SharedPreferences.Editor preferences = getSharedPreferences("MantenerUsuario", MODE_PRIVATE).edit();
                         preferences.putBoolean("Check", cbRecordarLogin.isChecked());
@@ -149,9 +150,11 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                         preferences.apply();
                         */
                     }
-                    mapLogin.put("idConductor",String.valueOf(conductor.getId()));
-                    mapLogin.put("Vehiculo", conductor.getTipoVehiculo());
-                    loginPref.setPrefLogin(context,mapLogin);
+                    loginPref.setPrefInt(context,"idConductor",conductor.getId());
+                    loginPref.setPrefString(context,"Vehiculo",conductor.getTipoVehiculo());
+                    //mapLogin.put("idConductor",String.valueOf());
+                    //mapLogin.put("Vehiculo", );
+                    //loginPref.setPrefLogin(context,mapLogin);
                     /*
                     editor = getSharedPreferences("Login", MODE_PRIVATE).edit();
                     editor.putInt("idConductor", conductor.getId());
@@ -192,9 +195,11 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                 public void onResponse(Call<Conductor> call, Response<Conductor> response) {
                     if(response.isSuccessful()){
                         conductor = response.body();
-                        mapLogin.put("idConductor", String.valueOf(conductor.getId()));
-                        mapLogin.put("Vehiculo", conductor.getTipoVehiculo());
-                        loginPref.setPrefLogin(context,mapLogin);
+                        loginPref.setPrefInt(context,"idConductor", Objects.requireNonNull(conductor).getId());
+                        loginPref.setPrefString(context,"Vehiculo",conductor.getTipoVehiculo());
+                        //mapLogin.put("idConductor", String.valueOf(conductor.getId()));
+                        //mapLogin.put("Vehiculo", conductor.getTipoVehiculo());
+                        //loginPref.setPrefLogin(context,mapLogin);
                         /*
                         editor = getSharedPreferences("Login", MODE_PRIVATE).edit();
                         editor.putInt("idConductor", conductor.getId());

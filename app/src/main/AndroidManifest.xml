@@ -4,6 +4,8 @@
     package="com.example.myapplication">
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.VIBRATE"/>
+
 
     <application
         android:allowBackup="true"
@@ -39,8 +41,7 @@
             android:launchMode="singleTop">
         </activity>
 
-        <service android:name=".notificaciones.NotificacionesServices" android:enabled="true"
-            tools:ignore="Instantiatable" />
+        <service android:name=".notificaciones.NotificacionesServices" android:enabled="true" />
 
     </application>
 

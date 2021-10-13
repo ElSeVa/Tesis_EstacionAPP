@@ -1,26 +1,14 @@
 package com.example.myapplication;
 
-import android.app.AlertDialog;
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
-import android.app.Notification;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.content.BroadcastReceiver;
-import android.content.ComponentName;
+
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.net.Uri;
-import android.os.Build;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.IBinder;
+import android.os.Handler;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.Menu;
 import android.widget.ImageView;
@@ -28,15 +16,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.example.myapplication.notificaciones.NotificacionesHelper;
 import com.example.myapplication.notificaciones.NotificacionesServices;
 import com.example.myapplication.preferencias.Preferencias;
-import com.example.myapplication.ui.Temporizador;
 import com.example.myapplication.ui.api.APIService;
 import com.example.myapplication.ui.api.ApiUtils;
-import com.example.myapplication.ui.home.HomeFragment;
 import com.example.myapplication.ui.models.Conductor;
-import com.example.myapplication.ui.models.Reservacion;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -65,11 +49,14 @@ import androidx.appcompat.widget.Toolbar;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
+import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;

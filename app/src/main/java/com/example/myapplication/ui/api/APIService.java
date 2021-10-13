@@ -133,6 +133,9 @@ public interface APIService {
     @GET("/reservacion/estado/{idGarage}")
     Call<List<Reservacion>> obtenerReservasEstados(@Path(value = "idGarage") int idGarage);
 
+    @GET("/reservacion/estados/{idConductor}")
+    Call<List<Reservacion>> obtenerReservasEstadosConductor(@Path(value = "idConductor") int idConductor);
+
     @GET("/reservacion")
     Call<List<Reservacion>> obtenerReservaciones();
 
