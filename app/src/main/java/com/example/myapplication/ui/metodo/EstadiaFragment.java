@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.transition.TransitionInflater;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -152,6 +153,9 @@ public class EstadiaFragment extends Fragment {
                                 mapTiempo.put("idReservacion",String.valueOf(reservacion.getId()));//pref.putInt("idReservacion",reservacion.getId());
                                 tiempoPref = new Preferencias("Tiempo"+reservacion.getIdConductor());
                                 tiempoPref.setPrefTiempos(activity,mapTiempo);//pref.apply();
+                                if(new Preferencias("notificacion").setPrefInt(activity,"idReservas",reservacion.getId())){
+                                    Log.d("Services-Notificacion", "idReservas: "+reservacion.getId());
+                                }
 
                                 Navigation.findNavController(v).navigate(R.id.action_estadiaFragment_to_nav_home3);
                                 //NavOptions.Builder navBuilder = new NavOptions.Builder();

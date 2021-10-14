@@ -4,16 +4,11 @@ import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.app.Service;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Build;
-import android.os.Handler;
-import android.os.IBinder;
 import android.os.Vibrator;
 import android.util.Log;
 
-import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
@@ -24,13 +19,7 @@ import com.example.myapplication.ui.api.ApiUtils;
 import com.example.myapplication.ui.models.Garage;
 import com.example.myapplication.ui.models.Reservacion;
 
-import java.io.IOException;
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -44,7 +33,7 @@ public class NotificacionesHelper {
     private final String ID_CHANNEL = "Canal 1";
     private final Timer timer;
 
-    private Integer idConductor;
+    private final Integer idConductor;
     private Integer idGarage = 0;
     private Integer idReserva = 0;
     private Notification notificacion;
@@ -54,7 +43,7 @@ public class NotificacionesHelper {
     private Integer anteriorTotalNotificacionConductor = 0;
     private boolean nuevaNotificacion = false;
     private Reservacion notificacionReserva;
-    private Preferencias notiPrefs, tiempoPrefs;
+    private final Preferencias tiempoPrefs;
 
     private final NotificationManagerCompat notificationManager;
 
@@ -78,6 +67,7 @@ public class NotificacionesHelper {
         this.context = context;
         Preferencias loginPref = new Preferencias("Login");
         idConductor = loginPref.getPrefInteger(context,"idConductor",0);
+        tiempoPrefs = new Preferencias("Tiempo"+idConductor);
         obtenerIdGarage();
         notificationManager = NotificationManagerCompat.from(context);
         timer = new Timer();
@@ -90,15 +80,11 @@ public class NotificacionesHelper {
             @Override
             public void run() {
                 if(tic%2==0){
-                    //Log.d("Services-Notificacion","Tic");
                     if(idGarage != 0){
                         totalDeNotificacionesGarage();
-                        Log.d("Services-Notificacion","Garage");
                     }
                     totalDeNotificacionesConductor();
-                    Log.d("Services-Notificacion","Sin Garage");
                 }else {
-                    //Log.d("Services-Notificacion","Toc");
                     if(idGarage != 0){
                         enviarNotificacionGarage();
                     }
@@ -112,8 +98,6 @@ public class NotificacionesHelper {
 
     public void pararTimer(){
         timer.cancel();
-        new Preferencias("Notificaciones").clearPref(context);
-
     }
 
     public void createNotificationChannel() {
@@ -185,6 +169,7 @@ public class NotificacionesHelper {
                 if(nuevaNotificacion){
                     if(notificacion != null){
                         notificationManager.notify(ID_NOTIFIC,notificacion);
+                        Alerta();
                         Log.d("Services-Notificacion","Se envia notificacion al garage");
                     }
                 }
@@ -245,13 +230,9 @@ public class NotificacionesHelper {
     }
 
     private void totalDeNotificacionesConductor(){
-        tiempoPrefs = new Preferencias("Tiempo"+idConductor);
-        if(tiempoPrefs.getPrefInteger(context,"idReservacion",0) != 0){
-            idReserva = tiempoPrefs.getPrefInteger(context,"idReservacion",0);
+        if(new Preferencias("notificacion").getPrefInteger(context,"idReservas",0) != 0){
+            idReserva = new Preferencias("notificacion").getPrefInteger(context,"idReservas",0);
         }
-        //idReserva = notiPrefs.getPrefInteger(context,"id_notificacion",idReserva);
-        Log.d("Services-Notificacion","idReserva " + tiempoPrefs.getPrefInteger(context,"idReservacion",0));
-        //Log.d("Services-Notificacion","notiPrefs "+ notiPrefs.getPrefInteger(context,"id_notificacion",idReserva));
         if(idReserva != 0){
             Call<Reservacion> reservacionCall = mAPIService.obtenerReservacionPorId(idReserva);
             reservacionCall.enqueue(new Callback<Reservacion>() {
@@ -265,15 +246,23 @@ public class NotificacionesHelper {
                                 idReserva = tiempoPrefs.getPrefInteger(context,"idReservacion",0);
                                 nuevaNotificacion = true;
                                 totalNotificacionesConductor = 1;
+                                anteriorTotalNotificacionConductor = 0;
+                                if(new Preferencias("notificacion").clearPref(context)){
+                                    Log.d("Services-Notificacion","idReservas:" + new Preferencias("notificacion").getPrefInteger(context,"idReservas",0));
+                                }
                                 break;
                             case "Cancelado":
                                 Log.d("Services-Notificacion","Hay reserva Cancelado "+idReserva);
                                 idReserva = tiempoPrefs.getPrefInteger(context,"idReservacion",0);
                                 nuevaNotificacion = true;
                                 totalNotificacionesConductor = 1;
+                                anteriorTotalNotificacionConductor = 0;
+                                if(new Preferencias("notificacion").clearPref(context)){
+                                    Log.d("Services-Notificacion","idReservas:" + new Preferencias("notificacion").getPrefInteger(context,"idReservas",0));
+                                }
                                 break;
                             default:
-                                Log.d("Services-Notificacion","Hay reserva en modo Esperando "+notificacionReserva.getId());
+                                //Log.d("Services-Notificacion","Hay reserva en modo Esperando "+notificacionReserva.getId());
                                 nuevaNotificacion = false;
                                 totalNotificacionesConductor = 0;
                                 break;
@@ -302,10 +291,16 @@ public class NotificacionesHelper {
             if(nuevaNotificacion) {
                 if (notificacion != null) {
                     notificationManager.notify(ID_NOTIFIC++, notificacion);
+                    Alerta();
                     Log.d("Services-Notificacion", "Se envia la notificacion al conductor");
                 }
             }
         }
+    }
+
+    private void Alerta(){
+        Vibrator v = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+        v.vibrate(800);
     }
 
 }

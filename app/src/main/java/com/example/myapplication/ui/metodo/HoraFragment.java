@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.text.InputType;
 import android.transition.TransitionInflater;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -220,6 +221,10 @@ public class HoraFragment extends Fragment {
                                 tiempoPref = new Preferencias("Tiempo"+reservacion.getIdConductor());
                                 mapTiempo.put("seEstaEjecutando",String.valueOf(true));
                                 mapTiempo.put("idReservacion",String.valueOf(reservacion.getId()));
+                                if(new Preferencias("notificacion").setPrefInt(activity,"idReservas",reservacion.getId())){
+                                    Log.d("Services-Notificacion", "idReservas: "+reservacion.getId());
+                                }
+
                                 tiempoPref.setPrefTiempos(activity,mapTiempo);
                                 /*
                                 SharedPreferences.Editor pref = activity.getSharedPreferences("Tiempo", Context.MODE_PRIVATE).edit();

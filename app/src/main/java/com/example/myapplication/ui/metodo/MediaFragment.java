@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.InputType;
 import android.transition.TransitionInflater;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -179,6 +180,9 @@ public class MediaFragment extends Fragment {
                                 mapTiempo.put("seEstaEjecutando",String.valueOf(true));
                                 mapTiempo.put("idReservacion",String.valueOf(reservacion.getId()));
                                 tiempoPref.setPrefTiempos(activity,mapTiempo);
+                                if(new Preferencias("notificacion").setPrefInt(activity,"idReservas",reservacion.getId())){
+                                    Log.d("Services-Notificacion", "idReservas: "+reservacion.getId());
+                                }
                                 /*
                                 SharedPreferences.Editor pref = activity.getSharedPreferences("Tiempo", Context.MODE_PRIVATE).edit();
                                 pref.putBoolean("seEstaEjecutando",true);

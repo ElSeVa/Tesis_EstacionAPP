@@ -149,20 +149,24 @@ public class MapMuestraFragment extends Fragment implements Callback<List<Imagen
     }
 
     private void estaLaEstadia(Call<Conductor> callConductor, Response<List<Estadia>> responseEstadia){
+        int siHayReserva = new Preferencias("notificacion").getPrefInteger(activity,"idReservas",0);
         callConductor.enqueue(new Callback<Conductor>() {
             @Override
             public void onResponse(Call<Conductor> call, Response<Conductor> response) {
                 if(response.isSuccessful()){
                     Conductor conductor = response.body();
+
                     assert responseEstadia.body() != null;
                     assert conductor != null;
                     for (Estadia estadia : responseEstadia.body()){
-                        if(estadia.getVehiculoPermitido().equalsIgnoreCase(conductor.getTipoVehiculo())){
+                        if(estadia.getVehiculoPermitido().equalsIgnoreCase(conductor.getTipoVehiculo()) && siHayReserva == 0){
                             btnReserva.setEnabled(true);
                             return;
                         }
                     }
-                    btnReserva.setEnabled(false);
+                    if(siHayReserva != 0){
+                        btnReserva.setEnabled(false);
+                    }
                 }
             }
 
