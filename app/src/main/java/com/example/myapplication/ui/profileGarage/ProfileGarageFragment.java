@@ -1,7 +1,6 @@
-package com.example.myapplication.ui.gallery;
+package com.example.myapplication.ui.profileGarage;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -19,28 +18,20 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
 
 import com.example.myapplication.MainActivity;
 import com.example.myapplication.R;
 import com.example.myapplication.preferencias.Preferencias;
 import com.example.myapplication.ui.api.APIService;
 import com.example.myapplication.ui.api.ApiUtils;
-import com.example.myapplication.ui.models.Conductor;
 import com.example.myapplication.ui.models.Estadia;
 import com.example.myapplication.ui.models.Garage;
 import com.example.myapplication.ui.models.Imagenes;
-import com.example.myapplication.ui.models.Item_Reservacion;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.io.EOFException;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -48,9 +39,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import static android.content.Context.MODE_PRIVATE;
-
-public class GalleryFragment extends Fragment implements Callback<List<Imagenes>> {
+public class ProfileGarageFragment extends Fragment implements Callback<List<Imagenes>> {
 
     private final APIService mAPIService = ApiUtils.getAPIService();
     private Button btnPerfilCambios;

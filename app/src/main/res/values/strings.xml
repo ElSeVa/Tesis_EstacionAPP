@@ -34,5 +34,10 @@
     <string name="imagen_fondo">Imagen secundaria de fondo</string>
     <string name="channel_description">Pruebas de notificaciones</string>
     <string name="tipo_de_vehiculo">Tipo de Vehiculo</string>
+    <string name="boton_para_buscar_comunas">Boton para buscar comunas</string>
+    <string name="ver_garage">Ver Garage</string>
+    <string name="enviar_comentario">Enviar comentario</string>
+    <string name="enviar_sugerencia">Enviar sugerencia</string>
+    <string name="enviar_sugerencias">Enviar Sugerencias</string>
 
 </resources>

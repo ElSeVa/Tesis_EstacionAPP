@@ -208,12 +208,12 @@ public class MainActivity extends AppCompatActivity implements MyDrawerControlle
 
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
-        AppBarConfiguration mAppBarConfiguration2 = new AppBarConfiguration.Builder(R.id.reservasFragment,
-                R.id.settingFragment)
+        AppBarConfiguration mAppBarConfiguration2 = new AppBarConfiguration.Builder(R.id.reservacionesFragment,
+                R.id.filtrosFragment)
                 .build();
 
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.reservasFragment, R.id.settingFragment,R.id.nav_home, R.id.nav_gallery, R.id.nav_perfil, R.id.nav_promocion)
+                R.id.reservacionesFragment, R.id.filtrosFragment,R.id.nav_home, R.id.nav_gallery, R.id.nav_perfil, R.id.nav_promocion,R.id.nav_sugerencias,R.id.nav_reservas)
                 .setDrawerLayout(drawer)
                 .build();
 
@@ -252,10 +252,19 @@ public class MainActivity extends AppCompatActivity implements MyDrawerControlle
                 || destination.getId() == R.id.estadiaFragment
                 || destination.getId() == R.id.comentariosFragment
                 || destination.getId() == R.id.nav_perfil
-                || destination.getId() == R.id.takePromotionFragment;
+                || destination.getId() == R.id.nav_promocion
+                || destination.getId() == R.id.takePromotionFragment
+                || destination.getId() == R.id.nav_sugerencias
+                || destination.getId() == R.id.nav_reservas;
     }
 
     public void logoutIntent(View v){
+        if(new Preferencias("Cuenta").clearPref(this)
+            && new Preferencias("Login").clearPref(this)
+            && new Preferencias("MantenerUsuario").clearPref(this)){
+            Log.d("Logout","Limpiando los SharedPreferences");
+        }
+        /*
         SharedPreferences.Editor Cuenta = getSharedPreferences("Cuenta", MODE_PRIVATE).edit();
         Cuenta.clear();
         Cuenta.apply();
@@ -265,6 +274,7 @@ public class MainActivity extends AppCompatActivity implements MyDrawerControlle
         SharedPreferences.Editor Mantener = getSharedPreferences("MantenerUsuario", MODE_PRIVATE).edit();
         Mantener.clear();
         Mantener.apply();
+        */
         stopService(new Intent(this, NotificacionesServices.class));
         Auth.GoogleSignInApi.signOut(googleApiClient).setResultCallback(new ResultCallback<Status>() {
             @Override
@@ -280,14 +290,14 @@ public class MainActivity extends AppCompatActivity implements MyDrawerControlle
             }
         });
     }
-
+/*
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
-
+*/
     @Override
     public boolean onSupportNavigateUp() {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);

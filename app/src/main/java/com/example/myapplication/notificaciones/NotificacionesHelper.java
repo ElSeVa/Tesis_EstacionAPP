@@ -44,6 +44,7 @@ public class NotificacionesHelper {
     private boolean nuevaNotificacion = false;
     private Reservacion notificacionReserva;
     private final Preferencias tiempoPrefs;
+    private List<Reservacion> reservacions;
 
     private final NotificationManagerCompat notificationManager;
 
@@ -142,6 +143,7 @@ public class NotificacionesHelper {
             public void onResponse(Call<List<Reservacion>> call, Response<List<Reservacion>> response) {
                 if(response.isSuccessful() && response.body() != null){
                     List<Reservacion> reservacionList = response.body();
+                    reservacions = response.body();
                     totalNotificaciones = reservacionList.size();
                     Log.d("Services-Notificacion","Se obtiene el total de las notificaciones");
                 }
@@ -168,7 +170,7 @@ public class NotificacionesHelper {
                 }
                 if(nuevaNotificacion){
                     if(notificacion != null){
-                        notificationManager.notify(ID_NOTIFIC,notificacion);
+                        notificationManager.notify(ID_NOTIFIC++,notificacion);
                         Alerta();
                         Log.d("Services-Notificacion","Se envia notificacion al garage");
                     }

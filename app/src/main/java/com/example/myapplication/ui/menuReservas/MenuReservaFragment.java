@@ -1,4 +1,4 @@
-package com.example.myapplication.ui.slideshow;
+package com.example.myapplication.ui.menuReservas;
 
 import android.content.Context;
 import android.os.Bundle;

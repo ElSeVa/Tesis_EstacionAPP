@@ -3,12 +3,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.reservas.ReservasFragment">
+    tools:context=".ReservacionesFragment">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/listReservas"
+    <ListView
+        android:id="@+id/listReservaciones"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="652dp"
         android:background="@color/white" />
 
 </FrameLayout>

@@ -4,34 +4,22 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.Navigation;
 
-import android.transition.TransitionInflater;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ListView;
 import android.widget.Spinner;
-import android.widget.Toast;
 
 import com.example.myapplication.preferencias.Preferencias;
 import com.example.myapplication.ui.api.APIService;
 import com.example.myapplication.ui.api.ApiUtils;
-import com.example.myapplication.ui.home.HomeFragment;
-import com.example.myapplication.ui.mapabox.MapaBox;
 import com.example.myapplication.ui.models.Estadia;
-import com.mapbox.android.core.location.LocationEngineProvider;
 
 import org.jetbrains.annotations.NotNull;
-import org.w3c.dom.ls.LSInput;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -42,7 +30,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class SettingFragment extends Fragment{
+public class FiltrosFragment extends Fragment{
 
 
     private Spinner spVehiculos, spHorario, spPrecio;
@@ -71,7 +59,7 @@ public class SettingFragment extends Fragment{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.fragment_setting, container, false);
+        View root = inflater.inflate(R.layout.fragment_filtros, container, false);
 
         spVehiculos =(Spinner) root.findViewById(R.id.spVehiculos);
         spHorario =(Spinner) root.findViewById(R.id.spHorario);

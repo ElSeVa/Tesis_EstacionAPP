@@ -5,7 +5,6 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -82,8 +81,8 @@ import retrofit2.Response;
 import static android.os.Looper.getMainLooper;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconImage;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconOffset;
-import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.textVariableAnchor;
 
+@SuppressLint("LogNotTimber")
 public class HomeFragment extends Fragment implements OnMapReadyCallback, PermissionsListener, MapboxMap.OnMarkerClickListener{
 
     private MapboxMap mapboxMap;
@@ -94,8 +93,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Permis
     private LocationEngine locationEngine;
     private LocationComponentOptions locationComponentOptions;
     private APIService mAPIService;
-    private SharedPreferences.Editor editor;
-    private Call<Reservacion> espera;
     private Call<Reservacion> reservacion;
     private final List<Estadia> estadiaList = new ArrayList<>();
     private Call<List<Mapa>> mapas;
@@ -114,17 +111,11 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Permis
     long DEFAULT_MAX_WAIT_TIME = DEFAULT_INTERVAL_IN_MILLISECONDS * 5;
     private static final long tiempoTotal = 1800000;
     private CountDownTimer contador;
-    private boolean isExecute;
-    private long tiempo;
-    private long tiempoFinal;
-    private Temporizador temporizador;
     private int idReservacion;
     private final ObserverReservaciones observerReservaciones = new ObserverReservaciones();
 
     private final Preferencias filtrosPref = new Preferencias("Filtros");
-    private Preferencias tiempoPref;
     private final Preferencias loginPref = new Preferencias("Login");
-    private final Map<String, String> mapTiempo= new HashMap<>();
     private final Map<String, String> mapLogin = new HashMap<>();
 
     @Override
@@ -139,7 +130,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Permis
         super.onCreate(savedInstanceState);
         TransitionInflater inflater = TransitionInflater.from(requireContext());
         setExitTransition(inflater.inflateTransition(R.transition.fade));
-
     }
 
     @Nullable
@@ -164,10 +154,10 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Permis
         //tiempo = tiempoPref.getPrefLong(activity,"tiempoRestante",tiempoTotal);
         //tiempoFinal = tiempoPref.getPrefLong(activity,"tiempoFinal",0L);
         int idConductor = loginPref.getPrefInteger(activity,"idConductor",0);
-        tiempoPref = new Preferencias("Tiempo"+idConductor);
+        Preferencias tiempoPref = new Preferencias("Tiempo"+idConductor);
         mAPIService = ApiUtils.getAPIService();
         idReservacion = tiempoPref.getPrefInteger(activity,"idReservacion",0);
-        temporizador = new Temporizador(activity,1000,idConductor);
+        Temporizador temporizador = new Temporizador(activity, 1000, idConductor);
         temporizador.setTextView(tvTemporizador);
         temporizador.registerLifecycle(this);
 
@@ -182,12 +172,13 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Permis
                     if(!reservacion.isExecuted()){
                         reservacion.enqueue(new Callback<Reservacion>() {
                             @Override
-                            public void onResponse(Call<Reservacion> call, Response<Reservacion> response) {
+                            public void onResponse(@NotNull Call<Reservacion> call, @NotNull Response<Reservacion> response) {
                                 if(response.isSuccessful()){
                                     Reservacion r = response.body();
                                     if (r != null) {
                                         if(r.getEstado().equalsIgnoreCase("Esperando")){
                                             observerReservaciones.notificar(true);
+                                            tvTemporizador.setVisibility(View.VISIBLE);
                                         }else{
                                             contador.onFinish();
                                             new Handler().postDelayed(() -> {
@@ -201,7 +192,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Permis
 
                             @SuppressLint("LogNotTimber")
                             @Override
-                            public void onFailure(Call<Reservacion> call, Throwable t) {
+                            public void onFailure(@NotNull Call<Reservacion> call, @NotNull Throwable t) {
                                 Log.d("ERROR","Tira error todo el rato " + t.getMessage());
                             }
                         });
@@ -240,13 +231,9 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Permis
         }
         */
 
-        idReservacion = tiempoPref.getPrefInteger(activity,"idReservacion",0);
-        tvTemporizador.setVisibility(View.VISIBLE);
         mapas = mAPIService.findAllMapa();
         garage = mAPIService.findAllGarage();
         mapaBox = new MapaBox(activity);
-
-
 
         vehiculo = filtrosPref.getPrefString(activity,"vehiculo",null);
         horario = filtrosPref.getPrefString(activity,"horario",null);
@@ -261,7 +248,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Permis
         }
         estadias.enqueue(new Callback<List<Estadia>>() {
             @Override
-            public void onResponse(Call<List<Estadia>> call, Response<List<Estadia>> response) {
+            public void onResponse(@NotNull Call<List<Estadia>> call, @NotNull Response<List<Estadia>> response) {
                 if(response.isSuccessful()){
                     if(response.body() != null){
                         estadiaList.addAll(response.body());
@@ -270,7 +257,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Permis
             }
 
             @Override
-            public void onFailure(Call<List<Estadia>> call, Throwable t) {
+            public void onFailure(@NotNull Call<List<Estadia>> call, @NotNull Throwable t) {
 
             }
         });
@@ -563,8 +550,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Permis
         mapView.onSaveInstanceState(estado);
     }
 
-
-
     @Override
     public void onStart() {
         super.onStart();
@@ -601,16 +586,4 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Permis
         mapView.onDestroy();
     }
 
-
-
-
-
-
-    private Map<String,String> crearClaveValorDefault(){
-        Map<String, String> map = new HashMap<>();
-        map.put("tiempoRestante", String.valueOf(tiempoTotal));
-        map.put("seEstaEjecutando", String.valueOf(false));
-        map.put("tiempoFinal", String.valueOf(0));
-        return map;
-    }
 }

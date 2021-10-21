@@ -1,27 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/tvTotal"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     android:orientation="horizontal"
-    android:padding="10dp"
-    android:background="@color/white">
+    android:padding="10dp">
 
     <TextView
+        android:id="@+id/tvTotalFrecuencia"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/list_frecuencia"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="25dp"
+        android:layout_marginTop="8dp"
+        android:text="Total:"
         android:textSize="20sp"
         android:textStyle="bold"
-        android:paddingStart="30dp"/>
-    <Button
+        tools:ignore="RtlSymmetry" />
+
+    <TextView
+        android:id="@+id/list_frecuencia"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="8dp"
+        android:layout_toEndOf="@+id/tvTotalFrecuencia"
+        android:paddingStart="5dp"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        tools:ignore="RtlSymmetry" />
+
+    <Button
         android:id="@+id/btn_list_give"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="35dp"
+        android:text="Dar"
         android:textSize="15sp"
         android:textStyle="bold"
-        android:text="Dar"
-        android:layout_marginStart="20dp"/>
+        android:layout_alignParentEnd="true"/>
 
 
-</LinearLayout>
+</RelativeLayout>

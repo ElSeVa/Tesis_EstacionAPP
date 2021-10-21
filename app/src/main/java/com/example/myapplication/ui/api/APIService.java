@@ -171,6 +171,13 @@ public interface APIService {
 */
     @POST("/resena")
     Call<Resena> insertResena(@Body Resena resena);
+
+/*
+*   4. Sugerencias
+*/
+    @FormUrlEncoded
+    @POST("/sugerencias/enviar")
+    Call<Boolean> enviarEmail(@Field("asunto") String asunto, @Field("body") String body);
 /*
 *   Update
 *
@@ -178,4 +185,10 @@ public interface APIService {
 */
     @POST("/garage/{id}")
     Call<Garage> updateDisponibilidad( @Path("id") int id, @Body Garage garage);
+
+/*
+*   2. Reservacion
+*/
+    @POST("/reservacion")
+    Call<Reservacion> uptadeReserva(@Body Reservacion reservacion);
 }

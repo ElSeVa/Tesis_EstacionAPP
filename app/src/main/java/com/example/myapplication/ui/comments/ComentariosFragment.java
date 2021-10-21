@@ -21,7 +21,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.myapplication.AdapterRecycleComentarios;
+import com.example.myapplication.adapters.AdapterRecycleComentarios;
 import com.example.myapplication.MainActivity;
 import com.example.myapplication.R;
 import com.example.myapplication.preferencias.Preferencias;
@@ -35,9 +35,7 @@ import com.example.myapplication.ui.models.Resena;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -105,7 +103,7 @@ public class ComentariosFragment extends Fragment implements Callback<List<Image
         tvNombreGarageComentario = root.findViewById(R.id.tvNombreGarageComentario);
 
         ivFotoPrincComentario = root.findViewById(R.id.ivFotoPrincComentario);
-        ivFotoSecundComentario = root.findViewById(R.id.ivFotoSecundComentario);
+        //ivFotoSecundComentario = root.findViewById(R.id.ivFotoSecundComentario);
 
         mAPIService = ApiUtils.getAPIService();
 
@@ -224,6 +222,7 @@ public class ComentariosFragment extends Fragment implements Callback<List<Image
 
                         ivFotoPrincComentario.setImageBitmap(fotoPrincipal);
                     }
+                    /*
                     if(img.getTipo().equals("Secundario")){
                         String base64Image = img.getImagen();
 
@@ -234,6 +233,7 @@ public class ComentariosFragment extends Fragment implements Callback<List<Image
                         int nAleatorio = rand.nextInt(bitmapList.size());
                         ivFotoSecundComentario.setImageBitmap(bitmapList.get(nAleatorio));
                     }
+                    */
                 }
             }
         }else {

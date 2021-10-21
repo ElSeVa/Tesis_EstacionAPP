@@ -1,4 +1,4 @@
-package com.example.myapplication;
+package com.example.myapplication.adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -7,27 +7,28 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import com.example.myapplication.R;
 import com.example.myapplication.ui.models.Item_Reservacion;
 
 import java.util.ArrayList;
 
-public class AdapterBaseReservas extends BaseAdapter {
+public class AdapterBaseReservacion extends BaseAdapter {
     private final Context context;
-    private final ArrayList<Item_Reservacion> reservas;
+    private final ArrayList<Item_Reservacion> reservacion;
 
-    public AdapterBaseReservas(Context context, ArrayList<Item_Reservacion> reservas){
-        this.reservas = reservas;
+    public AdapterBaseReservacion(Context context, ArrayList<Item_Reservacion> reservacion){
+        this.reservacion = reservacion;
         this.context = context;
     }
 
     @Override
     public int getCount() {
-        return reservas.size();
+        return reservacion.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return reservas.get(position);
+        return reservacion.get(position);
     }
 
     @Override

@@ -1,4 +1,4 @@
-package com.example.myapplication;
+package com.example.myapplication.adapters;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.myapplication.R;
 import com.example.myapplication.ui.models.Resena;
 
 import java.util.ArrayList;
@@ -24,7 +25,6 @@ public class AdapterRecycleComentarios extends RecyclerView.Adapter<AdapterRecyc
     public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         // Create a new view, which defines the UI of the list item
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.resena_list_adapter, null, false);
-
         return new ViewHolder(view);
     }
 

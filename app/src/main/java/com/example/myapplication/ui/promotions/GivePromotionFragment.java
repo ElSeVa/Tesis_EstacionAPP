@@ -1,37 +1,31 @@
 package com.example.myapplication.ui.promotions;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ExpandableListView;
-import android.widget.ListView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.example.myapplication.AdapterBasePromo;
-import com.example.myapplication.AdapterBaseReservas;
+import com.example.myapplication.adapters.AdapterBasePromo;
 import com.example.myapplication.MainActivity;
 import com.example.myapplication.R;
 import com.example.myapplication.preferencias.Preferencias;
 import com.example.myapplication.ui.api.APIService;
 import com.example.myapplication.ui.api.ApiUtils;
-import com.example.myapplication.ui.models.Conductor;
 import com.example.myapplication.ui.models.Garage;
 import com.example.myapplication.ui.models.Item_Promocion;
-import com.example.myapplication.ui.models.Item_Reservacion;
-import com.example.myapplication.ui.models.Reservacion;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -46,6 +40,7 @@ public class GivePromotionFragment extends Fragment {
 
     private HashMap<Item_Promocion, List<Item_Promocion>> item_promocionHashMap;
     private final Preferencias loginPref = new Preferencias("Login");
+    private Button btnListGive;
     @Override
     public void onAttach(@NonNull @NotNull Context context) {
         super.onAttach(context);
@@ -78,13 +73,20 @@ public class GivePromotionFragment extends Fragment {
         View root = inflater.inflate(R.layout.fragment_give_promotion, container, false);
         //SharedPreferences preferences = activity.getSharedPreferences("Login", Context.MODE_PRIVATE);
         //if(preferences != null){
-            int idConductor = loginPref.getPrefInteger(activity,"idConductor",0);//preferences.getInt("idConductor", 0);
+        btnListGive = root.findViewById(R.id.btn_list_give);
+        int idConductor = loginPref.getPrefInteger(activity,"idConductor",0);//preferences.getInt("idConductor", 0);
             //conductorCall = mAPIService.findConductor(idConductor);
-            garageCall = mAPIService.findIDGarage(idConductor);
+        garageCall = mAPIService.findIDGarage(idConductor);
         //}
 
         listView = root.findViewById(R.id.listPromo);
         return root;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull @NotNull View view, @Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
     }
 
     private void completarItem(int idGarage) {

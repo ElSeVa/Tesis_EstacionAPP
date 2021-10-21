@@ -1,7 +1,6 @@
 package com.example.myapplication;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -9,13 +8,13 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.example.myapplication.adapters.AdapterBaseReservacion;
+import com.example.myapplication.preferencias.Preferencias;
 import com.example.myapplication.ui.api.APIService;
 import com.example.myapplication.ui.api.ApiUtils;
 import com.example.myapplication.ui.models.Item_Reservacion;
-import com.example.myapplication.ui.models.Reservacion;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -26,13 +25,11 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import static android.content.Context.MODE_PRIVATE;
-
-public class ReservasFragment extends Fragment implements Callback<List<Item_Reservacion>> {
+public class ReservacionesFragment extends Fragment implements Callback<List<Item_Reservacion>> {
 
     private MainActivity activity;
 
-    private ListView listView;
+    private ListView listReservaciones;
 
     private APIService mAPIService = ApiUtils.getAPIService();
 
@@ -46,8 +43,8 @@ public class ReservasFragment extends Fragment implements Callback<List<Item_Res
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        SharedPreferences prefs = getActivity().getSharedPreferences("Login", MODE_PRIVATE);
-        int idConductor = prefs.getInt("idConductor", 0);
+        Preferencias loginPrefs = new Preferencias("Login");
+        int idConductor = loginPrefs.getPrefInteger(activity,"idConductor",0);
 
         Call<List<Item_Reservacion>> listCall = mAPIService.obtenerReservasConductor(idConductor);
         listCall.enqueue(this);
@@ -58,8 +55,8 @@ public class ReservasFragment extends Fragment implements Callback<List<Item_Res
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_reservas, container, false);
-        listView = (ListView) view.findViewById(R.id.listReserva);
+        View view = inflater.inflate(R.layout.fragment_reservaciones, container, false);
+        listReservaciones = (ListView) view.findViewById(R.id.listReservaciones);
         activity.setDrawer_unlocker();
         return view;
     }
@@ -68,8 +65,8 @@ public class ReservasFragment extends Fragment implements Callback<List<Item_Res
     public void onResponse(Call<List<Item_Reservacion>> call, Response<List<Item_Reservacion>> response) {
         if(response.isSuccessful() && response.body() != null){
             ArrayList<Item_Reservacion> reservacionList = new ArrayList<>(response.body());
-            AdapterBaseReservas adapterBase = new AdapterBaseReservas(activity, reservacionList);
-            listView.setAdapter(adapterBase);
+            AdapterBaseReservacion adapterBase = new AdapterBaseReservacion(activity, reservacionList);
+            listReservaciones.setAdapter(adapterBase);
         }
     }
 
