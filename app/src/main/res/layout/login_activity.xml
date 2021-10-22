@@ -20,41 +20,50 @@
             android:background="@drawable/btn_redondeado"
             android:src="@mipmap/ic_launcher_round"
             />
-        <EditText
+
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginTop="50dp"
-            android:layout_marginBottom="20dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:hint="Correo Electronico"
-            android:singleLine="true"
-            android:inputType="textEmailAddress"
-            android:textColorHint="@color/md_grey_500"
-            android:textColor="@color/white"
-            android:paddingLeft="20dp"
-            android:paddingRight="10dp"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/input"
-            android:id="@+id/etEmail"/>
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Contraseña"
-            android:singleLine="true"
-            android:inputType="textPassword"
-            android:textColorHint="@color/md_grey_500"
-            android:textColor="@color/white"
-            android:background="@drawable/input"
-            android:paddingStart="20dp"
-            android:paddingEnd="10dp"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:layout_marginBottom="20dp"
-            android:id="@+id/etPassword"/>
+            android:textColorHint="@color/md_grey_500">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textEmailAddress"
+                android:background="@drawable/input"
+                android:textColorHint="@color/md_grey_500"
+                android:textColor="@color/white"
+
+                android:hint="Correo Electronico"
+                android:id="@+id/etEmail"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginBottom="20dp"
+            android:textColorHint="@color/md_grey_500"
+            app:endIconMode="password_toggle">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPassword"
+                android:background="@drawable/input"
+                android:textColorHint="@color/md_grey_500"
+                android:textColor="@color/white"
+                android:hint="Contraseña"
+
+                android:id="@+id/etPassword"
+                android:imeOptions="actionSend"/>
+        </com.google.android.material.textfield.TextInputLayout>
         <CheckBox
             android:id="@+id/cbRecordarLogin"
             android:layout_marginBottom="20dp"

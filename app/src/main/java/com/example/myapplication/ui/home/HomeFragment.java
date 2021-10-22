@@ -204,6 +204,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Permis
                 @Override
                 public void onFinish() {
                     observerReservaciones.notificar(false);
+                    contador.cancel();
+                    temporizador.cancelarTemporizador();
                 }
             }.start();
         }

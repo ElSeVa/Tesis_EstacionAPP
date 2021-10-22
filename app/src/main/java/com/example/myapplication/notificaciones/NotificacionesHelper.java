@@ -5,17 +5,21 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Vibrator;
 import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.navigation.NavDeepLinkBuilder;
 
+import com.example.myapplication.MainActivity;
 import com.example.myapplication.R;
 import com.example.myapplication.preferencias.Preferencias;
 import com.example.myapplication.ui.api.APIService;
 import com.example.myapplication.ui.api.ApiUtils;
+import com.example.myapplication.ui.home.HomeFragment;
 import com.example.myapplication.ui.models.Garage;
 import com.example.myapplication.ui.models.Reservacion;
 
@@ -120,17 +124,27 @@ public class NotificacionesHelper {
 
     private void crearNotificacionGarage(int conteo){
         notificacion = null;
+        NavDeepLinkBuilder navDeep = new NavDeepLinkBuilder(context);
         if(conteo<=1){
             notificacion = new NotificationCompat.Builder(context, ID_CHANNEL)
                     .setSmallIcon(R.mipmap.ic_launcher)
                     .setContentTitle("Nueva Reserva")
                     .setContentText("Tienes "+conteo+" nueva reservacion para confirmar")
+                    .setContentIntent(
+                            navDeep.setComponentName(MainActivity.class)
+                                .setGraph(R.navigation.mobile_navigation)
+                                .setDestination(R.id.nav_reservas).createPendingIntent())
                     .setPriority(NotificationCompat.PRIORITY_DEFAULT).build();
+
         }else {
             notificacion = new NotificationCompat.Builder(context, ID_CHANNEL)
                     .setSmallIcon(R.mipmap.ic_launcher)
                     .setContentTitle("Nueva Reserva")
                     .setContentText("Tienes "+conteo+" nuevas reservaciones para confirmar")
+                    .setContentIntent(
+                            navDeep.setComponentName(MainActivity.class)
+                                .setGraph(R.navigation.mobile_navigation)
+                                .setDestination(R.id.nav_reservas).createPendingIntent())
                     .setPriority(NotificationCompat.PRIORITY_DEFAULT).build();
         }
         Log.d("Services-Notificacion","Se crea la notificacion del garage");
@@ -202,6 +216,7 @@ public class NotificacionesHelper {
     }
 
     private void crearNotificacionConductor(String estado){
+        NavDeepLinkBuilder navDeep = new NavDeepLinkBuilder(context);
         if(nuevaNotificacion){
             Log.d("Services-Notificacion","Notificacion Reserva no es Nulo");
             switch (estado){
@@ -210,7 +225,10 @@ public class NotificacionesHelper {
                     notificacion = new NotificationCompat.Builder(context, ID_CHANNEL)
                             .setSmallIcon(R.mipmap.ic_launcher)
                             .setContentTitle("Aceptaron su reservacion")
-                            .setContentText("El garage Acepto su reservacion")
+                            .setContentText("El garage acepto su reservacion")
+                            .setContentIntent(
+                                    navDeep.setGraph(R.navigation.mobile_navigation)
+                                            .setDestination(R.id.reservacionesFragment).createPendingIntent())
                             .setPriority(NotificationCompat.PRIORITY_DEFAULT).build();
                     break;
                 case "Cancelado":
@@ -218,7 +236,11 @@ public class NotificacionesHelper {
                     notificacion = new NotificationCompat.Builder(context, ID_CHANNEL)
                             .setSmallIcon(R.mipmap.ic_launcher)
                             .setContentTitle("Cancelaron su reservacion")
-                            .setContentText("El garage Cancelo su reservacion")
+                            .setContentText("El garage cancelo su reservacion")
+                            .setContentIntent(
+                                    navDeep.setComponentName(MainActivity.class)
+                                            .setGraph(R.navigation.mobile_navigation)
+                                            .setDestination(R.id.reservacionesFragment).createPendingIntent())
                             .setPriority(NotificationCompat.PRIORITY_DEFAULT).build();
                     break;
                 default:

@@ -31,6 +31,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -41,12 +43,12 @@ public class ReservasFragment extends Fragment implements Callback<List<Reservac
     Button btnAceptar, btnCancelar;
     RecyclerView listReservas;
     private AdapterRecycleReservas adapterRecycleReservas;
+    Timer timer = new Timer();
 
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         activity = (MainActivity) context;
-
     }
 
     @Override
@@ -69,12 +71,32 @@ public class ReservasFragment extends Fragment implements Callback<List<Reservac
     }
 
     @Override
+    public void onViewCreated(@NonNull @NotNull View view, @Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        TimerTask timerTask = new TimerTask() {
+            int tic = 0;
+            @Override
+            public void run() {
+                if(tic%2==0){
+                    Preferencias loginPrefs = new Preferencias("Login");
+                    Call<List<Reservacion>> listCall = ApiUtils.getAPIService().obtenerReservasEstados(loginPrefs.getPrefInteger(activity,"idGarage",0));
+                    listCall.enqueue(ReservasFragment.this);
+                }
+                tic++;
+            }
+        };
+        timer.schedule(timerTask,2,2000);
+    }
+
+    @Override
     public void onResponse(Call<List<Reservacion>> call, Response<List<Reservacion>> response) {
         if(response.isSuccessful() && response.body() != null){
             ArrayList<Reservacion> reservacionList = new ArrayList<>(response.body());
             adapterRecycleReservas = new AdapterRecycleReservas(reservacionList);
             //AdapterBaseReservas adapterBase = new AdapterBaseReservas(activity, reservacionList);
             listReservas.setAdapter(adapterRecycleReservas);
+            adapterRecycleReservas.notifyDataSetChanged();
             //adapterBase.notifyDataSetChanged();
         }
     }
@@ -82,5 +104,11 @@ public class ReservasFragment extends Fragment implements Callback<List<Reservac
     @Override
     public void onFailure(Call<List<Reservacion>> call, Throwable t) {
         t.printStackTrace();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        timer.cancel();
     }
 }

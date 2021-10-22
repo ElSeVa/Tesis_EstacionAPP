@@ -38,7 +38,7 @@ public class MenuReservaFragment extends Fragment implements View.OnClickListene
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.fragment_slideshow, container, false);
+        View root = inflater.inflate(R.layout.fragment_menu_reservas, container, false);
         btnHora = root.findViewById(R.id.btnHora);
         btnMedia = root.findViewById(R.id.btnMedia);
         btnEstadia = root.findViewById(R.id.btnEstadia);

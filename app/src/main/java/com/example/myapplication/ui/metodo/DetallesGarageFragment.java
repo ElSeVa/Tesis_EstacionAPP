@@ -1,7 +1,6 @@
 package com.example.myapplication.ui.metodo;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -43,7 +42,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MapMuestraFragment extends Fragment implements Callback<List<Imagenes>> {
+public class DetallesGarageFragment extends Fragment implements Callback<List<Imagenes>> {
     private MainActivity activity;
 
     private TextView tvNombreGarage;
@@ -91,7 +90,7 @@ public class MapMuestraFragment extends Fragment implements Callback<List<Imagen
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.map_muestra_activity, container, false);
+        View root = inflater.inflate(R.layout.fragment_detalles_garage, container, false);
         ratingBar = root.findViewById(R.id.rbMuestras);
 
         ivFotoPrinc = root.findViewById(R.id.ivFotoPrinc);

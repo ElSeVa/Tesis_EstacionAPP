@@ -44,7 +44,6 @@ public class ProfileGarageFragment extends Fragment implements Callback<List<Ima
     private final APIService mAPIService = ApiUtils.getAPIService();
     private Button btnPerfilCambios;
     private Garage propietario;
-    private Call<Garage> callGarage;
     private MainActivity activity;
     private ImageView ivFotoSecundGarage;
     private CircleImageView ivFotoPrincGarage;
@@ -90,7 +89,7 @@ public class ProfileGarageFragment extends Fragment implements Callback<List<Ima
 
         //if(preferences != null){
             int idConductor = loginPref.getPrefInteger(activity,"idConductor",0);//preferences.getInt("idConductor", 0);
-            callGarage = mAPIService.findIDGarage(idConductor);
+        Call<Garage> callGarage = mAPIService.findIDGarage(idConductor);
         //}
 
         callGarage.enqueue(new Callback<Garage>() {

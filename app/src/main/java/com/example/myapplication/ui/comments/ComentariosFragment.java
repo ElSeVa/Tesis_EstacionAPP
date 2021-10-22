@@ -89,7 +89,7 @@ public class ComentariosFragment extends Fragment implements Callback<List<Image
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.activity_comments, container, false);
+        View root = inflater.inflate(R.layout.fragment_comments, container, false);
 
         rbValoracion = root.findViewById(R.id.rbValoracion);
 

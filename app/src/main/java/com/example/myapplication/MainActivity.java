@@ -1,14 +1,15 @@
 package com.example.myapplication;
 
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.Menu;
 import android.widget.ImageView;
@@ -20,6 +21,7 @@ import com.example.myapplication.notificaciones.NotificacionesServices;
 import com.example.myapplication.preferencias.Preferencias;
 import com.example.myapplication.ui.api.APIService;
 import com.example.myapplication.ui.api.ApiUtils;
+import com.example.myapplication.ui.home.HomeFragment;
 import com.example.myapplication.ui.models.Conductor;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -36,8 +38,8 @@ import com.google.android.material.navigation.NavigationView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.navigation.NavController;
 import androidx.navigation.NavDestination;
 import androidx.navigation.Navigation;
@@ -49,14 +51,10 @@ import androidx.appcompat.widget.Toolbar;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.TimeUnit;
 
-import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -238,10 +236,6 @@ public class MainActivity extends AppCompatActivity implements MyDrawerControlle
         //fragmentManager.findFragmentById(R.id.btnReservaHora);
 
     }
-
-
-
-
 
     private boolean verificacionDestino(NavDestination destination){
         return destination.getId() == R.id.nav_gallery

@@ -60,13 +60,9 @@
     </fragment>
     <fragment
         android:id="@+id/mapMuestraFragment"
-        android:name="com.example.myapplication.ui.metodo.MapMuestraFragment"
+        android:name="com.example.myapplication.ui.metodo.DetallesGarageFragment"
         android:label="Detalles de Garage"
-        tools:layout="@layout/map_muestra_activity">
-        <argument
-            android:name="HaceReserva"
-            app:argType="boolean"
-            android:defaultValue="true" />
+        tools:layout="@layout/fragment_detalles_garage">
         <action
             android:id="@+id/action_mapMuestraFragment_to_menuReservaFragment"
             app:destination="@id/menuReservaFragment"
@@ -82,7 +78,7 @@
         android:id="@+id/menuReservaFragment"
         android:name="com.example.myapplication.ui.menuReservas.MenuReservaFragment"
         android:label="Menu de Reservas"
-        tools:layout="@layout/fragment_slideshow">
+        tools:layout="@layout/fragment_menu_reservas">
         <action
             android:id="@+id/action_menuReservaFragment_to_estadiaFragment"
             app:destination="@id/estadiaFragment" />
@@ -130,7 +126,7 @@
         android:id="@+id/comentariosFragment"
         android:name="com.example.myapplication.ui.comments.ComentariosFragment"
         android:label="Comentarios"
-        tools:layout="@layout/activity_comments"/>
+        tools:layout="@layout/fragment_comments"/>
     <fragment
         android:id="@+id/nav_perfil"
         android:name="com.example.myapplication.ui.profile.ProfileFragment"

@@ -7,11 +7,14 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
+import android.util.Patterns;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -38,6 +41,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.regex.Pattern;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -86,12 +90,43 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
             startActivityForResult(intent,SIGN_IN_CODE);
         });
 
+        etPasswod.setOnEditorActionListener((v, actionId, event) -> {
+            boolean handled = false;
+            if (actionId == EditorInfo.IME_ACTION_SEND) {
+                if(etEmail.length() == 0){
+                    mostrarMensaje("Ingrese su email");
+                }
+
+                if(etPasswod.length() == 0){
+                    mostrarMensaje("Ingrese su contrasena");
+                }
+
+                if(validarEmail(etEmail.getText().toString())){
+                    sendPost(etEmail.getText().toString(),etPasswod.getText().toString());
+                }else{
+                    mostrarMensaje("Ingrese un email valido");
+                }
+                handled = true;
+            }
+            return handled;
+        });
+
         btnLogin.setOnClickListener(v -> {
-            if(etEmail != null && etPasswod != null){
+
+            if(etEmail.length() == 0){
+                mostrarMensaje("Ingrese su email");
+            }
+
+            if(etPasswod.length() == 0){
+                mostrarMensaje("Ingrese su contrasena");
+            }
+
+            if(validarEmail(etEmail.getText().toString())){
                 sendPost(etEmail.getText().toString(),etPasswod.getText().toString());
             }else{
-                mostrarMensaje("Ingrese su email y contrasena");
+                mostrarMensaje("Ingrese un email valido");
             }
+
         });
 
     }
@@ -99,29 +134,27 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if(keyCode == KeyEvent.KEYCODE_BACK){
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setMessage("¿Desea salir de la aplicacion?")
-                    .setPositiveButton("Si", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            if (dialog != null) {
-                                dialog.dismiss();
-                            }
-                            Intent intent = new Intent(Intent.ACTION_MAIN);
-                            intent.addCategory(Intent.CATEGORY_HOME);
-                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            startActivity(intent);
-                        }
-                    })
-                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                    });
-            builder.show();
+            AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
+            builder.setCancelable(false);
+            builder.setMessage("¿Desea salir de la aplicacion?");
+            builder.setPositiveButton("Si", (dialog, which) -> {
+                if (dialog != null) {
+                    dialog.dismiss();
+                }
+                Toast.makeText(context, "saliendo", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(Intent.ACTION_MAIN);
+                intent.addCategory(Intent.CATEGORY_HOME);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                finish();
+            });
+            builder.setNegativeButton("No", (dialog, which) -> {
+                Toast.makeText(context, "Sigue en la misma", Toast.LENGTH_SHORT).show();
+                dialog.dismiss();
+            }).show();
+
         }
-        return super.onKeyDown(keyCode, event);
+        return false;
     }
 
     public void sendPost(String email, String contrasena) {
@@ -138,29 +171,9 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                         mantenerPref.setPrefBoolean(context,"Check",cbRecordarLogin.isChecked());
                         mantenerPref.setPrefString(context,"Usuario",email);
                         mantenerPref.setPrefString(context,"Password",contrasena);
-                        //mapMantener.put("Check",String.valueOf());
-                        //mapMantener.put("Usuario", email);
-                        //mapMantener.put("Password", contrasena);
-                        //mantenerPref.setPrefMantener(context,mapMantener);
-                        /*
-                        SharedPreferences.Editor preferences = getSharedPreferences("MantenerUsuario", MODE_PRIVATE).edit();
-                        preferences.putBoolean("Check", cbRecordarLogin.isChecked());
-                        preferences.putString("Usuario",email);
-                        preferences.putString("Password",contrasena);
-                        preferences.apply();
-                        */
                     }
                     loginPref.setPrefInt(context,"idConductor",conductor.getId());
                     loginPref.setPrefString(context,"Vehiculo",conductor.getTipoVehiculo());
-                    //mapLogin.put("idConductor",String.valueOf());
-                    //mapLogin.put("Vehiculo", );
-                    //loginPref.setPrefLogin(context,mapLogin);
-                    /*
-                    editor = getSharedPreferences("Login", MODE_PRIVATE).edit();
-                    editor.putInt("idConductor", conductor.getId());
-                    editor.putString("Vehiculo",conductor.getTipoVehiculo());
-                    editor.apply();
-                    */
                     cambiarIntent();
                 }else {
                     mostrarMensaje("login error");
@@ -197,15 +210,6 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                         conductor = response.body();
                         loginPref.setPrefInt(context,"idConductor", Objects.requireNonNull(conductor).getId());
                         loginPref.setPrefString(context,"Vehiculo",conductor.getTipoVehiculo());
-                        //mapLogin.put("idConductor", String.valueOf(conductor.getId()));
-                        //mapLogin.put("Vehiculo", conductor.getTipoVehiculo());
-                        //loginPref.setPrefLogin(context,mapLogin);
-                        /*
-                        editor = getSharedPreferences("Login", MODE_PRIVATE).edit();
-                        editor.putInt("idConductor", conductor.getId());
-                        editor.putString("Vehiculo",conductor.getTipoVehiculo());
-                        editor.apply();
-                        */
                         Intent intent = new Intent(context, MainActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(intent);
@@ -236,6 +240,12 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     private void mostrarMensaje(String mensaje){
         Toast.makeText(context,mensaje,Toast.LENGTH_LONG).show();
     }
+
+    private boolean validarEmail(String email) {
+        Pattern pattern = Patterns.EMAIL_ADDRESS;
+        return pattern.matcher(email).matches();
+    }
+
     private void cambiarIntent(){
         Intent intent = new Intent(context, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);

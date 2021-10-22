@@ -57,7 +57,7 @@ public class ReservacionesFragment extends Fragment implements Callback<List<Ite
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_reservaciones, container, false);
         listReservaciones = (ListView) view.findViewById(R.id.listReservaciones);
-        activity.setDrawer_unlocker();
+        //activity.setDrawer_unlocker();
         return view;
     }
 

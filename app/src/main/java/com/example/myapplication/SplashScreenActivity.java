@@ -42,7 +42,6 @@ public class SplashScreenActivity extends AppCompatActivity implements GoogleApi
     private final APIService mAPIService = ApiUtils.getAPIService();
     private final Preferencias mantenerPref = new Preferencias("MantenerUsuario");
     final Context context = SplashScreenActivity.this;
-
     private GoogleApiClient googleApiClient;
 
     private void handlerSignInResult(GoogleSignInResult googleSignInResult) {
@@ -115,7 +114,7 @@ public class SplashScreenActivity extends AppCompatActivity implements GoogleApi
                 }
 
             }
-        },3000);
+        },1000);
     }
 
     public void sendPost(String email, String contrasena) {
