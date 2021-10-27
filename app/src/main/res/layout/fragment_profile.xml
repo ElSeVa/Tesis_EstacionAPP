@@ -35,14 +35,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:textSize="25dp" />
+        android:textStyle="bold"
+        android:textSize="30dp" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Vehiculo"
         android:layout_gravity="center"
-        android:textSize="20dp" />
+        android:text="Vehiculo"
+        android:textSize="25dp" />
 
     <TextView
         android:id="@+id/tvPerfilVehiculo"
@@ -50,14 +51,16 @@
         android:layout_gravity="center"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="18dp" />
+        android:textStyle="italic"
+        android:textSize="20dp" />
 
     <Button
         android:id="@+id/btnPromociones"
         android:text="@string/ver_promociones"
+        android:background="@drawable/borde_circular"
         android:layout_marginTop="150dp"
         android:layout_gravity="center"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_width="250dp"
+        android:layout_height="55sp"/>
 
 </LinearLayout>

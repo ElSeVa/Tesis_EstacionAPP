@@ -9,6 +9,8 @@ import com.example.myapplication.ui.models.Imagenes;
 import com.example.myapplication.ui.models.Item_Promocion;
 import com.example.myapplication.ui.models.Item_Reservacion;
 import com.example.myapplication.ui.models.Mapa;
+import com.example.myapplication.ui.models.Promo;
+import com.example.myapplication.ui.models.Promociones;
 import com.example.myapplication.ui.models.Resena;
 import com.example.myapplication.ui.models.Reservacion;
 
@@ -38,8 +40,6 @@ public interface APIService {
 *
 *   1. Conductor
 */
-
-
     @GET("/conductor/{id}")
     Call<Conductor> findConductor(@Path(value="id") Integer id);
 
@@ -138,6 +138,29 @@ public interface APIService {
 
     @GET("/reservacion")
     Call<List<Reservacion>> obtenerReservaciones();
+/*
+*   8. Promos
+*/
+    @GET("/promos")
+    Call<List<Promo>> obtenerPromo();
+
+    @GET("/promos/{id}")
+    Call<Promo> obtenerPromoId(@Path(value = "id") int id);
+
+/*
+*   9. Promociones
+*/
+    @GET("/promociones")
+    Call<List<Promociones>> obtenerPromociones();
+
+    @GET("/promociones/conductor/{idConductor}")
+    Call<List<Promociones>> obtenerPromocionesIdConductor(@Path(value = "idConductor") int idConductor);
+
+    @GET("/promociones/garage/{idGarage}")
+    Call<List<Promociones>> obtenerPromocionesIdGarage(@Path(value = "idGarage") int idGarage);
+
+    @GET("/promociones/promos/{idPromo}")
+    Call<List<Promociones>> obtenerPromocionesIdPromo(@Path(value = "idPromo") int idPromo);
 
 /*
 *   Post

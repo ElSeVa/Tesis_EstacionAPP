@@ -98,16 +98,4 @@ public class AdapterBasePromo extends BaseExpandableListAdapter {
         return false;
     }
 
-    @SuppressLint("SetTextI18n")
-    private void agregarTextView(View view, Item_Promocion promocions, int position){
-        TextView tvNumero = view.findViewById(R.id.tvP_Numero);
-        TextView tvP_Nombre = view.findViewById(R.id.tvP_Nombre);
-        TextView tvP_Vehiculo = view.findViewById(R.id.tvP_Vehiculo);
-        TextView tvP_Frecuencia = view.findViewById(R.id.tvP_Frecuencia);
-
-        tvNumero.setText(String.valueOf(position+1));
-        tvP_Nombre.setText(promocions.getNombre());
-        tvP_Vehiculo.setText(promocions.getTipoVehiculo());
-        tvP_Frecuencia.setText(promocions.getFrecuencia().toString());
-    }
 }

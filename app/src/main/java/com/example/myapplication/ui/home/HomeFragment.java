@@ -37,6 +37,8 @@ import com.example.myapplication.ui.mapabox.MapaBox;
 import com.example.myapplication.ui.models.Estadia;
 import com.example.myapplication.ui.models.Garage;
 import com.example.myapplication.ui.models.Mapa;
+import com.example.myapplication.ui.models.Promo;
+import com.example.myapplication.ui.models.Promociones;
 import com.example.myapplication.ui.models.Reservacion;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.mapbox.android.core.location.LocationEngine;
@@ -522,28 +524,47 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Permis
     }
 
     private void definirDisponibilidad(Garage garage, Mapa mapa){
-        switch (garage.getDisponibilidad()){
-            case "Abierto":
-                mapaBox.mostrarMarcadores(Double.parseDouble(mapa.getLatitud()),
-                        Double.parseDouble(mapa.getLongitud()),
-                        garage.getNombre(), R.drawable.ic_mapbox_abierto);
-                break;
-            case "Completo":
-                mapaBox.mostrarMarcadores(Double.parseDouble(mapa.getLatitud()),
-                        Double.parseDouble(mapa.getLongitud()),
-                        garage.getNombre(), R.drawable.ic_mapbox_completo);
-                break;
-            case "Promocion":
-                mapaBox.mostrarMarcadores(Double.parseDouble(mapa.getLatitud()),
-                        Double.parseDouble(mapa.getLongitud()),
-                        garage.getNombre(),R.drawable.ic_mapbox_promocion);
-                break;
-            default:
-                mapaBox.mostrarMarcadores(Double.parseDouble(mapa.getLatitud()),
-                        Double.parseDouble(mapa.getLongitud()),
-                        garage.getNombre(),R.drawable.ic_mapbox_cerrado);
-                break;
-        }
+        Call<List<Promociones>> call = ApiUtils.getAPIService().obtenerPromocionesIdConductor(new Preferencias("Login").getPrefInteger(activity,"idConductor",0));
+        call.enqueue(new Callback<List<Promociones>>() {
+            @Override
+            public void onResponse(Call<List<Promociones>> call, Response<List<Promociones>> response) {
+                if(response.body() != null && response.isSuccessful()){
+                    ArrayList<Promociones> arrayList = new ArrayList<>(response.body());
+                    for (Promociones promociones : arrayList){
+                        if(promociones.getIdConductor().equals(new Preferencias("Login").getPrefInteger(activity, "idConductor", 0)) && promociones.getIdGarage().equals(garage.getId())){
+                            mapaBox.mostrarMarcadores(Double.parseDouble(mapa.getLatitud()),
+                                    Double.parseDouble(mapa.getLongitud()),
+                                    garage.getNombre(),R.drawable.ic_mapbox_promocion);
+                        }
+                    }
+                    switch (garage.getDisponibilidad()){
+                        case "Abierto":
+                            mapaBox.mostrarMarcadores(Double.parseDouble(mapa.getLatitud()),
+                                    Double.parseDouble(mapa.getLongitud()),
+                                    garage.getNombre(), R.drawable.ic_mapbox_abierto);
+                            break;
+                        case "Completo":
+                            mapaBox.mostrarMarcadores(Double.parseDouble(mapa.getLatitud()),
+                                    Double.parseDouble(mapa.getLongitud()),
+                                    garage.getNombre(), R.drawable.ic_mapbox_completo);
+                            break;
+                        default:
+                            mapaBox.mostrarMarcadores(Double.parseDouble(mapa.getLatitud()),
+                                    Double.parseDouble(mapa.getLongitud()),
+                                    garage.getNombre(),R.drawable.ic_mapbox_cerrado);
+                            break;
+                    }
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<List<Promociones>> call, Throwable t) {
+                t.printStackTrace();
+            }
+        });
+
+
     }
 
     @Override
