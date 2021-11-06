@@ -272,7 +272,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Permis
     @Override
     public void onMapReady(@NonNull MapboxMap mapboxMap) {
         this.mapboxMap = mapboxMap;
-
+        mapboxMap.setMinZoomPreference(10);
         mapaBox.setMapboxMap(this.mapboxMap);
         garage.enqueue(new Callback<List<Garage>>() {
             @Override

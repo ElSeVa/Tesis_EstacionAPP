@@ -2,9 +2,7 @@ package com.example.myapplication;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import android.util.Patterns;
@@ -14,7 +12,6 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -27,14 +24,12 @@ import com.example.myapplication.ui.api.APIService;
 import com.example.myapplication.ui.api.ApiUtils;
 import com.example.myapplication.ui.models.Conductor;
 import com.google.android.gms.auth.api.Auth;
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -67,7 +62,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.login_activity);
+        setContentView(R.layout.activity_login);
         etEmail = findViewById(R.id.etEmail);
         etPasswod = findViewById(R.id.etPassword);
         mAPIService = ApiUtils.getAPIService();
@@ -233,6 +228,12 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
 
     public void registerIntent(View v){
         Intent intent = new Intent(context, RegisterActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
+    public void recuperarIntent(View v){
+        Intent intent = new Intent(context, RecuperarActivity.class);
         startActivity(intent);
         finish();
     }

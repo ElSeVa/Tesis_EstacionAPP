@@ -37,6 +37,16 @@
             android:screenOrientation="locked">
         </activity>
 
+        <activity android:name=".RecuperarActivity"
+            android:label="Recuperar Contraseña"
+            android:screenOrientation="locked">
+        </activity>
+
+        <activity android:name=".CancelarReservaActivity"
+            android:label="Reservacion"
+            android:screenOrientation="locked">
+        </activity>
+
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"

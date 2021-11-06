@@ -201,6 +201,10 @@ public interface APIService {
     @FormUrlEncoded
     @POST("/sugerencias/enviar")
     Call<Boolean> enviarEmail(@Field("asunto") String asunto, @Field("body") String body);
+
+    @FormUrlEncoded
+    @POST("/sugerencias/recuperar")
+    Call<Boolean> enviarRecuperar(@Field("email") String email,@Field("asunto") String asunto, @Field("body") String body);
 /*
 *   Update
 *

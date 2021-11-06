@@ -159,7 +159,7 @@ public class NotificacionesHelper {
                     List<Reservacion> reservacionList = response.body();
                     reservacions = response.body();
                     totalNotificaciones = reservacionList.size();
-                    Log.d("Services-Notificacion","Se obtiene el total de las notificaciones");
+                    //Log.d("Services-Notificacion","Se obtiene el total de las notificaciones");
                 }
             }
 
@@ -173,7 +173,7 @@ public class NotificacionesHelper {
     public void enviarNotificacionGarage(){
         if(idGarage != 0){
             //boolean nuevaNotificacion=false;
-            Log.d("Services-Notificacion","Existe un id_garage");
+            //Log.d("Services-Notificacion","Existe un id_garage");
             if(totalNotificaciones != 0){
                 if(totalNotificaciones.equals(anteriorTotalNotificacion)){
                     nuevaNotificacion = false;

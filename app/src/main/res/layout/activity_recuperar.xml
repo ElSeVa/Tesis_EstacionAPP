@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="750dp"
+        android:background="@mipmap/ic_launcher"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#d8000000"
+        android:gravity="center"
+        android:orientation="vertical">
+        <ImageView
+            android:layout_width="110dp"
+            android:layout_height="110dp"
+            android:background="@drawable/btn_redondeado"
+            android:src="@mipmap/ic_launcher_round"
+            />
+
+        <TextView
+            android:textAlignment="center"
+            android:text="Ingrese su correo\npara recuperar la contraseña"
+            android:layout_marginTop="50dp"
+            android:textSize="15sp"
+            android:padding="5dp"
+            android:textColor="@color/white"
+            android:textColorLink="@color/purple_200"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginBottom="20dp"
+            android:textColorHint="@color/md_grey_500">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textEmailAddress"
+                android:background="@drawable/input"
+                android:textColorHint="@color/md_grey_500"
+                android:textColor="@color/white"
+                android:hint="Correo Electronico"
+                android:id="@+id/etEmailRecuperar"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="50dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:background="@drawable/btn_redondeado"
+            android:id="@+id/btnRecuperar"
+            android:text="@string/enviar_correo">
+        </Button>
+
+    </LinearLayout>
+</RelativeLayout>

@@ -39,5 +39,6 @@
     <string name="enviar_comentario">Enviar comentario</string>
     <string name="enviar_sugerencia">Enviar sugerencia</string>
     <string name="enviar_sugerencias">Enviar Sugerencias</string>
+    <string name="enviar_correo">Enviar correo</string>
 
 </resources>

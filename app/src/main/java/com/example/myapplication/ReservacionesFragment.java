@@ -1,6 +1,7 @@
 package com.example.myapplication;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -11,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 
 import com.example.myapplication.adapters.AdapterBaseReservacion;
+import com.example.myapplication.preferencias.ItemPreferencias;
 import com.example.myapplication.preferencias.Preferencias;
 import com.example.myapplication.ui.api.APIService;
 import com.example.myapplication.ui.api.ApiUtils;
@@ -67,6 +69,13 @@ public class ReservacionesFragment extends Fragment implements Callback<List<Ite
             ArrayList<Item_Reservacion> reservacionList = new ArrayList<>(response.body());
             AdapterBaseReservacion adapterBase = new AdapterBaseReservacion(activity, reservacionList);
             listReservaciones.setAdapter(adapterBase);
+            listReservaciones.setOnItemClickListener((parent, view, position, id) -> {
+                Intent intent = new Intent(activity,CancelarReservaActivity.class);
+                Item_Reservacion item = reservacionList.get(position);
+                intent.putExtra("id", item.getId());
+                intent.putExtra("nombre", item.getNombre());
+                startActivity(intent);
+            });
         }
     }
 
