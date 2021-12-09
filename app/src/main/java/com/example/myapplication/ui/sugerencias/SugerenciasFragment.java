@@ -19,6 +19,7 @@ import com.example.myapplication.MainActivity;
 import com.example.myapplication.R;
 import com.example.myapplication.ui.api.APIService;
 import com.example.myapplication.ui.api.ApiUtils;
+import com.example.myapplication.ui.models.Sugerencias;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -52,19 +53,20 @@ public class SugerenciasFragment extends Fragment {
         btnSugerenciaEnviar.setOnClickListener(v -> {
             if(etSugerenciaComentario.getText() != null) {
                 APIService mApiService = ApiUtils.getAPIService();
-                Call<Boolean> call = mApiService.enviarEmail("Sugerencias", etSugerenciaComentario.getText().toString());
-                call.enqueue(new Callback<Boolean>() {
+                Call<String> call = mApiService.enviarEmail(new Sugerencias("potoxsdes@gmail.com","Sugerencias", etSugerenciaComentario.getText().toString()));
+                call.enqueue(new Callback<String>() {
                     @Override
-                    public void onResponse(@NotNull Call<Boolean> call, @NotNull Response<Boolean> response) {
+                    public void onResponse(@NotNull Call<String> call, @NotNull Response<String> response) {
                         if(response.isSuccessful()){
-                            boolean valor = response.body();
+                            String s = response.body();
+                            assert s != null;
                             etSugerenciaComentario.setText("");
-                            Toast.makeText(activity,"Valor del boolean "+valor,Toast.LENGTH_SHORT).show();
+                            Toast.makeText(activity,"Gracias por enviar una sugerencia.",Toast.LENGTH_SHORT).show();
                         }
                     }
 
                     @Override
-                    public void onFailure(@NotNull Call<Boolean> call, @NotNull Throwable t) {
+                    public void onFailure(@NotNull Call<String> call, @NotNull Throwable t) {
                         Log.d("Sugerencias",t.getMessage());
                     }
                 });

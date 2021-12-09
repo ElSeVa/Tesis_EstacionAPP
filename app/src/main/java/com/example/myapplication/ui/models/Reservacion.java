@@ -1,5 +1,7 @@
 package com.example.myapplication.ui.models;
 
+import com.example.myapplication.enums.Estados;
+import com.example.myapplication.enums.Horario;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -36,13 +38,13 @@ public class Reservacion {
     @Expose
     private int idGarage;
 
-    public Reservacion(int precio, String estadia, int cantidad, String fechaInicio, String fechaFinal, String estado, int idConductor, int idGarage) {
+    public Reservacion(int precio, Horario estadia, int cantidad, String fechaInicio, String fechaFinal, Estados estado, int idConductor, int idGarage) {
         this.precio = precio;
-        this.estadia = estadia;
+        this.estadia = estadia.getHorarios();
         this.cantidad = cantidad;
         this.fechaInicio = fechaInicio;
         this.fechaFinal = fechaFinal;
-        this.estado = estado;
+        this.estado = estado.getEstados();
         this.idConductor = idConductor;
         this.idGarage = idGarage;
     }

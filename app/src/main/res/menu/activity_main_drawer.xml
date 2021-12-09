@@ -9,7 +9,7 @@
         android:checkableBehavior="single">
         <item
             android:id="@+id/nav_home"
-            android:icon="@drawable/ic_menu_camera"
+            android:icon="@drawable/ic_menu_home"
             android:title="@string/menu_home" />
         <item
             android:id="@+id/nav_perfil"
@@ -22,11 +22,11 @@
         android:checkableBehavior="single">
         <item
             android:id="@+id/nav_gallery"
-            android:icon="@drawable/ic_menu_gallery"
+            android:icon="@drawable/ic_menu_garage"
             android:title="@string/garage" />
         <item
             android:id="@+id/nav_reservas"
-            android:icon="@drawable/ic_menu_promocion"
+            android:icon="@drawable/ic_menu_reservas"
             android:title="Reservas" />
         <item
             android:id="@+id/nav_promocion"

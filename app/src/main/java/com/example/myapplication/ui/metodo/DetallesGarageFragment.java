@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Handler;
 import android.transition.TransitionInflater;
 import android.util.Base64;
 import android.view.LayoutInflater;
@@ -22,6 +23,8 @@ import androidx.navigation.Navigation;
 
 import com.example.myapplication.MainActivity;
 import com.example.myapplication.R;
+import com.example.myapplication.enums.Disponibilidad;
+import com.example.myapplication.enums.Horario;
 import com.example.myapplication.preferencias.Preferencias;
 import com.example.myapplication.ui.api.APIService;
 import com.example.myapplication.ui.api.ApiUtils;
@@ -57,7 +60,7 @@ public class DetallesGarageFragment extends Fragment implements Callback<List<Im
     private CircleImageView ivFotoPrinc;
 
     private Call<Conductor> conductorCall;
-    private Call<List<Garage>> garage;
+    private Call<Garage> garage;
     private Call<List<Resena>> resena;
 
     private Integer idGarage;
@@ -110,18 +113,18 @@ public class DetallesGarageFragment extends Fragment implements Callback<List<Im
         idGarage = loginPref.getPrefInteger(activity,"idGarage",0);// prefs.getInt("idGarage", 0);
         int idConductor = loginPref.getPrefInteger(activity,"idConductor",0);// prefs.getInt("idConductor", 0);
         resena = mApiService.obtenerPorIdGarage(idGarage);
-        garage = mApiService.findAllGarage();
+        garage = mApiService.findGarage(idGarage);
         Call<List<Estadia>> estadia = mApiService.groupByPorIdGarage(idGarage, "Si");
         Call<List<Imagenes>> imagenes = mApiService.obtenerImagenesPorIdGarage(idGarage);
 
         conductorCall = mApiService.findConductor(idConductor);
 
-
-
         estadia.enqueue(new Callback<List<Estadia>>() {
             @Override
             public void onResponse(@NotNull Call<List<Estadia>> call,@NotNull Response<List<Estadia>> response) {
-                buscarYCompletar(garage,response);
+                new Handler().postDelayed(() -> {
+                    buscarYCompletar(garage,response);
+                },10);
                 estaLaEstadia(conductorCall,response);
             }
 
@@ -147,8 +150,52 @@ public class DetallesGarageFragment extends Fragment implements Callback<List<Im
 
     }
 
+    private void buscarYCompletar(Call<Garage> callGarage, Response<List<Estadia>> responseEstadia){
+        callGarage.enqueue(new Callback<Garage>() {
+            @Override
+            public void onResponse(@NotNull Call<Garage> call, @NotNull Response<Garage> response) {
+                if(response.isSuccessful() && response.body() != null){
+                    Garage garage = response.body();
+                    //Toast.makeText(activity, garage.getId()+" Disponibilidad "+garage.getDisponibilidad(), Toast.LENGTH_SHORT).show();
+                    if(responseEstadia.body() != null){
+                        tvNombreGarage.setText(garage.getNombre());
+                        tvDireccionGarage.setText(garage.getDireccion());
+                        tvDisponibilidadGarage.setText(garage.getDisponibilidad());
+                        for (Estadia estadia : responseEstadia.body()){
+                            if(garage.getId().equals(estadia.getIdGarage())){
+                                tvVehiculosEstadia.append(estadia.getVehiculoPermitido() + ", ");
+                            }
+                        }
+                        String text = tvVehiculosEstadia.getText().toString();
+                        String substring = text.substring(0, text.length() - 2);
+                        tvVehiculosEstadia.setText(substring);
+                        //Toast.makeText(activity, "Disponibilidad: Abierto", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(activity, "Disponibilidad: Cerrado o Completado", Toast.LENGTH_SHORT).show();
+                        switch (garage.getDisponibilidad()){
+                            case "Cerrado":
+                            case "Completo":
+                                btnReserva.setEnabled(false);
+                                break;
+                            default:
+                                btnReserva.setEnabled(true);
+                                break;
+                        }
+
+                    }
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Garage> call, Throwable t) {
+                t.printStackTrace();
+            }
+        });
+    }
+
     private void estaLaEstadia(Call<Conductor> callConductor, Response<List<Estadia>> responseEstadia){
         int siHayReserva = new Preferencias("notificacion").getPrefInteger(activity,"idReservas",0);
+        //Toast.makeText(activity, "notificacion: " + siHayReserva, Toast.LENGTH_SHORT).show();
         callConductor.enqueue(new Callback<Conductor>() {
             @Override
             public void onResponse(Call<Conductor> call, Response<Conductor> response) {
@@ -160,6 +207,7 @@ public class DetallesGarageFragment extends Fragment implements Callback<List<Im
                     for (Estadia estadia : responseEstadia.body()){
                         if(estadia.getVehiculoPermitido().equalsIgnoreCase(conductor.getTipoVehiculo()) && siHayReserva == 0){
                             btnReserva.setEnabled(true);
+                            //Toast.makeText(activity, "Tiene el mismo vehiculo y no hay reserva", Toast.LENGTH_SHORT).show();
                             return;
                         }
                     }
@@ -172,41 +220,6 @@ public class DetallesGarageFragment extends Fragment implements Callback<List<Im
             @Override
             public void onFailure(Call<Conductor> call, Throwable t) {
 
-            }
-        });
-    }
-
-    private void buscarYCompletar(Call<List<Garage>> callGarage, Response<List<Estadia>> responseEstadia){
-        callGarage.enqueue(new Callback<List<Garage>>() {
-            @Override
-            public void onResponse(@NotNull Call<List<Garage>> call, @NotNull Response<List<Garage>> response) {
-                if(response.isSuccessful() && response.body() != null){
-                    for (Garage garage : response.body()){
-                        if(garage.getId().equals(idGarage) && responseEstadia.body() != null){
-                            tvNombreGarage.setText(garage.getNombre());
-                            tvDireccionGarage.setText(garage.getDireccion());
-                            tvDisponibilidadGarage.setText(garage.getDisponibilidad());
-                            for (Estadia estadia : responseEstadia.body()){
-                                if(garage.getId().equals(estadia.getIdGarage())){
-                                    tvVehiculosEstadia.append(estadia.getVehiculoPermitido() + ", ");
-                                }
-                            }
-                            String text = tvVehiculosEstadia.getText().toString();
-                            String substring = text.substring(0, text.length() - 2);
-                            tvVehiculosEstadia.setText(substring);
-                            if(garage.getDisponibilidad().equalsIgnoreCase("Abierto") || garage.getDisponibilidad().equalsIgnoreCase("Promocion")){
-                                btnReserva.setEnabled(true);
-                                return;
-                            }
-                            btnReserva.setEnabled(false);
-                        }
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<Garage>> call, Throwable t) {
-                t.printStackTrace();
             }
         });
     }

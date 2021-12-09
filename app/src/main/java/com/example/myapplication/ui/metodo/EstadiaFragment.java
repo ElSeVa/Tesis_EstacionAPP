@@ -22,6 +22,8 @@ import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.myapplication.MainActivity;
 import com.example.myapplication.R;
+import com.example.myapplication.enums.Estados;
+import com.example.myapplication.enums.Horario;
 import com.example.myapplication.preferencias.Preferencias;
 import com.example.myapplication.ui.api.APIService;
 import com.example.myapplication.ui.api.ApiUtils;
@@ -105,16 +107,16 @@ public class EstadiaFragment extends Fragment {
 
         etFechaEstadia.setOnClickListener(this::showFechaEstadia);
 
-        SharedPreferences prefs = activity.getSharedPreferences("Login", Context.MODE_PRIVATE);
+        //SharedPreferences prefs = activity.getSharedPreferences("Login", Context.MODE_PRIVATE);
         idConductor = loginPref.getPrefInteger(activity,"idConductor",0);// prefs.getInt("idConductor", 0);
         idGarage = loginPref.getPrefInteger(activity,"idGarage",0);// prefs.getInt("idGarage", 0);
         vehiculo = loginPref.getPrefString(activity,"Vehiculo",null);// prefs.getString("Vehiculo", null);
         establecerEstadia();
-
+        /*
         if(!listEstadia.isEmpty()){
             Toast.makeText(activity, "Hay Estadia", Toast.LENGTH_SHORT).show();
         }
-
+        */
         btnReservaEstadia.setOnClickListener(v -> {
             for (Estadia e : listEstadia){
                 estadia = e;
@@ -136,10 +138,10 @@ public class EstadiaFragment extends Fragment {
                     ex.printStackTrace();
                 }
                 df = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-                Toast.makeText(activity, "Precio: "+ precio + " ,Estadia: Estadia, Cantidad: " +cantidad, Toast.LENGTH_SHORT).show();
-                Toast.makeText(activity, "Fecha_Inicio: " + df.format(calFechaI.getTime()) + ", Fecha_Final: " + df.format(calFechaF.getTime()), Toast.LENGTH_SHORT).show();
+                //Toast.makeText(activity, "Precio: "+ precio + " ,Estadia: "+Horario.ESTADIA+", Cantidad: " +cantidad, Toast.LENGTH_SHORT).show();
+                //Toast.makeText(activity, "Fecha_Inicio: " + df.format(calFechaI.getTime()) + ", Fecha_Final: " + df.format(calFechaF.getTime()), Toast.LENGTH_SHORT).show();
                 if(precio != 0){
-                    Reservacion reservacion = new Reservacion(precio,"Estadia",cantidad,df.format(calFechaI.getTime()),df.format(calFechaF.getTime()),"Esperando",idConductor,idGarage);
+                    Reservacion reservacion = new Reservacion(precio, Horario.ESTADIA,cantidad,df.format(calFechaI.getTime()),df.format(calFechaF.getTime()), Estados.ESPERANDO,idConductor,idGarage);
                     Call<Reservacion> call = mAPIService.insertsReserva(reservacion);
                     call.enqueue(new Callback<Reservacion>() {
                         @Override
@@ -192,18 +194,20 @@ public class EstadiaFragment extends Fragment {
             @Override
             public void onResponse(Call<Estadia> call, Response<Estadia> response) {
                 if(!response.isSuccessful() && response.body() == null){
-                    Toast.makeText(activity, String.valueOf(response.code()), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, "tipo de error: "+response.code(), Toast.LENGTH_SHORT).show();
                     assert response.body() != null;
                 }else{
-                    Toast.makeText(activity, String.valueOf(response.code()), Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(activity, String.valueOf(response.code()), Toast.LENGTH_SHORT).show();
                     assert response.body() != null;
                 }
                 Estadia estadia = response.body();
-                Toast.makeText(activity, "Estado: " + estadia.getPrecio(), Toast.LENGTH_SHORT).show();
+                //Toast.makeText(activity, "Estado: " + estadia.getPrecio(), Toast.LENGTH_SHORT).show();
                 listEstadia.add(estadia);
+                /*
                 if(!listEstadia.isEmpty()){
                     Toast.makeText(activity, "Hay Estadia", Toast.LENGTH_SHORT).show();
                 }
+                */
             }
 
             @Override

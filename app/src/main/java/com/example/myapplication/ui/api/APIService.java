@@ -13,6 +13,7 @@ import com.example.myapplication.ui.models.Promo;
 import com.example.myapplication.ui.models.Promociones;
 import com.example.myapplication.ui.models.Resena;
 import com.example.myapplication.ui.models.Reservacion;
+import com.example.myapplication.ui.models.Sugerencias;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -198,13 +199,12 @@ public interface APIService {
 /*
 *   4. Sugerencias
 */
-    @FormUrlEncoded
-    @POST("/sugerencias/enviar")
-    Call<Boolean> enviarEmail(@Field("asunto") String asunto, @Field("body") String body);
+    @POST("/sugerencias")
+    Call<String> enviarEmail(@Body Sugerencias sugerencias);
 
-    @FormUrlEncoded
-    @POST("/sugerencias/recuperar")
-    Call<Boolean> enviarRecuperar(@Field("email") String email,@Field("asunto") String asunto, @Field("body") String body);
+    @POST("/recuperar")
+    Call<String> enviarRecuperar(@Body Sugerencias sugerencias);
+
 /*
 *   Update
 *

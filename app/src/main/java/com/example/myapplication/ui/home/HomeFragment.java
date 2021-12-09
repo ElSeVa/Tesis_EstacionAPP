@@ -163,6 +163,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Permis
         temporizador.setTextView(tvTemporizador);
         temporizador.registerLifecycle(this);
 
+        //verifica el estado del temporizador mientras hace ve si tiene el conductor una reserva
         observerReservaciones.agregar(temporizador);
         if(idReservacion != 0){
             Log.d("lifeCyCle","hay reserva");
@@ -269,6 +270,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Permis
         locationEngine = LocationEngineProvider.getBestLocationEngine(activity);
     }
 
+    //carga todo lo referido al mapa, ya sea las coordenadas de los garage con su marcadores.
     @Override
     public void onMapReady(@NonNull MapboxMap mapboxMap) {
         this.mapboxMap = mapboxMap;
@@ -322,6 +324,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Permis
 
     }
 
+    //Cada vez que hacen click a un marcador/garage mostrara un boton para acceder a la informacion
+    //del supuesto garage.
     @Override
     public boolean onMarkerClick(@NonNull Marker marker) {
         if(marker.isInfoWindowShown() && btnGarage.isEnabled()){
@@ -366,6 +370,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Permis
         return false;
     }
 
+    //El boton de busqueda, encargado solamente mostrar las distintas comunas,barrios,etc. para mostrar
+    //las zona donde hay estacionamientos/garages.
     private void initSearchFab() {
         PlaceAutocomplete.clearRecentHistory(activity);
         fab_location_search.setOnClickListener(v ->  {
@@ -395,10 +401,10 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Permis
 
     @SuppressWarnings( {"MissingPermission"})
     private void enableLocationComponent(@NonNull Style loadedMapStyle) {
-        // Check if permissions are enabled and if not request
+        // Verifica si los permisos estan habilitados y si no es asi los solicita.
         if (PermissionsManager.areLocationPermissionsGranted(activity)) {
-            // Activate the MapboxMap LocationComponent to show user location
-            // Adding in LocationComponentOptions is also an optional parameter
+            // Activa el MapboxMap del LocationComponent para mostrar la ubicacion del usuario
+            // Agregar el LocationComponentOptions también es un parámetro opcional
             LocationComponent locationComponent = mapboxMap.getLocationComponent();
 
             LocationComponentActivationOptions locationComponentActivationOptions = LocationComponentActivationOptions
@@ -416,9 +422,9 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Permis
             locationComponent.activateLocationComponent(LocationComponentActivationOptions.builder(activity,loadedMapStyle).build());
             //locationComponent.activateLocationComponent(this, loadedMapStyle);
             locationComponent.setLocationComponentEnabled(true);
-            // Set the component's camera mode
+            // Setea el modo de camara
             locationComponent.setCameraMode(CameraMode.TRACKING);
-            // Set the component's render mode
+            // Setea el modo de render
             locationComponent.setRenderMode(RenderMode.COMPASS);
             LocationEngineRequest request = new LocationEngineRequest.Builder(DEFAULT_INTERVAL_IN_MILLISECONDS)
                     .setPriority(LocationEngineRequest.PRIORITY_NO_POWER)
@@ -454,6 +460,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Permis
         }
     }
 
+    //como busca 2 cosas distintas y el retrofit no deja usarlo en uno, tuve que hacer una metodo aparte
+    //para traer los datos del filtro
     public void llenarMapa(Call<List<Mapa>> call, Response<List<Garage>> responseGarage){
         call.enqueue(new Callback<List<Mapa>>() {
             @Override
@@ -497,11 +505,13 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Permis
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE_AUTOCOMPLETE) {
 
-            // Retrieve selected location's CarmenFeature
+            // Recupera de CarmenFeature la ubicacion seleccionada
             CarmenFeature selectedCarmenFeature = PlaceAutocomplete.getPlace(data);
 
             // Create a new FeatureCollection and add a new Feature to it using selectedCarmenFeature above.
+            // Cree una nueva FeatureCollection y agréga una nueva Feature usando el selectedCarmenFeature de arriba.
             // Then retrieve and update the source designated for showing a selected location's symbol layer icon
+            // Luego recupera y actualiza la fuente designada para mostrar el icono con su ubicacion
 
             if (mapboxMap != null) {
                 Style style = mapboxMap.getStyle();

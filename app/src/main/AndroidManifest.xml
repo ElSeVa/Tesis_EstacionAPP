@@ -2,20 +2,22 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.myapplication">
+
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/ic_logo_estacionapp"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/ic_logo_estacionapp"
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApplication"
         android:usesCleartextTraffic="true">
 
-        <activity android:name=".SplashScreenActivity"
+        <activity
+            android:name=".SplashScreenActivity"
             android:theme="@style/Theme.MyApplication.NoActionBar"
             android:screenOrientation="locked">
 
@@ -26,36 +28,55 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".LoginActivity"
+        <activity
+            android:name=".LoginActivity"
+            android:label="EstacionAPP"
+            android:screenOrientation="locked"/>
+
+        <activity
+            android:name=".RegisterActivity"
+            android:label="EstacionAPP Registrer"
+            android:screenOrientation="locked" />
+
+        <activity
+            android:name=".RecuperarActivity"
+            android:label="Recuperar Contraseña"
+            android:screenOrientation="locked" />
+
+        <activity
+            android:name=".CambiarContrasena"
             android:label="EstacionAPP"
             android:screenOrientation="locked">
 
+            <tools:validation testUrl="https://naniof.000webhostapp.com/cambiarContrasena" />
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:scheme="https"
+                    android:host="naniof.000webhostapp.com"
+                    android:pathPattern="/cambiarContrasena" />
+            </intent-filter>
         </activity>
 
-        <activity android:name=".RegisterActivity"
-            android:label="EstacionAPP Registrer"
-            android:screenOrientation="locked">
-        </activity>
-
-        <activity android:name=".RecuperarActivity"
-            android:label="Recuperar Contraseña"
-            android:screenOrientation="locked">
-        </activity>
-
-        <activity android:name=".CancelarReservaActivity"
+        <activity
+            android:name=".CancelarReservaActivity"
             android:label="Reservacion"
-            android:screenOrientation="locked">
-        </activity>
+            android:screenOrientation="locked" />
 
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
             android:theme="@style/Theme.MyApplication.NoActionBar"
             android:launchMode="singleTop"
-            android:screenOrientation="locked">
-        </activity>
+            android:screenOrientation="locked" />
 
-        <service android:name=".notificaciones.NotificacionesServices" android:enabled="true" />
+        <service
+            android:name=".notificaciones.NotificacionesServices"
+            android:enabled="true" />
 
     </application>
 

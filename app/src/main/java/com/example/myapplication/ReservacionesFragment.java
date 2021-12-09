@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.example.myapplication.adapters.AdapterBaseReservacion;
 import com.example.myapplication.preferencias.ItemPreferencias;
@@ -32,6 +33,7 @@ public class ReservacionesFragment extends Fragment implements Callback<List<Ite
     private MainActivity activity;
 
     private ListView listReservaciones;
+    private TextView tvNoHayReservaciones;
 
     private APIService mAPIService = ApiUtils.getAPIService();
 
@@ -58,6 +60,7 @@ public class ReservacionesFragment extends Fragment implements Callback<List<Ite
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_reservaciones, container, false);
+        tvNoHayReservaciones = view.findViewById(R.id.tvNoHayReservaciones);
         listReservaciones = (ListView) view.findViewById(R.id.listReservaciones);
         //activity.setDrawer_unlocker();
         return view;
@@ -67,15 +70,21 @@ public class ReservacionesFragment extends Fragment implements Callback<List<Ite
     public void onResponse(Call<List<Item_Reservacion>> call, Response<List<Item_Reservacion>> response) {
         if(response.isSuccessful() && response.body() != null){
             ArrayList<Item_Reservacion> reservacionList = new ArrayList<>(response.body());
-            AdapterBaseReservacion adapterBase = new AdapterBaseReservacion(activity, reservacionList);
-            listReservaciones.setAdapter(adapterBase);
-            listReservaciones.setOnItemClickListener((parent, view, position, id) -> {
-                Intent intent = new Intent(activity,CancelarReservaActivity.class);
-                Item_Reservacion item = reservacionList.get(position);
-                intent.putExtra("id", item.getId());
-                intent.putExtra("nombre", item.getNombre());
-                startActivity(intent);
-            });
+            if(reservacionList.size() != 0){
+                tvNoHayReservaciones.setVisibility(View.GONE);
+                AdapterBaseReservacion adapterBase = new AdapterBaseReservacion(activity, reservacionList);
+                listReservaciones.setAdapter(adapterBase);
+                listReservaciones.setOnItemClickListener((parent, view, position, id) -> {
+                    Intent intent = new Intent(activity,CancelarReservaActivity.class);
+                    Item_Reservacion item = reservacionList.get(position);
+                    intent.putExtra("id", item.getId());
+                    intent.putExtra("nombre", item.getNombre());
+                    startActivity(intent);
+                });
+            }else{
+                listReservaciones.setVisibility(View.GONE);
+                tvNoHayReservaciones.setText("No has hecho ninguna reservacion");
+            }
         }
     }
 

@@ -6,7 +6,7 @@
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="750dp"
-        android:background="@mipmap/ic_launcher"/>
+        android:background="@mipmap/ic_mapa"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -14,11 +14,10 @@
         android:background="#d8000000"
         android:gravity="center"
         android:orientation="vertical">
-        <ImageView
+        <de.hdodenhof.circleimageview.CircleImageView
             android:layout_width="110dp"
             android:layout_height="110dp"
-            android:background="@drawable/btn_redondeado"
-            android:src="@mipmap/ic_launcher_round"
+            android:src="@mipmap/ic_logo_estacionapp"
             />
 
         <TextView

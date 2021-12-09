@@ -7,9 +7,9 @@
     android:background="@color/mapbox_plugins_bright_blue">
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/ciCargando"
-        android:src="@mipmap/ic_launcher"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:src="@mipmap/ic_logo_estacionapp"
+        android:layout_width="85dp"
+        android:layout_height="85dp"
         android:layout_centerInParent="true" />
 
     <ProgressBar

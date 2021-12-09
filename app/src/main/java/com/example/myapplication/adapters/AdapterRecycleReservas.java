@@ -12,13 +12,16 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.R;
+import com.example.myapplication.enums.Estados;
 import com.example.myapplication.ui.api.ApiUtils;
 import com.example.myapplication.ui.models.Conductor;
 import com.example.myapplication.ui.models.Resena;
 import com.example.myapplication.ui.models.Reservacion;
 
 import java.nio.BufferUnderflowException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -63,7 +66,9 @@ public class AdapterRecycleReservas extends RecyclerView.Adapter<AdapterRecycleR
         viewHolder.getTvFFinal().setText(reservas.getFechaFinal());
 
         viewHolder.getBtnAceptar().setOnClickListener(v -> {
-            reservas.setEstado("Aceptado");
+            SimpleDateFormat df = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+            reservas.setEstado(Estados.ACEPTADO.getEstados());
+            reservas.setFechaInicio(df.format(new Date()));
             Call<Reservacion> reservacionCall = ApiUtils.getAPIService().uptadeReserva(reservas);
             reservacionCall.enqueue(new Callback<Reservacion>() {
                 @Override
@@ -81,7 +86,7 @@ public class AdapterRecycleReservas extends RecyclerView.Adapter<AdapterRecycleR
         });
 
         viewHolder.getBtnCancelar().setOnClickListener(v -> {
-            reservas.setEstado("Cancelado");
+            reservas.setEstado(Estados.CANCELADO.getEstados());
             Call<Reservacion> reservacionCall = ApiUtils.getAPIService().uptadeReserva(reservas);
             reservacionCall.enqueue(new Callback<Reservacion>() {
                 @Override

@@ -19,7 +19,7 @@
             android:contentDescription="@string/imagen_de_fondo" />
 
         <de.hdodenhof.circleimageview.CircleImageView
-            android:src="@mipmap/ic_launcher_round"
+            android:src="@drawable/ic_baseline_person"
             android:id="@+id/ivFotoPrincProfile"
             android:layout_width="130dp"
             android:layout_height="120dp"

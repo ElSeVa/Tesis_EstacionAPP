@@ -27,6 +27,8 @@ import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.myapplication.MainActivity;
 import com.example.myapplication.R;
+import com.example.myapplication.enums.Estados;
+import com.example.myapplication.enums.Horario;
 import com.example.myapplication.preferencias.Preferencias;
 import com.example.myapplication.ui.api.APIService;
 import com.example.myapplication.ui.api.ApiUtils;
@@ -167,7 +169,7 @@ public class HoraFragment extends Fragment {
                 if(switch1.isChecked()){
                     if(!fecha.isEmpty()){
                         dias = calcularCantidadDias(fecha);
-                        Toast.makeText(activity, dias + " Dias Total", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(activity, dias + " Dias Total", Toast.LENGTH_SHORT).show();
                     }else{
                         Toast.makeText(activity, "Seleccione una fecha", Toast.LENGTH_SHORT).show();
                     }
@@ -207,9 +209,9 @@ public class HoraFragment extends Fragment {
                 }
 
                 if(precio!=0){
-                    Toast.makeText(activity, "Precio: "+ precio + " ,Estadia: Hora, Cantidad: " +cantidad, Toast.LENGTH_SHORT).show();
-                    Toast.makeText(activity, "Fecha_Inicio: " + df.format(calFechaI.getTime()) + ", Fecha_Final: " + df.format(calFechaF.getTime()), Toast.LENGTH_SHORT).show();
-                    Reservacion reservacion = new Reservacion(precio,"Hora",cantidad,df.format(calFechaI.getTime()),df.format(calFechaF.getTime()),"Esperando",idConductor,idGarage);
+                    //Toast.makeText(activity, "Precio: "+ precio + " ,Estadia: "+Horario.HORA+", Cantidad: " +cantidad, Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(activity, "Fecha_Inicio: " + df.format(calFechaI.getTime()) + ", Fecha_Final: " + df.format(calFechaF.getTime()), Toast.LENGTH_SHORT).show();
+                    Reservacion reservacion = new Reservacion(precio, Horario.HORA,cantidad,df.format(calFechaI.getTime()),df.format(calFechaF.getTime()), Estados.ESPERANDO,idConductor,idGarage);
                     Call<Reservacion> callReserva = mAPIService.insertsReserva(reservacion);
                     //Call<Reservacion> callReserva = mAPIService.insertReserva(precio,"Hora",cantidad,df.format(calFechaI.getTime()),df.format(calFechaF.getTime()),"Esperando",idConductor,idGarage);
                     callReserva.enqueue(new Callback<Reservacion>() {
@@ -347,13 +349,15 @@ public class HoraFragment extends Fragment {
                     Toast.makeText(activity,"Paso 2 " + response.code(), Toast.LENGTH_SHORT).show();
                 }
                 Estadia estadia = response.body();
-                if (estadia != null) {
+                /*if (estadia != null) {
                     Toast.makeText(activity, "Estado: " + estadia.getPrecio(), Toast.LENGTH_SHORT).show();
-                }
+                }*/
                 listEstadia.add(estadia);
+                /*
                 if(!listEstadia.isEmpty()){
                     Toast.makeText(activity, "Hay Estadia", Toast.LENGTH_SHORT).show();
                 }
+                */
             }
 
             @Override

@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -35,6 +36,7 @@ public class TakePromotionFragment extends Fragment {
     private MainActivity activity;
     private ListView listView;
     private Call<List<Promociones>> callPromociones;
+    private TextView tvNoHayPromociones;
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -47,6 +49,7 @@ public class TakePromotionFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_take_promotion, container, false);
+        tvNoHayPromociones = root.findViewById(R.id.tvNoHayPromociones);
         listView = root.findViewById(R.id.listPromociones);
         return root;
     }
@@ -59,8 +62,15 @@ public class TakePromotionFragment extends Fragment {
             @Override
             public void onResponse(Call<List<Promociones>> call, Response<List<Promociones>> response) {
                 if(response.isSuccessful() && response.body() != null){
-                    AdapterBasePromociones adapterBase = new AdapterBasePromociones(activity, new ArrayList<>(response.body()));
-                    listView.setAdapter(adapterBase);
+                    if(response.body().size() != 0){
+                        tvNoHayPromociones.setVisibility(View.GONE);
+                        AdapterBasePromociones adapterBase = new AdapterBasePromociones(activity, new ArrayList<>(response.body()));
+                        listView.setAdapter(adapterBase);
+                    }else{
+                        listView.setVisibility(View.GONE);
+                        tvNoHayPromociones.setText("No tienes ninguna promocion");
+                    }
+
                 }
             }
 

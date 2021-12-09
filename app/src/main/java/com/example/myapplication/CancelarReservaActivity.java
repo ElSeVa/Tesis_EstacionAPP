@@ -96,6 +96,9 @@ public class CancelarReservaActivity extends AppCompatActivity {
                         });
                     }
                     callReservacion.timeout();
+                    if(millisUntilFinished == 0){
+                        onFinish();
+                    }
                 }
 
                 @Override

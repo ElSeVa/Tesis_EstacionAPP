@@ -201,11 +201,17 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
             conductorCall.enqueue(new Callback<Conductor>() {
                 @Override
                 public void onResponse(Call<Conductor> call, Response<Conductor> response) {
-                    if(response.isSuccessful()){
+                    if(response.isSuccessful() && response.body() != null){
                         conductor = response.body();
                         loginPref.setPrefInt(context,"idConductor", Objects.requireNonNull(conductor).getId());
                         loginPref.setPrefString(context,"Vehiculo",conductor.getTipoVehiculo());
                         Intent intent = new Intent(context, MainActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                    }else{
+                        Intent intent = new Intent(context, RegisterActivity.class);
+                        intent.putExtra("email",account.getEmail());
+                        intent.putExtra("nombre",account.getDisplayName());
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(intent);
                     }

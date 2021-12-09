@@ -108,7 +108,12 @@ public class MainActivity extends AppCompatActivity implements MyDrawerControlle
             tvEmailUsuario.setText(account.getEmail());
             mapCuenta.put("idConductor",String.valueOf(idConductor));
             mapCuenta.put("Nombre",account.getDisplayName());
-            mapCuenta.put("Uri",Objects.requireNonNull(account.getPhotoUrl()).toString());
+            Uri uri = account.getPhotoUrl();
+            if(uri != null){
+                mapCuenta.put("Uri",Objects.requireNonNull(account.getPhotoUrl()).toString());
+                photo = account.getPhotoUrl();
+                Log.d("MIAPP",account.getPhotoUrl().toString());
+            }
             cuentaPref.setPrefCuenta(context,mapCuenta);
             /*
             cuenta = getSharedPreferences("Cuenta", MODE_PRIVATE).edit();
@@ -117,8 +122,7 @@ public class MainActivity extends AppCompatActivity implements MyDrawerControlle
             cuenta.putString("Uri", Objects.requireNonNull(account.getPhotoUrl()).toString());
             cuenta.apply();
             */
-            photo = account.getPhotoUrl();
-            Log.d("MIAPP",account.getPhotoUrl().toString());
+
         }else{
             if (idConductor == 0) {
                 goLogInScreen();

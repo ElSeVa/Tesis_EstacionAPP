@@ -25,6 +25,8 @@ import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.myapplication.MainActivity;
 import com.example.myapplication.R;
+import com.example.myapplication.enums.Estados;
+import com.example.myapplication.enums.Horario;
 import com.example.myapplication.preferencias.Preferencias;
 import com.example.myapplication.ui.api.APIService;
 import com.example.myapplication.ui.api.ApiUtils;
@@ -165,10 +167,10 @@ public class MediaFragment extends Fragment {
                 }catch (Exception ex){
                     ex.printStackTrace();
                 }
-                Toast.makeText(activity, "Precio: "+ precio + " ,Estadia: Hora, Cantidad: " +cantidad, Toast.LENGTH_SHORT).show();
-                Toast.makeText(activity, "Fecha_Inicio: " + df.format(calFechaI.getTime()) + ", Fecha_Final: " + df.format(calFechaF.getTime()), Toast.LENGTH_SHORT).show();
+                //Toast.makeText(activity, "Precio: "+ precio + " ,Estadia: "+Horario.MEDIA_ESTADIA+", Cantidad: " +cantidad, Toast.LENGTH_SHORT).show();
+                //Toast.makeText(activity, "Fecha_Inicio: " + df.format(calFechaI.getTime()) + ", Fecha_Final: " + df.format(calFechaF.getTime()), Toast.LENGTH_SHORT).show();
                 if(precio != 0){
-                    Reservacion reservacion = new Reservacion(precio,"Media Estadia",cantidad,df.format(calFechaI.getTime()),df.format(calFechaF.getTime()),"Esperando",idConductor,idGarage);
+                    Reservacion reservacion = new Reservacion(precio, Horario.MEDIA_ESTADIA,cantidad,df.format(calFechaI.getTime()),df.format(calFechaF.getTime()), Estados.ESPERANDO,idConductor,idGarage);
                     Call<Reservacion> call = mAPIService.insertsReserva(reservacion);
                     call.enqueue(new Callback<Reservacion>() {
                         @Override
@@ -231,11 +233,13 @@ public class MediaFragment extends Fragment {
                     assert response.body() != null;
                 }
                 Estadia estadia = response.body();
-                Toast.makeText(activity, "Estado: " + estadia.getPrecio(), Toast.LENGTH_SHORT).show();
+                //Toast.makeText(activity, "Estado: " + estadia.getPrecio(), Toast.LENGTH_SHORT).show();
                 listEstadia.add(estadia);
+                /*
                 if(!listEstadia.isEmpty()){
                     Toast.makeText(activity, "Hay Estadia", Toast.LENGTH_SHORT).show();
                 }
+                */
             }
 
             @Override
